@@ -1,0 +1,22 @@
+Package: camrprojects
+Title: Portable Functions for R Projects at CAM-MGH
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Kevin",
+           family = "Potter",
+           role = c("aut", "cre"),
+           email = "kevin.w.potter@gmail.com")
+Description: A set of portable functions commonly 
+  used in R projects for the Center for Addiction 
+  Medicine - CAM - at the Massachusetts General Hospital - MGH.
+Depends:
+    R (>= 3.0)
+Imports:
+    dplyr,
+    stringr,
+    jsonlite,
+    devtools
+License: License: MIT + License
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
