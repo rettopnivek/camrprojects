@@ -31,12 +31,12 @@ install_github("rettopnivek/camrprojects")
 
 To load the package:
 ```
-library(utilityf)
+library(camrprojects)
 ```
 
 To list the available functions:
 ```
-ls(pos = "package:utilityf")
+ls(pos = "package:camrprojects")
 ```
 
 Details and examples for a specific function can be obtained via `help( "function" )` substituting the appropriate function name for "function".
