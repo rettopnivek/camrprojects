@@ -24,16 +24,16 @@
 #'
 #' @export
 
-file_present = function( string,
-                         output = 'Logical' ) {
+file_present <- function( string,
+                          output = 'Logical' ) {
 
   # All files and folders present
   # in working directory
-  all_files = dir()
+  all_files <- dir()
 
   # Determine if file name is present
   # in list of files/folders
-  check = grepl( string, all_files, fixed = T )
+  check <- grepl( string, all_files, fixed = T )
 
   # Output
   if ( output %in% c( 'Logical', 'logical' ) ) {

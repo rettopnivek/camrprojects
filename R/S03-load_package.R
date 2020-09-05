@@ -25,13 +25,13 @@
 #'
 #' @export
 
-load_package = function( package_name,
-                         from = 'CRAN',
-                         repo = NULL,
-                         ... ) {
+load_package <- function( package_name,
+                          from = 'CRAN',
+                          repo = NULL,
+                          ... ) {
 
   # List of packages that are installed
-  installed_packages = installed.packages()[,1]
+  installed_packages <- installed.packages()[,1]
 
   if ( !( package_name %in% installed_packages ) ) {
 

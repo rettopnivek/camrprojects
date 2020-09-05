@@ -1,6 +1,7 @@
 #' Determine Git Version for Project
 #'
-#' FORTHCOMING.
+#' A function to extract the git version for an R project
+#' that has auto-generated changelogs.
 #'
 #' @return A character string giving the version number, in the
 #'   format of MAJOR.MINOR.PATCH.
@@ -37,6 +38,11 @@ pull_git_version <- function() {
     }
 
   } else {
+    warning( paste0(
+      "The list 'folder_pathways' with the paths and associated ",
+      "labels was not found in the global environment - please ",
+      "create this list via the 'create_folder_pathways' function"
+    ), call. = F )
   }
 
   # Return to current directory
