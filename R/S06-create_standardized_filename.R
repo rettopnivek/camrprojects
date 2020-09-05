@@ -1,4 +1,4 @@
-#' Create Standardized Filename for Output
+#' Create Standardized Filename
 #'
 #' Generates a standardized file name following the format
 #' TXX-description-dd_mm_yyyy-v.X.X.X.extension, giving
@@ -22,14 +22,24 @@
 #'
 #' @author Kevin Potter
 #'
+#' @examples
+#' # Word document
+#' print( create_standardized_filename(
+#'   'Results', 'docx', project_version = 'v.1.0.0'
+#' )
+#' # Image file
+#' print( create_standardized_filename(
+#'   'Figure', 'png', project_version = 'v.1.0.0'
+#' )
+#'
 #' @export
 
-create_filename_for_output <- function( description,
-                                        extension,
-                                        tag = NULL,
-                                        number = NULL,
-                                        file_date = NULL,
-                                        project_version = NULL ) {
+create_standardized_filename <- function( description,
+                                          extension,
+                                          tag = NULL,
+                                          number = NULL,
+                                          file_date = NULL,
+                                          project_version = NULL ) {
 
   # Determine files in directory
   all_files <- dir()
@@ -73,7 +83,7 @@ create_filename_for_output <- function( description,
 
   # Check for matching tags and descriptions for
   # files present in folder
-  no_files = TRUE
+  no_files <- TRUE
   if ( length( all_files ) > 0 ) {
 
     matching_tags <-
@@ -108,7 +118,7 @@ create_filename_for_output <- function( description,
 
     # Make sure number is a double-digit and
     # convert to character string
-    nc = nchar( number )
+    nc <- nchar( number )
     if ( nc == 1 ) {
       number <- paste0( '0', number )
     } else {

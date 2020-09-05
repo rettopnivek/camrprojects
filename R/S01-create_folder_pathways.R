@@ -82,7 +82,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
   if ( is.null( folder_pathways ) ) {
 
     # Initialize list
-    folder_pathways$Path_labels = list(
+    folder_pathways$Path_labels <- list(
       Project = c( 'Project', 'project' )
     )
 
@@ -109,8 +109,8 @@ create_folder_pathways <- function( folder_pathways = NULL,
 
     ### Folder for project directory
 
-    folder_pathways = list(
-      Project <- getwd()
+    folder_pathways <- list(
+      Project = getwd()
     )
 
     ### Folder for R scripts
@@ -139,7 +139,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
     setwd( 'Data' )
     folder_pathways$Data <- getwd()
     # Update path labels
-    folder_pathways$Path_labels$Data =
+    folder_pathways$Path_labels$Data <-
       c( 'Data', 'data' )
 
     ### Folder for raw data files
@@ -151,7 +151,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
     setwd( 'Raw_data_files' )
     folder_pathways$Raw_data_files <- getwd()
     # Update path labels
-    folder_pathways$Path_labels$Raw_data_files =
+    folder_pathways$Path_labels$Raw_data_files <-
       c( 'Raw data', 'raw data', 'Raw', 'raw' )
 
     # If specified, check for file containing API token for
@@ -205,7 +205,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
         )
         folder_pathways$Dropbox <- getwd()
         # Update path labels
-        folder_pathways$Path_labels$Dropbox =
+        folder_pathways$Path_labels$Dropbox <-
           c( 'Dropbox', 'dropbox' )
         setwd( orig_dir )
 
@@ -223,7 +223,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
     setwd( 'Data_processing' )
     folder_pathways$Data_processing <- getwd()
     # Update path labels
-    folder_pathways$Path_labels$Data_processing =
+    folder_pathways$Path_labels$Data_processing <-
       c( 'Processing', 'processing', 'Process', 'process',
          'Data processing', 'data processing',
          'Process data', 'process data',
@@ -277,21 +277,21 @@ create_folder_pathways <- function( folder_pathways = NULL,
     }
 
     # Add path to list
-    folder_pathways = c( folder_pathways, add_path$path )
+    folder_pathways <- c( folder_pathways, add_path$path )
 
     # Re-title new path
-    nms = names( folder_pathways )
-    nms[ nms == "" ] = add_path$title
-    names( folder_pathways ) = nms
+    nms <- names( folder_pathways )
+    nms[ nms == "" ] <- add_path$title
+    names( folder_pathways ) <- nms
 
     # Add slot for path labels
-    folder_pathways$Path_labels = c(
+    folder_pathways$Path_labels <- c(
       folder_pathways$Path_labels, list( add_path$labels ) )
 
     # Re-title slot for path labels
-    nms = names( folder_pathways$Path_labels )
-    nms[ nms == "" ] = add_path$title
-    names( folder_pathways$Path_labels ) = nms
+    nms <- names( folder_pathways$Path_labels )
+    nms[ nms == "" ] <- add_path$title
+    names( folder_pathways$Path_labels ) <- nms
 
   }
 

@@ -12,7 +12,7 @@ A character string giving the version number, in the
 }
 \description{
 A function to extract the git version for an R project
-that has auto-generated changelogs.
+that has auto-generated change logs.
 }
 \author{
 Willam Schmitt

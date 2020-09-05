@@ -1,7 +1,7 @@
 #' Determine Git Version for Project
 #'
 #' A function to extract the git version for an R project
-#' that has auto-generated changelogs.
+#' that has auto-generated change logs.
 #'
 #' @return A character string giving the version number, in the
 #'   format of MAJOR.MINOR.PATCH.
@@ -33,7 +33,6 @@ pull_git_version <- function() {
     } else {
 
       warning( "The 'package.json' file was not found" )
-      out <- c( '0.0.0' )
 
     }
 

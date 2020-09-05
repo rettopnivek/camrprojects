@@ -4,15 +4,17 @@
 #' can be installed. Then, loads the package for easy use.
 #'
 #' @param package_name A character string with the package name.
-#' @param from Where to download the package from; Options include...
-#' #' \enumerate{
+#' @param from Where to download the package from; options include...
+#' \enumerate{
 #'   \item 'CRAN'
 #'   \item 'Github'
 #' }
-#' @param repo An optional character string with the Github repository
-#'   name (in the form 'username/repository') If \code{NULL}, assumes the username is
-#'   'rettopnivek' and that the repository is 'package_name'.
-#' @param ... Additional parameters for the 'devtools' installation functions.
+#' @param repo An optional character string with the Github
+#'   repository name (in the form 'username/repository').
+#'   If \code{NULL}, assumes the username is 'rettopnivek'
+#'   and that the repository is 'package_name'.
+#' @param ... Additional parameters for the 'devtools'
+#'   installation functions.
 #'
 #' @author Kevin Potter
 #'

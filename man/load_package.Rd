@@ -9,17 +9,19 @@ load_package(package_name, from = "CRAN", repo = NULL, ...)
 \arguments{
 \item{package_name}{A character string with the package name.}
 
-\item{from}{Where to download the package from; Options include...
-#' \enumerate{
+\item{from}{Where to download the package from; options include...
+\enumerate{
   \item 'CRAN'
   \item 'Github'
 }}
 
-\item{repo}{An optional character string with the Github repository
-name (in the form 'username/repository') If \code{NULL}, assumes the username is
-'rettopnivek' and that the repository is 'package_name'.}
+\item{repo}{An optional character string with the Github
+repository name (in the form 'username/repository').
+If \code{NULL}, assumes the username is 'rettopnivek'
+and that the repository is 'package_name'.}
 
-\item{...}{Additional parameters for the 'devtools' installation functions.}
+\item{...}{Additional parameters for the 'devtools'
+installation functions.}
 }
 \description{
 Checks if a package is installed, and if not, sees if it

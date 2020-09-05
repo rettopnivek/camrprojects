@@ -8,7 +8,7 @@
 # Contributors:
 #   William Schmitt
 # Last updated:
-#   2020-09-04
+#   2020-09-05
 
 # Package development
 # library( devtools )
@@ -24,9 +24,9 @@
 #'
 #' @description
 #'
-#' The \pkg{mgh_cam_r_tools} package implements a set of
+#' The \pkg{camrprojects} package implements a set of
 #' portable functions commonly used in R projects
-#' for the Center for Addiction Medicine (CAM) at the
+#' from the Center for Addiction Medicine (CAM) at the
 #' Massachusetts General Hospital (MGH). A complete list
 #' of the functions available in the package can be
 #' obtained via the command

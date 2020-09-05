@@ -42,8 +42,7 @@ go_to <- function( path ) {
 
     if ( path %in% lbls[[ nms[i] ]] ) {
       # Save path for future navigation
-      location = folder_pathways[[ nms[i] ]]
-
+      location <- folder_pathways[[ nms[i] ]]
     }
 
   }
