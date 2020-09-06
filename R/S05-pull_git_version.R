@@ -45,7 +45,7 @@ pull_git_version <- function() {
   }
 
   # Return to current directory
-  setwd( orig_dir )
+  setwd( cur_dir )
 
   return( out )
 }
