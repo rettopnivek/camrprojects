@@ -47,7 +47,7 @@ upload_to_folder <- function( filename,
     # function
     if ( exists( 'folder_pathways', envir = .GlobalEnv ) ) {
 
-      if ( primary_path %in% folder_pathways$Path_labels ) {
+      if ( primary_path %in% unlist( folder_pathways$Path_labels ) ) {
         # Navigate to folder via 'go_to' function
         go_to( primary_path )
       } else {
