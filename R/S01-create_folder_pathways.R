@@ -162,11 +162,11 @@ create_folder_pathways <- function( folder_pathways = NULL,
             "folder"
           ), call. = F
         )
-      }
 
-      fileConn <- file("API_token.txt")
-      writeLines(c("COPY API TOKEN HERE"), fileConn)
-      close(fileConn)
+        fileConn <- file("API_token.txt")
+        writeLines(c("COPY API TOKEN HERE"), fileConn)
+        close(fileConn)
+      }
 
     }
 
