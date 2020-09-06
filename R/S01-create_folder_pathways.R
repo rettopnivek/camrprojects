@@ -108,10 +108,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
     }
 
     ### Folder for project directory
-
-    folder_pathways <- list(
-      Project = getwd()
-    )
+    folder_pathways$Project <- getwd()
 
     ### Folder for R scripts
 
@@ -120,9 +117,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
       dir.create( 'R' )
     }
     setwd( 'R' )
-    folder_pathways <- list(
-      R_scripts <- getwd()
-    )
+    folder_pathways$R_scripts <- getwd()
     # Update path labels
     folder_pathways$Path_labels$R =
       c( 'R', 'r', 'R scripts', 'r scripts' )
