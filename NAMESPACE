@@ -3,6 +3,7 @@
 export(create_folder_pathways)
 export(create_standardized_filename)
 export(elements)
+export(extract_unique_value)
 export(file_present)
 export(go_to)
 export(linear_interp)
