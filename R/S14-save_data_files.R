@@ -100,7 +100,7 @@ save_data_files = function( data_frames_to_save,
 
     # Save specified R objects located in global environment
     save(
-      data_frames_to_save,
+      list = data_frames_to_save,
       envir = .GlobalEnv,
       file = fname
     )
