@@ -77,7 +77,7 @@ save_data_files = function( data_frames_to_save,
 
   if ( 'RData' %in% extensions ) {
 
-    file_index = ( exentions %in% 'RData' )
+    file_index = ( extensions %in% 'RData' )
 
     if ( use_standard_names ) {
       # If specified to use standardized naming scheme
@@ -111,7 +111,7 @@ save_data_files = function( data_frames_to_save,
 
   if ( 'csv' %in% extensions ) {
 
-    file_index = ( exentions %in% 'csv' )
+    file_index = ( extensions %in% 'csv' )
 
     # Determine number of objects to save
     n_obj = length( data_frames_to_save )
