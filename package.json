@@ -1,6 +1,6 @@
 {
   "name": "camrprojects",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Portable R functions for MGH-CAM",
   "main": "index.js",
   "scripts": {
