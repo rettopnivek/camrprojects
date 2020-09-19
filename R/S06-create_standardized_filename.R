@@ -92,7 +92,7 @@ create_standardized_filename <- function( description,
       all_files != 'Placeholder.txt' # Exclude placeholder file
 
     matching_description <-
-      stringr::str_detect( all_files, stringr::fixed( description ) ) &
+      stringr::str_detect( all_files, stringr::fixed( paste0('-', description, '-')) ) &
       stringr::str_detect( all_files, stringr::fixed( '.' ) ) & # Exclude folders
       all_files != 'Placeholder.txt' # Exclude placeholder file
 
