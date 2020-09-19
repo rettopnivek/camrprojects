@@ -92,9 +92,14 @@ create_standardized_filename <- function( description,
       all_files != 'Placeholder.txt' # Exclude placeholder file
 
     matching_description <-
-      stringr::str_detect( all_files, stringr::fixed( description ) ) &
+      stringr::str_detect( all_files, stringr::fixed( paste0('-', description, '-')) ) &
       stringr::str_detect( all_files, stringr::fixed( '.' ) ) & # Exclude folders
       all_files != 'Placeholder.txt' # Exclude placeholder file
+
+    matching_extension <-
+      stringr::str_detect( all_files, stringr::str_c(extension, '$') ) &
+      stringr::str_detect( all_files, stringr::fixed('.') ) & # Exclude folders
+      all_files != 'Placeholder.txt'
 
     no_files <- FALSE
   }
@@ -107,9 +112,9 @@ create_standardized_filename <- function( description,
     } else {
 
       # Increment file number
-      if ( any( matching_description & matching_tags ) ) {
+      if ( any( matching_description & matching_tags & matching_extension ) ) {
         number <- stringr::str_sub(
-          all_files[ matching_description & matching_tags ],
+          all_files[ matching_description & matching_tags & matching_extension ],
           start = 2, end = 3 )
       } else {
         number <- sum( matching_tags  ) + 1
