@@ -1,3 +1,9 @@
+#### 0.0.2 (2020-09-19)
+
+##### Bug Fixes
+
+*  Updated package.json repository field so auto-changelog has working hyperlinks ([5c71bd43](https://github.com/rettopnivek/camrprojects/commit/5c71bd43824099e2c580b554e42b13d5f337b496))
+
 #### 0.0.1 (2020-09-19)
 
 ##### Documentation Changes
