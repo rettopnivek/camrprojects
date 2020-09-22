@@ -172,6 +172,9 @@ build_demo_table <- function(df, grp, funcs) {
   }
 
   tb <- tb %>%
+    mutate(
+      !!eqGrp := str_c(!!eqGrp, '\n(n=', n, ')')
+    ) %>%
     select(
       -n
     ) %>%
