@@ -1,3 +1,33 @@
+### 0.1.0 (2020-09-22)
+
+##### Build System / Dependencies
+
+*  Updated gitignore to ignore .Rhistory files ([27615e90](https://github.com/rettopnivek/camrprojects/commit/27615e90085565c436a0e8f0b87ce778215ce1d6))
+*  Remove .Rhistory from git ([6f15a2cc](https://github.com/rettopnivek/camrprojects/commit/6f15a2ccd222433590cf6762c01b27c9f4792d0c))
+*  Updated DESCRIPTION and NAMESPACE to reflect new package imports ([033bc636](https://github.com/rettopnivek/camrprojects/commit/033bc63654cdf54bbb15b54ffd22242e1303e301))
+
+##### Documentation Changes
+
+*  Updated package dependencies in README ([109970b3](https://github.com/rettopnivek/camrprojects/commit/109970b3009f01a17fb32e03bd826a3499799497))
+
+##### New Features
+
+*  build_demo_table now automatically reports n's for each group ([346a879e](https://github.com/rettopnivek/camrprojects/commit/346a879edb7566fd6ff35f5c7c2fdfe22517c92c))
+*  Added build_demo_table function for easy demographics table creation ([1061c73f](https://github.com/rettopnivek/camrprojects/commit/1061c73fb79842ff805cab789ef1c0e403db66d6))
+*  added a function to save data files in a standardized format ([06752b23](https://github.com/rettopnivek/camrprojects/commit/06752b2357bf1650576524fcece623624a42757a))
+*  added function handling portable component of running specified data processing scripts for the create_cleaned_data functions ([ba8ddc17](https://github.com/rettopnivek/camrprojects/commit/ba8ddc17fff61f231d9dfc3351c4eac0e4c3f562))
+
+##### Bug Fixes
+
+*  Updated name of build_demo_table script to follow numbering scheme ([c8802842](https://github.com/rettopnivek/camrprojects/commit/c8802842b2dc6bc9d9e61ddfad4504d1cad90f59))
+*  fixed scoping issue with save call in save_data_files function ([72b96ef7](https://github.com/rettopnivek/camrprojects/commit/72b96ef7ce2fcf93bafff51b520f2e08e4ee303c))
+*  fixed typo in save_data_files function for extensions ([7b235b75](https://github.com/rettopnivek/camrprojects/commit/7b235b758afd822cfc8452932fb91dafd0c766ca))
+*  create_standardized_filename now checks to ensure description matches entire file description when auto-numbering. ([1e33ef90](https://github.com/rettopnivek/camrprojects/commit/1e33ef90473fe90aa5f9fe0ac229719578a6f3db))
+
+##### Other Changes
+
+* //github.com/rettopnivek/camrprojects ([14dce081](https://github.com/rettopnivek/camrprojects/commit/14dce081e877738522695017b1d82f00348e9dfc))
+
 #### 0.0.2 (2020-09-19)
 
 ##### Bug Fixes
