@@ -26,11 +26,11 @@
 #' # Word document
 #' print( create_standardized_filename(
 #'   'Results', 'docx', project_version = 'v.1.0.0'
-#' )
+#' ))
 #' # Image file
 #' print( create_standardized_filename(
 #'   'Figure', 'png', project_version = 'v.1.0.0'
-#' )
+#' ))
 #'
 #' @export
 
