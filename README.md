@@ -14,6 +14,12 @@ The R package 'jsonlite'
 
 The R package 'devtools'
 
+The R package 'dplyr'
+
+The R package 'tidyr'
+
+The R package 'magrittr'
+
 ### Installation
 
 To easily install the 'camrprojects' package, you'll need the 'devtools' package:  
