@@ -1,4 +1,4 @@
-#' build_demo_table
+#' Build Demographics Table
 #'
 #' A function that will build a data frame that is well-
 #' formatted to easily create a flextable object.
