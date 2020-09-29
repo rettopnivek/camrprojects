@@ -10,8 +10,10 @@
 #'   of equivalent length to \code{matches}).
 #' @param type The type of matching, either 'partial' or 'exact'
 #'   (uses \code{grepl} or \code{\%in\%}, respectively).
-#' @param default The default value to assign in the absence of
-#'   a match.
+#' @param default Either a single value to assign in the absence of
+#'   a match, or a vector equivalent in length to \code{x}.
+#' @param replace_if An optional vector specifying the subset of
+#'   default values when it is appropriate to assign new values.
 #'
 #' @return A new vector of equivalent length to \code{x}, with
 #'   values assigned based on successful matches.
@@ -24,18 +26,30 @@
 #' match_and_assign( x, list( 'at', 'og' ), c('A','B') )
 #' # Exact matching
 #' match_and_assign( x, list( 'Cat', c( 'Dog', 'Fog' ) ), c('A','B'),
-#'                   default = '' )
+#'                   default = '', type = 'exact' )
+#' # Vector input for argument 'default'
+#' x <- c( 'A', 'A', 'D', 'C', 'A', 'A', 'C', 'D' )
+#' match_and_assign( x, list( 'C', 'D' ), c('B','B'), default = x )
+#' # Using 'replace_if' for conditional assignment
+#' x1 <- rep( LETTERS[1:4], each = 2 )
+#' x2 <- rep( LETTERS[5:6], 4 )
+#' match_and_assign( x2, list( 'E', 'F' ), c('1','2'),
+#'                   default = x1, replace_if = c( 'A', 'B' ) )
 #'
 #' @export
 
 match_and_assign <- function( x, matches, new_values, type = 'partial',
-                              default = NA ) {
+                              default = NA, replace_if = NULL ) {
 
   # Number of observations
   No <- length( x )
 
   # Initialize output
-  output <- rep( default, No )
+  if ( length( default ) == No ) {
+    output <- default
+  } else {
+    output <- rep( default[1], No )
+  }
 
   # Number of values/elements to match over
   Nm <- length( matches )
@@ -62,7 +76,20 @@ match_and_assign <- function( x, matches, new_values, type = 'partial',
       is_match <- x %in% matches[[i]]
     }
 
-    output[ is_match ] <- new_values[i]
+    # If a vector of default values was provided
+    # and user provided vector of values specifying
+    # when replacement should occur
+    if ( ( length( default ) == No ) &
+         !is.null( replace_if ) ) {
+
+      # Replace only if default values are in
+      # subset appropriate for replacement
+      output[ is_match & output %in% replace_if ] <- new_values[i]
+
+    } else {
+      # Update output
+      output[ is_match ] <- new_values[i]
+    }
 
   }
 

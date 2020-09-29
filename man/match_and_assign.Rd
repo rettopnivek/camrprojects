@@ -4,7 +4,14 @@
 \alias{match_and_assign}
 \title{Assign New Values Based on Partial or Exact Matching}
 \usage{
-match_and_assign(x, matches, new_values, type = "partial", default = NA)
+match_and_assign(
+  x,
+  matches,
+  new_values,
+  type = "partial",
+  default = NA,
+  replace_if = NULL
+)
 }
 \arguments{
 \item{x}{A vector of values to match over.}
@@ -18,8 +25,11 @@ of equivalent length to \code{matches}).}
 \item{type}{The type of matching, either 'partial' or 'exact'
 (uses \code{grepl} or \code{\%in\%}, respectively).}
 
-\item{default}{The default value to assign in the absence of
-a match.}
+\item{default}{Either a single value to assign in the absence of
+a match, or a vector equivalent in length to \code{x}.}
+
+\item{replace_if}{An optional vector specifying the subset of
+default values when it is appropriate to assign new values.}
 }
 \value{
 A new vector of equivalent length to \code{x}, with
@@ -35,7 +45,15 @@ x <- c( 'Cat', 'Hat', 'Rat', 'Dog', 'Fog', 'Cog' )
 match_and_assign( x, list( 'at', 'og' ), c('A','B') )
 # Exact matching
 match_and_assign( x, list( 'Cat', c( 'Dog', 'Fog' ) ), c('A','B'),
-                  default = '' )
+                  default = '', type = 'exact' )
+# Vector input for argument 'default'
+x <- c( 'A', 'A', 'D', 'C', 'A', 'A', 'C', 'D' )
+match_and_assign( x, list( 'C', 'D' ), c('B','B'), default = x )
+# Using 'replace_if' for conditional assignment
+x1 <- rep( LETTERS[1:4], each = 2 )
+x2 <- rep( LETTERS[5:6], 4 )
+match_and_assign( x2, list( 'E', 'F' ), c('1','2'),
+                  default = x1, replace_if = c( 'A', 'B' ) )
 
 }
 \author{
