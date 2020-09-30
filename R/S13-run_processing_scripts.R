@@ -159,7 +159,9 @@ run_processing_scripts = function( processing_files,
   }
 
   # Check if processing functions are already loaded
-  if ( exists( 'process_dictionary', where = 1 ) ) {
+  any_processing_functions <-
+    any( stringr::str_detect( ls( envir = .GlobalEnv ), fixed( 'process_' ) ) )
+  if ( any_processing_functions ) {
     go_to( 'processing' )
     # Remove processing functions
     source( 'DP01_Functions.R' )
