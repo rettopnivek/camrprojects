@@ -174,13 +174,16 @@ run_processing_scripts = function( processing_files,
     check = tryCatch(
       {
         source( processing_files[i] )
-        TRUE
+        'Processing completed successfully'
       },
-      error = function(e) FALSE
+      error = function(e) return( as.character( e ) )
     )
 
-    if ( !check ) {
+    if ( check != 'Processing completed successfully' ) {
+      message( '*** Error in script' )
+      message( check )
       message( '*** Processing failed!' )
+
     }
 
   }
