@@ -1,6 +1,8 @@
 #' Checks if a File is Present in a Folder
 #'
 #' Checks if a file is present in the current working directory.
+#' Can check either regular file or file using MGH-CAM's standardized
+#' file naming template: TXX-Description-MM_DD_YYYY-vX.X.X.ext
 #'
 #' @param string A file name or part of a file name to search for.
 #' @param output Character string indicating the type of output to
@@ -11,6 +13,9 @@
 #'   \item 'Index' or 'index'
 #'   \item 'Name' or 'name'
 #' }
+#' @param std_name A logical indicating whether the file follows the
+#'   standardized naming convention. If true, just matches the tag
+#'   and description of the file.
 #'
 #' @return Either...
 #' \enumerate{
@@ -25,15 +30,22 @@
 #' @export
 
 file_present <- function( string,
-                          output = 'Logical' ) {
+                          output = 'Logical',
+                          std_name = FALSE) {
 
   # All files and folders present
   # in working directory
   all_files <- dir()
 
-  # Determine if file name is present
+  # Determine if (standard) file name is present
   # in list of files/folders
-  check <- grepl( string, all_files, fixed = T )
+  if (std_name) {
+    fmatch <- regexpr('^\\w\\d{2}-[^-]*', all_files, perl = T)
+    tag_and_desc <- regmatches(all_files, fmatch)
+    check <- grepl(tag_and_desc, all_files, fixed = T)
+  } else{
+    check <- grepl( string, all_files, fixed = T )
+  }
 
   # Output
   if ( output %in% c( 'Logical', 'logical' ) ) {
