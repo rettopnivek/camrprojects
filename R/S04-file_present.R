@@ -40,8 +40,8 @@ file_present <- function( string,
   # Determine if (standard) file name is present
   # in list of files/folders
   if (std_name) {
-    fmatch <- regexpr('^\\w\\d{2}-[^-]*', all_files, perl = T)
-    tag_and_desc <- regmatches(all_files, fmatch)
+    fmatch <- regexpr('^\\w\\d{2}-[^-]*', string, perl = T)
+    tag_and_desc <- regmatches(string, fmatch)
     check <- grepl(tag_and_desc, all_files, fixed = T)
   } else{
     check <- grepl( string, all_files, fixed = T )
