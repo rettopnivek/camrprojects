@@ -93,7 +93,8 @@ redcap_read = function( redcap_uri,
     content = 'record',
     format = 'json',
     returnFormat = 'json',
-    type = 'flat'
+    type = 'flat',
+    rawOrLabel = raw_or_label
   )
 
   # Download each batch
