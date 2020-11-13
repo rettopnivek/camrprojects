@@ -26,6 +26,7 @@
 #' @author William Schmitt
 #'
 #' @export
+#' @md
 
 redcap_read = function( redcap_uri,
                             token,

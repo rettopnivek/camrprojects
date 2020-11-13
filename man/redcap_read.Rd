@@ -13,7 +13,7 @@ REDCap project. Required.}
 \item{token}{The user-specific string that serves to authenticate
 the call to the REST API. Required.}
 
-\item{raw_or_label}{A string (either `'raw'` or `'label'`) which
+\item{raw_or_label}{A string (either \code{'raw'} or \code{'label'}) which
 specifies whether the exported data should be the raw
 coded/numerical values or the human-readable labels.
 Default is label.}
@@ -23,11 +23,13 @@ download at once.}
 }
 \value{
 A list which contains the following elements:
-* `data`: A data frame containing all records and all fields.
-* `success`:A logical indicating the success of the download.
+\itemize{
+\item \code{data}: A data frame containing all records and all fields.
+\item \code{success}:A logical indicating the success of the download.
+}
 }
 \description{
-This function seeks to mimic the [REDCapR::redcap_read()] function,
+This function seeks to mimic the \code{\link[REDCapR:redcap_read]{REDCapR::redcap_read()}} function,
 but with a more robust output that can handle bizarre characters
 and calculated fields. Instead of relying on base R HTTP protocols,
 this function handles all REST API calls using RCurl.
