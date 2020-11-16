@@ -2,8 +2,8 @@
 #'
 #' This function seeks to mimic the [REDCapR::redcap_read()] function,
 #' but with a more robust output that can handle bizarre characters
-#' and calculated fields. Instead of relying on base R HTTP protocols,
-#' this function handles all REST API calls using RCurl.
+#' and calculated fields. This function handles all REST API calls
+#' using httr.
 #'
 #' @param redcap_uri The URI (uniform resource identifier) of the
 #'   REDCap project. Required.
@@ -35,20 +35,16 @@ redcap_read = function( redcap_uri,
 
   # Download REDCap Metadata (e.g. data dictionary) to determine
   # unique identifier field.
-  metaDatJSON <- RCurl::postForm(
-    uri = redcap_uri,
-    token = token,
-    content = 'metadata',
-    format = 'json',
-    returnFormat = 'json'
+  metaDatResp <- postFormJSONToDf(
+    url = redcap_uri,
+    params = list(
+      token = token,
+      content = 'metadata',
+      format = 'json',
+      returnFormat = 'json'
+    )
   )
-
-  # Remove invalid chars (\r\n -- carriage return, or \t -- tabs)
-  metaDatJSON <- gsub('[\r\n]', '', metaDatJSON)
-  metaDatJSON <- gsub('[\t]', '', metaDatJSON)
-
-  # Convert to data frame
-  metaDat <- jsonlite::fromJSON(metaDatJSON)
+  metaDat <- metaDatResp$data
 
   # Extract unique identifier field
   uniId <- metaDat[1, 1]
@@ -61,16 +57,18 @@ redcap_read = function( redcap_uri,
   ))
 
   # Use unique id to get list of participants
-  ptListJSON <- RCurl::postForm(
-    uri = redcap_uri,
-    token = token,
-    content = 'record',
-    format = 'json',
-    returnFormat = 'json',
-    type = 'flat',
-    fields = uniId
+  ptListResp <- postFormJSONToDf(
+    url = redcap_uri,
+    params = list(
+      token = token,
+      content = 'record',
+      format = 'json',
+      returnFormat = 'json',
+      type = 'flat',
+      fields = uniId
+    )
   )
-  ptList <- jsonlite::fromJSON(ptListJSON)
+  ptList <- ptListResp$data
 
   # Determine number of batches to download
   ptList <- unique(ptList[, 1])
@@ -122,16 +120,13 @@ redcap_read = function( redcap_uri,
 
     # Create parameter vector
     paramList <- append(baseParams, curIds)
-    datJSON <- RCurl::postForm(
-      uri = redcap_uri,
-      .params = paramList
+    datResp <- postFormJSONToDf(
+      url = redcap_uri,
+      params = paramList
     )
 
-    # Remove invalid chars (\r\n -- carriage return, or \t -- tabs)
-    datJSON <- gsub('[\r\n]', '', datJSON)
-    datJSON <- gsub('[\t]', '', datJSON)
-    curDat <- jsonlite::fromJSON(datJSON)
-    dat <- rbind(dat, curDat)
+    # Combine with other batches
+    dat <- rbind(dat, datResp$data)
   }
 
   # Package output

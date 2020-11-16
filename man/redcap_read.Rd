@@ -31,8 +31,8 @@ A list which contains the following elements:
 \description{
 This function seeks to mimic the \code{\link[REDCapR:redcap_read]{REDCapR::redcap_read()}} function,
 but with a more robust output that can handle bizarre characters
-and calculated fields. Instead of relying on base R HTTP protocols,
-this function handles all REST API calls using RCurl.
+and calculated fields. This function handles all REST API calls
+using httr.
 }
 \author{
 William Schmitt
