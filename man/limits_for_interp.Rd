@@ -4,7 +4,14 @@
 \alias{limits_for_interp}
 \title{Function to Find Limits for Interpolation}
 \usage{
-limits_for_interp(value, x, y, interp_y = T)
+limits_for_interp(
+  value,
+  x,
+  y,
+  interp_y = T,
+  use_first_last = F,
+  warn_if_first_last = T
+)
 }
 \arguments{
 \item{value}{The x or y-axis value to interpolate.}
@@ -17,6 +24,14 @@ limits_for_interp(value, x, y, interp_y = T)
 
 \item{interp_y}{Logical; if \code{TRUE}, the value to
 interpolate is assumed to be a y coordinate.}
+
+\item{use_first_last}{Logical; if \code{TRUE} when values
+fall outside the provided vectors the function uses the
+first or last set of x and y values as an approximation.}
+
+\item{warn_if_first_last}{Logical; if \code{TRUE} warns
+the user when an approximation is used for cases that
+fall outside the range of the provided vectors.}
 }
 \value{
 A vector of 5 values, the lower x and y-axis values
@@ -50,6 +65,9 @@ linear_interp( inp )
 inp = limits_for_interp( 6, x, y )
 linear_interp( inp )
 
+# Approximation with first/last value (use with caution)
+inp = limits_for_interp( 6, x, y, use_first_last = T )
+linear_interp( inp )
 
 }
 \author{

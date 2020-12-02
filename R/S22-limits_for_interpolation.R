@@ -11,6 +11,12 @@
 #'   (must match \code{x} in length).
 #' @param interp_y Logical; if \code{TRUE}, the value to
 #'   interpolate is assumed to be a y coordinate.
+#' @param use_first_last Logical; if \code{TRUE} when values
+#'   fall outside the provided vectors the function uses the
+#'   first or last set of x and y values as an approximation.
+#' @param warn_if_first_last Logical; if \code{TRUE} warns
+#'   the user when an approximation is used for cases that
+#'   fall outside the range of the provided vectors.
 #'
 #' @author Kevin Potter
 #'
@@ -40,11 +46,16 @@
 #' inp = limits_for_interp( 6, x, y )
 #' linear_interp( inp )
 #'
+#' # Approximation with first/last value (use with caution)
+#' inp = limits_for_interp( 6, x, y, use_first_last = T )
+#' linear_interp( inp )
 #'
 #' @export
 
 limits_for_interp = function( value, x, y,
-                                     interp_y = T ) {
+                              interp_y = T,
+                              use_first_last = F,
+                              warn_if_first_last = T ) {
 
   # Check that time/outcome are actually aligned
   if ( length( x ) != length( y ) ) {
@@ -107,6 +118,48 @@ limits_for_interp = function( value, x, y,
       out[4] = y[sel]
 
       out[5] = value
+    } else {
+
+      if ( use_first_last ) {
+
+        # if no values above specified value
+        if ( !any( sel_above ) ) {
+
+          # Use final x and y-value
+          out[1] = x[n]
+          out[2] = y[n]
+          out[3] = x[n]
+          out[4] = y[n]
+          if ( interp_y ) out[5] = y[n] else out[5] = x[n]
+
+          which_edge = 'last'
+        }
+
+        # if no values below specified value
+        if ( !any( sel_below ) ) {
+
+          # Use first x and y-value
+          out[1] = x[1]
+          out[2] = y[1]
+          out[3] = x[1]
+          out[4] = y[1]
+          if ( interp_y ) out[5] = y[1] else out[5] = x[1]
+
+          which_edge = 'first'
+        }
+
+        if ( warn_if_first_last ) {
+          warning(
+            paste0(
+              'Specified value outside provided vectors; using ',
+              which_edge, ' set of values as approximation'
+            ),
+            call. = F
+          )
+        }
+
+      }
+
     }
 
   }
