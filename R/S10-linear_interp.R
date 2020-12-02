@@ -60,6 +60,11 @@ linear_interp <- function( vec, interp_y = T ) {
     names( vec ) <- c( 'x0', 'y0', 'x1', 'y1', val_to_interp )
   }
 
+  # If any missing data
+  if ( any( is.na( vec ) ) ) {
+    return( NA )
+  }
+
   x0 <- vec['x0']
   y0 <- vec['y0']
   x1 <- vec['x1']
@@ -77,6 +82,16 @@ linear_interp <- function( vec, interp_y = T ) {
   Y = matrix( NA, 2, 1 )
   Y[1,1] <- y0
   Y[2,1] <- y1
+
+  # Check for matching limits
+  if ( x0 == x1 & y0 == y1 ) {
+    if ( interp_y ) {
+      out <- y0; names( out ) <- 'y'
+    } else {
+      out <- x0; names( out ) <- 'x'
+    }
+    return( out )
+  }
 
   # Intercept and slope
   tX <- t(X)

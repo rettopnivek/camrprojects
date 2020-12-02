@@ -4,7 +4,7 @@
 \alias{file_present}
 \title{Checks if a File is Present in a Folder}
 \usage{
-file_present(string, output = "Logical")
+file_present(string, output = "Logical", std_name = FALSE)
 }
 \arguments{
 \item{string}{A file name or part of a file name to search for.}
@@ -17,6 +17,10 @@ file_present(string, output = "Logical")
   \item 'Index' or 'index'
   \item 'Name' or 'name'
 }}
+
+\item{std_name}{A logical indicating whether the file follows the
+standardized naming convention. If true, just matches the tag
+and description of the file.}
 }
 \value{
 Either...
@@ -29,6 +33,8 @@ Either...
 }
 \description{
 Checks if a file is present in the current working directory.
+Can check either regular file or file using MGH-CAM's standardized
+file naming template: TXX-Description-MM_DD_YYYY-vX.X.X.ext
 }
 \author{
 Kevin Potter
