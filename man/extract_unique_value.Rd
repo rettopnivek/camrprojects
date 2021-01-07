@@ -11,7 +11,8 @@ extract_unique_value(
   default = "",
   missing = c(""),
   reference = NULL,
-  check_for_multiple = TRUE
+  check_for_multiple = TRUE,
+  allow_multiple = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,10 @@ in \code{x}.}
 \item{check_for_multiple}{Logical; if \code{TRUE} will check if
 more than one value was found in the subset of rows to consider
 and display a warning message with details if this occurs.}
+
+\item{allow_multiple}{Logical; if \code{TRUE} will allow multiple
+return values. By default, it does not override \code{check_for_multiple},
+so remember to change this if applicable.}
 }
 \value{
 
@@ -99,5 +104,5 @@ cat( res )
 
 }
 \author{
-Kevin Potter
+Kevin Potter, William Schmitt
 }
