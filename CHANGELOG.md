@@ -1,3 +1,39 @@
+#### 0.1.1 (2021-01-07)
+
+##### Documentation Changes
+
+*  Updated documentation for redcap_read to use markdown syntax. ([7d85b47a](https://github.com/rettopnivek/camrprojects/commit/7d85b47aae1aece90b77d754312b84756c952bf6))
+*  changed man page title for build_demo_table to be title case ([eb3b94e9](https://github.com/rettopnivek/camrprojects/commit/eb3b94e94946625da99b0a515ac38f4a8978e121))
+
+##### New Features
+
+*  Added allow_multiple argument for extract_unique_value function. ([8fd676fe](https://github.com/rettopnivek/camrprojects/commit/8fd676fe7c75f56d9b60d2b4a37d57fc1eb0045c))
+*  Added function to find lower and upper limits to pass into linear_interp function ([3a4e0be8](https://github.com/rettopnivek/camrprojects/commit/3a4e0be879ba1e7664ff08b72509ca2b500ebcfa))
+*  Added redcap_read function to mimic REDCapR package more robustly. ([2ad9833e](https://github.com/rettopnivek/camrprojects/commit/2ad9833eaa0f6be4744e9b6a979f907e46440b4b))
+*  Added functions for updating standardized file names and checking documentation for custom functions ([b5216d3e](https://github.com/rettopnivek/camrprojects/commit/b5216d3eafb01571d1b5bd0f3d6b2aca8fe7d86c))
+*  added print out of script errors for run_processing_script function ([c0a47fcc](https://github.com/rettopnivek/camrprojects/commit/c0a47fcc3ed9f8bca61b4c5d3a3506352ca918b9))
+*  added functionality to match_and_assign function to allow for conditional updating of vector based on user specified conditions ([3aac51b9](https://github.com/rettopnivek/camrprojects/commit/3aac51b9416d60dbb1abda701ce6acb4a2121ec9))
+*  added function to match and assign new values based on input vector ([4e891d15](https://github.com/rettopnivek/camrprojects/commit/4e891d15a3c84f690575dd7070416cf43a17f115))
+*  added function to add meta data for data dictionary purposes ([2f4f8087](https://github.com/rettopnivek/camrprojects/commit/2f4f808730f9c67f253175ae1e14d9bfebf3dcb3))
+* **file_present:**  Added std_name parameter for checking whether old version of standardized file exists. ([66288c61](https://github.com/rettopnivek/camrprojects/commit/66288c61fe8584f39e99970bf28bc4988fb7080b))
+
+##### Bug Fixes
+
+*  Added option for interpolation to use first or last set of values as approximation for cases that fall outside range of provided vectors ([113f5ca6](https://github.com/rettopnivek/camrprojects/commit/113f5ca68accbbe173242d7547f88fa4f30e2f57))
+*  run_processing_scripts now correctly checks whether user defined processing functions exists ([f4c893d2](https://github.com/rettopnivek/camrprojects/commit/f4c893d2fd55f470c30085d8105b4cf8dfea5fcb))
+*  removed R history file ([90ec792c](https://github.com/rettopnivek/camrprojects/commit/90ec792c1bed4b788a92f2d8df99d6e38e71dfce))
+*  Examples for create_standardized_filename now have all closing parentheses ([35e869cd](https://github.com/rettopnivek/camrprojects/commit/35e869cd7769f11b557ac9594d4d845248db95b4))
+* **redcap_read:**  Fixed bug that caused raw_or_label argument to have no effect. ([0386a84a](https://github.com/rettopnivek/camrprojects/commit/0386a84a0f57c0b17e09c65632f5d7a25c3cd10f))
+* **file_present:**  Returns actual match and not all standardized files in directory now. ([95b4649d](https://github.com/rettopnivek/camrprojects/commit/95b4649dffa7ded336aefae4f7fe985b7197a4d8))
+
+##### Other Changes
+
+* //github.com/rettopnivek/camrprojects ([9130d5fe](https://github.com/rettopnivek/camrprojects/commit/9130d5fe0fd3520d35434c9625c910d63bca88ff))
+
+##### Refactors
+
+* **redcap_read:**  Switched dependency from RCurl to httr to avoid Windows OS compatability issues. ([39193c67](https://github.com/rettopnivek/camrprojects/commit/39193c6780d02e36c55eb871ab60f41bb4f0f468))
+
 ### 0.1.0 (2020-09-22)
 
 ##### Build System / Dependencies
