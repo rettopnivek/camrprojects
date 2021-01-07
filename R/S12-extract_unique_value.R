@@ -20,8 +20,11 @@
 #' @param check_for_multiple Logical; if \code{TRUE} will check if
 #'   more than one value was found in the subset of rows to consider
 #'   and display a warning message with details if this occurs.
+#' @param allow_multiple Logical; if \code{TRUE} will allow multiple
+#'   return values. By default, it does not override \code{check_for_multiple},
+#'   so remember to change this if applicable.
 #'
-#' @author Kevin Potter
+#' @author Kevin Potter, William Schmitt
 #'
 #' @return
 #'
@@ -84,7 +87,8 @@ extract_unique_value <- function( x,
                                   default = "",
                                   missing = c( "" ),
                                   reference = NULL,
-                                  check_for_multiple = TRUE ) {
+                                  check_for_multiple = TRUE,
+                                  allow_multiple = FALSE) {
 
   # Number of variables/columns to loop over
   K <- length( variable_names )
@@ -132,17 +136,22 @@ extract_unique_value <- function( x,
         }
 
       }
-      # Take the first unique value
-      current_value <- current_value[1]
 
-      # Once a unique value is found, stop looping over
-      # remaining variables
-      break()
+      if (allow_multiple) {
+        # Append to output
+        output <- append(output, current_value)
+      } else {
+
+        # Take the first unique value
+        output <- current_value[1]
+
+        # Once a unique value is found, stop looping over
+        # remaining variables
+        break()
+      }
     }
 
   }
-  # Update output
-  output <- current_value
 
   # Return output
   return( output )
