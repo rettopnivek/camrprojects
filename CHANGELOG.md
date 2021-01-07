@@ -1,3 +1,9 @@
+#### 0.1.2 (2021-01-07)
+
+##### Documentation Changes
+
+*  Updated documentation for extract_unique_value. ([e3f52436](https://github.com/rettopnivek/camrprojects/commit/e3f52436205e043e74f1409514acae8cfb3a9513))
+
 #### 0.1.1 (2021-01-07)
 
 ##### Documentation Changes
