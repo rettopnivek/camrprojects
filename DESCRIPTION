@@ -19,7 +19,11 @@ Imports:
     tidyr,
     rlang,
     magrittr,
-    httr
+    httr,
+    purrr,
+    furrr,
+    progressr,
+    progress
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
