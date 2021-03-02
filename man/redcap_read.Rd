@@ -32,7 +32,10 @@ A list which contains the following elements:
 This function seeks to mimic the \code{\link[REDCapR:redcap_read]{REDCapR::redcap_read()}} function,
 but with a more robust output that can handle bizarre characters
 and calculated fields. This function handles all REST API calls
-using httr.
+using httr. This function also uses calls to \link{furrr} and \link{future} for
+downloading batches from REDCap. The \link[future:plan]{plan} is not specified.
+Instead, the user should use the plan that works best for their
+specific use.
 }
 \author{
 William Schmitt

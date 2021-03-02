@@ -3,7 +3,10 @@
 #' This function seeks to mimic the [REDCapR::redcap_read()] function,
 #' but with a more robust output that can handle bizarre characters
 #' and calculated fields. This function handles all REST API calls
-#' using httr.
+#' using httr. This function also uses calls to [furrr] and [future] for
+#' downloading batches from REDCap. The [plan][future::plan()] is not specified.
+#' Instead, the user should use the plan that works best for their
+#' specific use.
 #'
 #' @param redcap_uri The URI (uniform resource identifier) of the
 #'   REDCap project. Required.
@@ -70,16 +73,16 @@ redcap_read = function( redcap_uri,
   )
   ptList <- ptListResp$data
 
-  # Determine number of batches to download
-  ptList <- unique(ptList[, 1])
-  numBatches <- ceiling(length(ptList)/batch_size)
+  # Get list of pts in batches
+  ptList <- unlist(unique(ptList[, 1]))
+  ptList <- split(ptList, ceiling(seq_along(ptList)/batch_size))
 
   # Notify user
   message(paste(
-    length(ptList),
+    purrr::reduce(purrr::map_int(ptList, length), sum),
     'records identified.',
     'Downloading',
-    numBatches,
+    length(ptList),
     'batches of',
     batch_size,
     'records.'
@@ -95,22 +98,14 @@ redcap_read = function( redcap_uri,
     rawOrLabel = raw_or_label
   )
 
-  # Download each batch
-  dat <- data.frame()
-  for (i in 1:numBatches) {
-    message(paste(
-      '  Downloading Batch',
-      i,
-      'of',
-      numBatches
-    ))
+  # Function to download a batch
+  downloadBatch <- function(ids, baseParams, pb) {
 
-    # Calculate range
-    minId <- (i - 1) * batch_size + 1
-    maxId <- min(i*batch_size, length(ptList))
+    # Update progress bar
+    pb()
 
     # Build list of record #s to filter data
-    curIds <- as.list(ptList[minId:maxId])
+    curIds <- as.list(ids)
     curIdNames <- paste0(
       'records[',
       0:(length(curIds) - 1),
@@ -125,13 +120,26 @@ redcap_read = function( redcap_uri,
       params = paramList
     )
 
-    # Combine with other batches
-    dat <- rbind(dat, datResp$data)
+    # Return
+    return(datResp$data)
   }
+
+  # Download each batch with a progress bar indicator
+  progressr::with_progress({
+    # Initialize pb
+    progressr::handlers('progress')
+    pb <- progressr::progressor(length(ptList))
+    pb(amount = 0)
+    # Get data
+    dat <- furrr::future_map_dfr(ptList, downloadBatch, baseParams, pb)
+  })
 
   # Package output
   message('Done.')
-  out <- list(data = dat, success = 1)
+  out <- list(
+    data = dat,
+    success = 1
+  )
 
   return(out)
 }
