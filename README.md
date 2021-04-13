@@ -20,6 +20,16 @@ The R package 'tidyr'
 
 The R package 'magrittr'
 
+The R package 'httr'
+
+The R package 'purrr'
+
+The R package 'furrr'
+
+The R package 'progressr'
+
+The R package 'progress'
+
 ### Installation
 
 To easily install the 'camrprojects' package, you'll need the 'devtools' package:  
