@@ -26,6 +26,7 @@ A list which contains the following elements:
 \itemize{
 \item \code{data}: A data frame containing all records and all fields.
 \item \code{success}:A logical indicating the success of the download.
+\item \code{metaData}: A data frame containing the REDCap metadata for all fields.
 }
 }
 \description{
