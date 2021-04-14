@@ -25,6 +25,7 @@
 #' @return A list which contains the following elements:
 #' * `data`: A data frame containing all records and all fields.
 #' * `success`:A logical indicating the success of the download.
+#' * `metaData`: A data frame containing the REDCap metadata for all fields.
 #'
 #' @author William Schmitt
 #'
@@ -38,7 +39,7 @@ redcap_read = function( redcap_uri,
 
   # Download REDCap Metadata (e.g. data dictionary) to determine
   # unique identifier field.
-  metaDatResp <- postFormJSONToDf(
+  metaDtfResp <- postFormJSONToDf(
     url = redcap_uri,
     params = list(
       token = token,
@@ -47,10 +48,10 @@ redcap_read = function( redcap_uri,
       returnFormat = 'json'
     )
   )
-  metaDat <- metaDatResp$data
+  metaDtf <- metaDtfResp$data
 
   # Extract unique identifier field
-  uniId <- metaDat[1, 1]
+  uniId <- metaDtf[1, 1]
 
   # Notify user
   message(paste(
@@ -101,9 +102,6 @@ redcap_read = function( redcap_uri,
   # Function to download a batch
   downloadBatch <- function(ids, baseParams, pb) {
 
-    # Update progress bar
-    pb()
-
     # Build list of record #s to filter data
     curIds <- as.list(ids)
     curIdNames <- paste0(
@@ -120,6 +118,9 @@ redcap_read = function( redcap_uri,
       params = paramList
     )
 
+    # Update progress bar
+    pb()
+
     # Return
     return(datResp$data)
   }
@@ -134,11 +135,54 @@ redcap_read = function( redcap_uri,
     dat <- furrr::future_map_dfr(ptList, downloadBatch, baseParams, pb)
   })
 
+  # Get numeric fields
+  intFields <- dplyr::filter(
+    metaDtf,
+    stringr::str_detect(text_validation_type_or_show_slider_number, 'integer')
+  )
+  numFields <- dplyr::filter(
+    metaDtf,
+    stringr::str_detect(text_validation_type_or_show_slider_number, 'number')
+  )
+  calcFields <- dplyr::filter(
+    metaDtf,
+    field_type == 'calc'
+  )
+
+  # Typecast fields
+
+  # Int validation --> integers
+  dat <- dplyr::mutate(
+    dat,
+    dplyr::across(
+      intFields$field_name,
+      as.integer
+    )
+  )
+
+  # Num validation --> numeric
+  dat <- dplyr::mutate(
+    dat,
+    dplyr::across(
+      numFields$field_name,
+      as.numeric
+    )
+  )
+
+  # Calculated fields --> numeric
+  dat <- dplyr::mutate(
+    dat,
+    dplyr::across(
+      calcFields$field_name,
+      as.numeric
+    )
+  )
   # Package output
   message('Done.')
   out <- list(
     data = dat,
-    success = 1
+    success = 1,
+    metaData = metaDtf
   )
 
   return(out)
