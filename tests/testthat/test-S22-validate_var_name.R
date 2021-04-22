@@ -41,4 +41,9 @@ test_that("Variable name last part follows casing guidelines", {
 
 test_that("Variable name validation is vectorized", {
   expect_equal(validate_var_name(c("FOO", "BAZ", "FOO.CHR.Baz")), c(F, F, T))
+  expect_equal(validate_var_name(c("FOO", NA)), c(F, F))
+  expect_equal(validate_var_name(
+    c("FOO.INT.QTN.Var_name", "FOO.INT.Baz")),
+    c(T, T)
+  )
 })

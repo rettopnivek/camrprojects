@@ -99,7 +99,7 @@ validate_var_name <- function(str, type = "R") {
   ## Split strings into name parts
 
   # Get number of name parts
-  maxSplits <- max(stringr::str_count(str, "\\.") + 1)
+  maxSplits <- max(stringr::str_count(str, "\\.") + 1, na.rm = T)
   if (maxSplits < 3) {
     return(rep(FALSE, length(str)))
   }
@@ -121,7 +121,25 @@ validate_var_name <- function(str, type = "R") {
   }
 
   ## Check last part: First word is title case and others are lowercase
-  lastPart <- stringr::str_split(strSplit[, ncol(strSplit)], '_')
+
+  # Transpose strSplit so it's a list for each variable (split into parts)
+  strSplitList <- purrr::pmap(strSplit, list)
+
+  # Get max index of non "" element for each variable
+  lastPartIdx <- suppressWarnings(purrr::map_dbl(
+    strSplitList,
+    ~ max(which(purrr::map_lgl(., ~ . != '')))
+  ))
+
+  # Use index to return last part, else return blank string
+  lastPart <- purrr::map2_chr(
+    lastPartIdx,
+    1:length(lastPartIdx),
+    ~ ifelse(.x > 2, strSplit[.y, .x], '')
+  )
+
+  # Break last part by _ separator
+  lastPart <- stringr::str_split(lastPart, '_')
 
   # Does first word begin with capital and then is all lower or all upper?
   lastPartFirstCheck <- purrr::map_lgl(
@@ -138,7 +156,7 @@ validate_var_name <- function(str, type = "R") {
     ~ .[-1]
   )
 
-  # Check all words
+  # Check all other words
   lastPartOtherCheck <- purrr::map_lgl(
     lastPartOthers,
     ~ all(stringr::str_detect(., '(^[[:upper:]\\d]+$)|(^[[:lower:]\\d]+$)') | . == '')
@@ -147,22 +165,18 @@ validate_var_name <- function(str, type = "R") {
 
   ## Check mid parts: alphanummeric (with first one capitalized)
 
-  # Extract and reformat to be list of
-  midParts <- dplyr::select(strSplit, -c(1, 2, ncol(strSplit)))
-  if (ncol(midParts) == 0) {
-    outMid <- TRUE
-  } else {
-    outMid <- dplyr::pull(
-      dplyr::transmute(
-        dplyr::rowwise(midParts),
-        allPass = stringr::str_detect(
-          dplyr::c_across(),
-          '^[:upper:](([[:upper:]\\d]+$)|([[:lower:]\\d]+$))'
-        )
-      ),
-      allPass
-    )
-  }
+  # Extract list of midParts
+  midParts <- purrr::map2(
+    strSplitList,
+    lastPartIdx,
+    ~ ifelse(.y <= 3, '', .x[3:.y])
+  )
+
+  # Check that everything passes
+  outMid <- purrr::map_lgl(
+    midParts,
+    ~ all(stringr::str_detect(., '^[:upper:](([[:upper:]\\d]+$)|([[:lower:]\\d]+$))'))
+  ) | purrr::map_lgl(midParts, ~ . == '')
 
   # Combine all checks and return
   return(out1 & out2 & outMid & outLast)
