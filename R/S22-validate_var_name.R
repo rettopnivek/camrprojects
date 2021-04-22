@@ -1,4 +1,4 @@
-#' Validate a string conforms to naming standard
+#' Validate that a String Conforms to Naming Standards
 #'
 #' Validate a string conforms to the Center for Addiction Medicine (CAM) R
 #' data-frame column naming standard. The CAM name standard is
@@ -8,12 +8,13 @@
 #'
 #' The CAM Name Standard: GGG.TTT.Optional.Var_name.
 #' \itemize{
-#'   \item `GGG` is the variable's group, which roughly corresponds to data of a
-#'    similar nature or type. Examples include: IDS for identification
+#'   \item `GGG` is the variable's group, which roughly corresponds to data
+#'     of a similar nature or type. Examples include: IDS for identification
 #'    variables, SBJ for subject demographic variables, SSS for important
 #'    study details, INV for inventory measures, etc.
-#'   \item`TTT` is the variable's type, which corresponds to either a specific R type
-#'     or a specific REDCap field type. Find permissible types below:
+#'   \item`TTT` is the variable's type, which corresponds to either a
+#'     specific R type or a specific REDCap field type. Find permissible
+#'     types below:
 #'     \itemize{
 #'       \item Possible R Types:
 #'         \itemize{
@@ -159,7 +160,8 @@ validate_var_name <- function(str, type = "R") {
   # Check all other words
   lastPartOtherCheck <- purrr::map_lgl(
     lastPartOthers,
-    ~ all(stringr::str_detect(., '(^[[:upper:]\\d]+$)|(^[[:lower:]\\d]+$)') | . == '')
+    ~ all( stringr::str_detect(
+      ., '(^[[:upper:]\\d]+$)|(^[[:lower:]\\d]+$)') | . == '')
   )
   outLast <- lastPartFirstCheck & lastPartOtherCheck
 
@@ -175,7 +177,8 @@ validate_var_name <- function(str, type = "R") {
   # Check that everything passes
   outMid <- purrr::map_lgl(
     midParts,
-    ~ all(stringr::str_detect(., '^[:upper:](([[:upper:]\\d]+$)|([[:lower:]\\d]+$))'))
+    ~ all( stringr::str_detect(
+      ., '^[:upper:](([[:upper:]\\d]+$)|([[:lower:]\\d]+$))'))
   ) | purrr::map_lgl(midParts, ~ . == '')
 
   # Combine all checks and return

@@ -1,4 +1,4 @@
-#' Rename a REDCap data frame to follow CAM Naming Standards
+#' Rename a REDCap Data Frame to Follow CAM Naming Standards
 #'
 #' Rename a data frame downloaded from REDCap using the field annotation located
 #' in the metadata data frame downloaded with the data. See [valiate_var_name()]
