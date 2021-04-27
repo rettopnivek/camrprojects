@@ -70,7 +70,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   # Turn choices for checkboxes into nested dtf
   newNames <- dplyr::mutate(
     newNames,
-    field_choices = if_else(
+    field_choices = dplyr::if_else(
       field_type == "checkbox",
       stringr::str_extract_all(field_choices, '[:alnum:]*(?=,\\s)'),
       list("")
@@ -85,7 +85,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
     newNames,
     dplyr::across(
       c(field_name, newName),
-      ~ if_else(
+      ~ dplyr::if_else(
           field_type == "checkbox",
           paste0(., "___", field_choices),
           .
@@ -94,7 +94,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   )
 
   # Join with current names
-  nameMap <- left_join(
+  nameMap <- dplyr::left_join(
     nameMap,
     dplyr::select(newNames, newName, field_name),
     by = c("current" = "field_name")
@@ -103,7 +103,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   # TEMPORARY: Fill in blanks
   nameMap <- dplyr::mutate(
     nameMap,
-    newName = if_else(
+    newName = dplyr::if_else(
       is.na(newName),
       current,
       newName
