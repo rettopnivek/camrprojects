@@ -1,3 +1,19 @@
+# ...
+# Written by...
+#   Eylul Akman
+#   Kevin Potter
+# email: kevin.w.potter@gmail.com
+# Please email me directly if you
+# have any questions or comments
+# Last updated 2021-05-26
+
+# Table of contents
+# 1) process_comm
+
+###
+### 1) process_comm
+###
+
 #' Process data from the COMM questionnaire
 #'
 #' This function scores the COMM questionnaire by summing the individual item
