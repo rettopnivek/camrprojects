@@ -199,6 +199,7 @@ match_to_files <- function( string,
 #' @param date_format The format to use for the current
 #'   date, defaults to 'MM_DD_YYYY'.
 #' @param exclude A vector of file names to exclude when
+#'   automatically determining file numbers
 #' @param remove Logical; if TRUE, attempts to locate
 #'   previous versions of the outputted file name
 #'   (i.e., same name but earlier dates) and remove

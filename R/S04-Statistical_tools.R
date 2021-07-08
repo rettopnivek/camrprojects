@@ -1,5 +1,7 @@
 # Statistical tools
-# Written by Kevin Potter
+# Written by
+#   Kevin Potter
+#   William Schmitt
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
@@ -8,6 +10,7 @@
 # Table of contents
 # 1)
 
+#### 1) limits_for_interp ####
 #' Function to Find Limits for Interpolation
 #'
 #' A function that, given a vector of x and y values,
@@ -177,6 +180,7 @@ limits_for_interp = function( value, x, y,
   return( out )
 }
 
+#### 2) linear_interp ####
 #' Function for Linear Interpolation
 #'
 #' Given a pair of x and y values, uses linear
@@ -297,7 +301,7 @@ linear_interp <- function( vec, interp_y = T ) {
   return( out )
 }
 
-
+#### 3) build_demo_table ####
 #' Build Demographics Table
 #'
 #' A function that will build a data frame that is well-
