@@ -946,5 +946,83 @@ meta <- function(dtf,
 
 # create_data_dictionary <- function() {}
 
+#### 13) meta_data_template ####
+
+meta_data_template <- function( dtf,
+                                group_var = NULL,
+                                time_points_var = NULL ) {
+
+  column_names = colnames( dtf )
+
+  arg_for_md <- ""
+
+  in_s <- function(x, s) {
+    grepl( x, s, fixed = TRUE )
+  }
+
+  for ( i in 1:length( column_names ) ) {
+
+    lst_val <- '    description = paste0("")'
+
+    if ( in_s( '.INT.', column_names[i] ) &
+         !in_s( 'IDS.', column_names[i] ) &
+         !in_s( 'SSS.', column_names[i] ) ) {
+      lst_val <- paste0(
+        lst_val, ',\n',
+        '    units_of_x = ""'
+      )
+    }
+
+    if ( in_s( '.DBL.', column_names[i] ) &
+         !in_s( 'IDS.', column_names[i] ) &
+         !in_s( 'SSS.', column_names[i] )) {
+      lst_val <- paste0(
+        lst_val, ',\n',
+        '    units_of_x = ""'
+      )
+    }
+
+    if ( in_s( '.LGC.', column_names[i] ) ) {
+      lst_val <- paste0(
+        lst_val, ',\n',
+        '    values = c( TRUE, FALSE ),\n',
+        '    labels_for_values = c( "", "" )'
+      )
+    }
+
+
+    arg_for_md <- paste0(
+      arg_for_md,
+      '  ', column_names[i], ' = list(\n',
+      lst_val, '\n',
+      '  )'
+    )
+    if ( i < length( column_names ) ) {
+      arg_for_md <- paste0(
+        arg_for_md,
+        ',\n'
+      )
+    }
+
+  }
+  arg_for_md <- paste0(
+    'inputs <- list(\n',
+    arg_for_md,
+    '\n)'
+  )
+
+  update_md <- paste0(
+    'for ( i in 1:length( inputs ) ) {\n',
+    '  lst <- inputs[[i]]\n',
+    '  lst$dtf <- dtf\n',
+    '  lst$column_name <- names(inputs)[i]\n',
+    '  dtf <- do.call( add_meta_data, lst )\n',
+    '}\n'
+  )
+
+  message( paste0( arg_for_md, "\n\n", update_md ) )
+
+}
+
 
 
