@@ -4,7 +4,7 @@
 \alias{create_summary_for_x}
 \title{Compute Brief Set of Summary Statistics for a Numeric Variable}
 \usage{
-create_summary_for_x(x, codes_for_missing, digits = 2)
+create_summary_for_x(x, codes_for_missing, digits = 2, ver = 2)
 }
 \arguments{
 \item{x}{A numeric vector.}

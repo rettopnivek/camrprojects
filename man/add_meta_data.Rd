@@ -15,6 +15,7 @@ add_meta_data(
   scales = NULL,
   subscales = NULL,
   range_of_x = NULL,
+  summary_of_x = NULL,
   category_labels = NULL,
   type_labels = NULL,
   codes_for_missing = c("", " "),
@@ -45,6 +46,8 @@ add_meta_data(
 \item{subscales}{...}
 
 \item{range_of_x}{...}
+
+\item{summary_of_x}{...}
 
 \item{category_labels}{...}
 
