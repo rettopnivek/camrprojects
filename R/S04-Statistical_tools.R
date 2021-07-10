@@ -8,7 +8,9 @@
 # Last updated 2021-05-25
 
 # Table of contents
-# 1)
+# 1) limits_for_interp
+# 2) linear_interp
+# 3) build_demo_table
 
 #### 1) limits_for_interp ####
 #' Function to Find Limits for Interpolation

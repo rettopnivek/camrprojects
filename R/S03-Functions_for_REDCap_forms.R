@@ -10,10 +10,7 @@
 # Table of contents
 # 1) process_comm
 
-###
-### 1) process_comm
-###
-
+#### 1) process_comm ####
 #' Process data from the COMM questionnaire
 #'
 #' This function scores the COMM questionnaire by summing the individual item

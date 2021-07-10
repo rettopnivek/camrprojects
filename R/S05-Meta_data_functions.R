@@ -260,7 +260,8 @@ find_range_for_x <- function( x, codes_for_missing, digits = 2 ) {
 #'
 #' @export
 
-create_summary_for_x <- function( x, codes_for_missing, digits = 2 ) {
+create_summary_for_x <- function( x, codes_for_missing,
+                                  digits = 2, ver = 2 ) {
 
   out = ''
 
@@ -270,6 +271,10 @@ create_summary_for_x <- function( x, codes_for_missing, digits = 2 ) {
   x <- x[ no_missing ]
 
   if ( length( unique( x ) ) == 2 ) {
+    ver = 1
+  }
+
+  if ( ver == 1 ) {
 
     u = sort( unique( x ) )
     p <- round( 100*mean( x == u[2] ), digits )
@@ -284,7 +289,9 @@ create_summary_for_x <- function( x, codes_for_missing, digits = 2 ) {
       '>'
     )
 
-  } else {
+  }
+
+  if ( ver == 2 ) {
 
     m <- round( mean( x ), digits )
     md <- round( median( x ), digits )
@@ -298,6 +305,29 @@ create_summary_for_x <- function( x, codes_for_missing, digits = 2 ) {
       'SD = ', s, '|', 'Q1 = ', q1, '|',
       'Q3 = ', q3, '|Missing = ', sum( !no_missing ),
       ' of ', length( no_missing ),
+      '>'
+    )
+
+  }
+
+  if ( ver == 3 ) {
+
+
+    freq = table( x )
+    p = round( 100 * ( freq / sum( freq ) ), digits )
+
+    out = paste0(
+      names( freq ),
+      '=',
+      freq,
+      '(',
+      p,
+      '%)'
+    )
+
+    out = paste0(
+      '<',
+      paste( out, collapse = '|' ),
       '>'
     )
 
@@ -590,6 +620,7 @@ contains_groups <- function(dtf, column_name, grouping_column,
 #' @param scales ...
 #' @param subscales ...
 #' @param range_of_x ...
+#' @param summary_of_x ...
 #' @param category_labels ...
 #' @param type_labels ...
 #' @param codes_for_missing ...
@@ -616,6 +647,7 @@ add_meta_data <- function(dtf,
                           scales = NULL,
                           subscales = NULL,
                           range_of_x = NULL,
+                          summary_of_x = NULL,
                           category_labels = NULL,
                           type_labels = NULL,
                           codes_for_missing = c( '', ' ' ),
@@ -705,17 +737,38 @@ add_meta_data <- function(dtf,
     }
   }
 
-  # Generate descriptive summary of observations
-  # if integer, double, or logical
-  if ( grepl( '.INT.', column_name ) |
-       grepl( '.DBL.', column_name ) |
-       grepl( '.LGC.', column_name ) ) {
+  if ( is.null( summary_of_x ) ) {
 
-    summary_of_x =
-      create_summary_for_x(x, codes_for_missing, digits)
+    # Generate descriptive summary of observations
+    # if integer, double, or logical
+    if ( grepl( '.INT.', column_name ) |
+         grepl( '.DBL.', column_name ) |
+         grepl( '.LGC.', column_name ) ) {
+
+      if ( !grepl( 'SSS.', column_name ) ) {
+        summary_of_x =
+          create_summary_for_x(x, codes_for_missing, digits)
+      }
+
+    } else {
+      summary_of_x = ''
+    }
 
   } else {
-    summary_of_x = ''
+
+    if ( summary_of_x == 'binary' ) {
+      summary_of_x =
+        create_summary_for_x(x, codes_for_missing, digits, ver = 1)
+    }
+    if ( summary_of_x == 'continuous' ) {
+      summary_of_x =
+        create_summary_for_x(x, codes_for_missing, digits, ver = 2)
+    }
+    if ( summary_of_x == 'category' ) {
+      summary_of_x =
+        create_summary_for_x(x, codes_for_missing, digits, ver = 3)
+    }
+
   }
 
   if ( !is.null( group_var ) ) {

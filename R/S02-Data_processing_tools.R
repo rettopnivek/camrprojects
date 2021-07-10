@@ -1,7 +1,7 @@
 # REDCap and API tools
 # Written by...
-#   William Schmitt
 #   Kevin Potter
+#   William Schmitt
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
@@ -16,12 +16,9 @@
 #   2.2) rename_redcap_vars
 # 3) pull_git_version
 
-###
-### 1) Functions to read from REDCap
-###
+#### 1) Functions to read from REDCap ####
 
-# 1.1) postFormJSONToDf
-
+#### 1.1) postFormJSONToDf ####
 #' Sends a POST Form via httr and Converts JSON Return to a Data Frame
 #'
 #' This function uses httr to submit a POST form to the given url and
@@ -81,8 +78,7 @@ postFormJSONToDf <- function(url, params) {
   )
 }
 
-# 1.2) redcap_read
-
+#### 1.2) redcap_read ####
 #' Read All Records From a REDCap Project
 #'
 #' This function seeks to mimic the [REDCapR::redcap_read()] function,
@@ -273,12 +269,9 @@ redcap_read = function( redcap_uri,
   return(out)
 }
 
-###
-### 2) Functions for Naming Conventions
-###
+#### 2) Functions for Naming Conventions ####
 
-# 2.1) validate_var_name
-
+#### 2.1) validate_var_name ####
 #' Validate That a String Conforms to Naming Standards
 #'
 #' Validate a string conforms to the Center for Addiction Medicine (CAM) R
@@ -466,8 +459,7 @@ validate_var_name <- function(str, type = "R") {
   return(out1 & out2 & outMid & outLast)
 }
 
-# 2.2) rename_redcap_vars
-
+#### 2.2) rename_redcap_vars ####
 #' Rename a REDCap Data Frame to Follow CAM Naming Standards
 #'
 #' Rename a data frame downloaded from REDCap using the field annotation located
@@ -586,9 +578,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   return(dtf)
 }
 
-###
-### 3) pull_git_version
-###
+#### 3) pull_git_version ####
 
 #' Determine Git Version for Project
 #'
@@ -642,9 +632,7 @@ pull_git_version <- function() {
   return( out )
 }
 
-###
-### 4) source_scripts
-###
+#### 4) source_scripts ####
 
 #' Source in Multiple Scripts in a Folder
 #'

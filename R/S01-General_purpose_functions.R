@@ -14,10 +14,7 @@
 #   2.2) create_standardized_filename
 # 3) extract_unique_value
 
-###
-### 1) load_package
-###
-
+#### 1) load_package ####
 #' Installs and Loads an R Package
 #'
 #' Checks if a package is installed, and if not, sees if it
@@ -84,12 +81,9 @@ load_package <- function( package_name,
 
 }
 
-###
-### 2) Functions for file names
-###
+#### 2) Functions for file names ####
 
-# 2.1) match_to_files
-
+#### 2.1) match_to_files ####
 #' Checks for Partial Matches Between a String and a Set of Files
 #'
 #' Checks if a file is present in the current working directory.
@@ -163,8 +157,7 @@ match_to_files <- function( string,
 
 }
 
-# 2.2)
-
+#### 2.2) create_standardized_filename ####
 #' Create Standardized File Name
 #'
 #' Create a standardized file name of the
@@ -367,10 +360,7 @@ create_standardized_filename <- function(description,
   return(filename)
 }
 
-###
-### 3) extract_unique_value
-###
-
+#### 3) extract_unique_value ####
 #' Extract Unique Values From Data Frames or Lists
 #'
 #' A function that will search over a subset of rows in a data frame
