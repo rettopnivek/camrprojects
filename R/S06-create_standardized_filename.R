@@ -71,14 +71,20 @@ create_standardized_filename <- function( description,
   if ( is.null( file_date ) ) {
     file_date = format(
       Sys.Date(),
-      '%m_%d_%Y'
+      '%Y-%m-%d'
     )
   }
 
   # If not specified, auto-generate version
   # number associated with gitlab project
   if ( is.null( project_version ) ) {
-    project_version <- paste0( 'v.', pull_git_version() )
+    project_version <- substr(git2r::last_commit()$sha, 0, 7)
+  }
+
+  st <- git2r::status(untracked=FALSE)
+  if (length(c(st$unstaged, st$staged)) != 0) {
+    project_version <- paste0(project_version, 'm')
+    warning('Uncommited changes are present. Output files will have a version ending in "m".')
   }
 
   # Check for matching tags and descriptions for

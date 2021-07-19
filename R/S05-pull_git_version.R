@@ -12,6 +12,8 @@
 
 pull_git_version <- function() {
 
+  .Deprecated()
+
   # Default output
   out <- '1.0.0'
 
