@@ -15,6 +15,7 @@
 #   2.1) validate_var_name
 #   2.2) rename_redcap_vars
 # 3) pull_git_version
+# 4) source_scripts
 
 #### 1) Functions to read from REDCap ####
 
@@ -672,9 +673,8 @@ source_scripts = function( files_to_include = NULL,
     files_to_source <- all_files
   }
 
-  sapply( 1:length( dp_functions ), function(i) {
+  sapply( 1:length( files_to_source ), function(i) {
     source( paste0( path, "/", files_to_source[i] ) )
   } )
 
 }
-

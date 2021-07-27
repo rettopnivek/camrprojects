@@ -5,7 +5,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-05-25
+# Last updated 2021-07-27
 
 # Table of contents
 # 1) load_package
@@ -13,6 +13,8 @@
 #   2.1) match_to_files
 #   2.2) create_standardized_filename
 # 3) extract_unique_value
+# 4) clmn
+# 5) values_labels
 
 #### 1) load_package ####
 #' Installs and Loads an R Package
@@ -520,4 +522,153 @@ extract_unique_value <- function( x,
   return( output )
 }
 
+#### 4) clmn ####
+#' Extract Column Names Meeting Inclusion/Exclusion Criteria
+#'
+#' A function that matches or excludes column names in a
+#' data frame based on user-supplied sub-strings.
+#'
+#' @param dtf A data frame.
+#' @param ... Character strings with the sub-strings to match
+#'   (or exclude) against the column names in \code{dtf}.
+#'   If an entry starts with either \code{!}, \code{~}, or
+#'   \code{-}, any columns containing the substring will be
+#'   excluded. Otherwise, the function will locate
+#'   all column names containing all inputted sub-strings.
+#'
+#' @author Kevin Potter
+#'
+#' @return A vector of column names meeting the inclusion
+#' and exclusion criteria.
+#'
+#' @examples
+#' # Create a data frame
+#' dtf <- data.frame(
+#'   IDS.INT.Subject = rep( 1:4, each = 2 ),
+#'   SSS.CHR.Group = rep( c( 'A', 'A', 'B', 'B' ), each = 2 ),
+#'   SSS.INT.Group = rep( c( 1, 1, 2, 2 ), each = 2 ),
+#'   SSS.LGC.Group_A = rep( c( T, T, F, F ), each = 2 ),
+#'   SSS.CHR.Time_point = rep( c( 'Pre', 'Post' ), 4 ),
+#'   SSS.INT.Time_point = rep( 0:1, 4 ),
+#'   OUT.DBL.Scores = rnorm( 8 )
+#' )
+#'
+#' #' # All variables containing 'SSS'
+#' dtf %>% clmn( 'SSS' )
+#'
+#' # All variables containing both 'SSS' and 'CHR'
+#' dtf %>% clmn( 'SSS', 'CHR' )
+#'
+#' # Variables containing 'SSS' but not 'CHR'
+#' dtf %>% clmn( 'SSS', '~CHR' )
+#'
+#' @export
 
+clmn <- function( dtf, ... ) {
+
+  args <- list(...)
+  n_args <- length( args )
+
+  include <- rep( '', n_args )
+  exclude <- rep( '', n_args )
+  inc_i <- 1
+  inc_e <- 1
+  for ( i in 1:n_args ) {
+    txt <- as.character( args[[i]] )
+    if ( grepl( '!', txt, fixed = T ) |
+         grepl( '~', txt, fixed = T ) |
+         grepl( '-', txt, fixed = T ) ) {
+      txt <- gsub( '!', '', txt, fixed = T )
+      txt <- gsub( '~', '', txt, fixed = T )
+      txt <- gsub( '-', '', txt, fixed = T )
+      exclude[inc_e] <- txt
+      inc_e <- inc_e + 1
+    } else {
+      include[inc_i] <- txt
+      inc_i <- inc_i + 1
+    }
+  }
+
+  if ( all( include == '' ) ) {
+    include = NULL
+  } else {
+    include <- include[ include != '' ]
+  }
+  if ( all( exclude == '' ) ) {
+    exclude = NULL
+  } else {
+    exclude <- exclude[ exclude != '' ]
+  }
+
+  clm <- colnames( dtf )
+  K <- length( clm )
+
+  if ( !is.null( include ) ) {
+    each_include <- sapply( include, function(x) {
+      grepl( x, clm, fixed = T )
+    } )
+  } else {
+    each_include = cbind( rep( T, K ) )
+  }
+
+
+  if ( !is.null( exclude ) ) {
+    each_exclude <- sapply( exclude, function(x) {
+      grepl( x, clm, fixed = T )
+    } )
+  } else {
+    each_exclude = cbind( rep( F, K ) )
+  }
+
+  entries =
+    rowSums( each_include ) == length( include ) &
+    !( rowSums( each_exclude ) > 0 )
+
+  return( clm[ entries ] )
+}
+
+
+#### 5) values_labels ####
+#' Display Values and Associated Labels
+#'
+#' A function that takes two columns in a data frame
+#' (assumed to be an initial column of values and
+#' a subsequent column of associated labels)
+#' and displays the assignment of values to labels.
+#'
+#' @param dtf A data frame.
+#' @param values A character string, the column name for
+#'   the values of interest (non-standard evaluation possible).
+#' @param labels A character string, the column name for
+#'   the labels of interest (non-standard evaluation possible).
+#'
+#' @author Kevin Potter
+#'
+#' @return A data frame with a column for values and
+#' a column for associated labels.
+#'
+#' @examples
+#'
+#' @export
+
+values_labels <- function( dtf, values, labels ) {
+
+  # Non-standard evaluation
+  V = as.character( substitute( values ) )
+  L = as.character( substitute( labels ) )
+
+  dtf$Cur_values = dtf[[ V ]]
+  dtf$Cur_labels = dtf[[ L ]]
+
+  out = dtf %>%
+    group_by(
+      Values = Cur_values
+    ) %>%
+    summarise(
+      Labels = unique( Cur_labels ),
+      .groups = 'drop'
+    ) %>%
+    data.frame( stringsAsFactors = F )
+
+  return( out )
+}

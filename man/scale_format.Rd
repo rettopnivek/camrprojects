@@ -4,7 +4,15 @@
 \alias{scale_format}
 \title{Standardized Reporting Format for Scales/Inventories/Questionnaires}
 \usage{
-scale_format(name, n_items, abbreviation = "", cut_off = "", subscale = FALSE)
+scale_format(
+  name,
+  n_items,
+  range,
+  abbreviation = "",
+  cut_off = NA,
+  reference = "",
+  subscale = FALSE
+)
 }
 \arguments{
 \item{name}{A character string with the full name of
@@ -14,22 +22,24 @@ or the 'Cannabis Use Disorder Identification Test').}
 \item{n_items}{An integer with the number of
 questions/items in the scale (or subscale).}
 
+\item{range}{...}
+
 \item{abbreviation}{A character string with the abbreviation
 for the scale (e.g., 'HADS' or 'CUDIT').}
 
-\item{cut_off}{An optional numeric value giving a cut-off
+\item{cut_off}{An optional numeric vector giving any cut-offs
 used in the scale (e.g., the CUDIT uses a clinical cut-off
 of scores at \code{8} or higher to indicate problematic
 cannabis use).}
+
+\item{reference}{...}
 
 \item{subscale}{Logical; if \code{TRUE}, instead outputs
 the reporting format for subscales (consisting only
 of the subscale name its number of items).}
 }
 \value{
-A character string, either '<Scale name> (<Scale
-abbreviation>) - <N> items - Cut-off of <x>' or
-'<Subscale name> - <N> items'.
+...
 }
 \description{
 Given a scale's name, number of items, and abbreviation,
