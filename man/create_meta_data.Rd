@@ -29,29 +29,52 @@ create_meta_data(
 \arguments{
 \item{dtf}{A data frame.}
 
-\item{column_name}{...}
+\item{column_name}{A character string, the name of the
+column to add attributes to.}
 
-\item{description}{...}
+\item{description}{A character string, a human-readable
+description of the variable.}
 
-\item{variable_category}{...}
+\item{variable_category}{The overarching category to which
+a variable belongs (e.g., session details, subject details,
+etc.). By default, the function infers the category using
+the initial 3-letter abbreviation contained in the column
+name.}
 
-\item{data_type}{...}
+\item{data_type}{The type of data in a column (e.g.,
+integer, logical, character string, etc.). By default, the
+function infers the data type from the second 3-letter
+abbreviation contained in the column name.}
 
-\item{redcap_variables}{...}
+\item{redcap_variables}{A character string, the variable
+name in the raw REDCap data from which the current
+variable was derived.}
 
-\item{values_and_labels}{...}
+\item{values_and_labels}{An optional named list of two vectors:
+\enumerate{
+  \item Values: A vector of the unique values (e.g., numeric
+  codes, abbreviations, logical values) stored in the column;
+  \item Labels: A character vector with the descriptive labels
+  for each corresponding value.
+}}
 
 \item{scale_details}{...}
 
 \item{subscale_details}{...}
 
-\item{summary_of_x}{...}
+\item{summary_of_x}{A character string, either...
+\itemize{
+  \item 'continuous': ???;
+  \item 'categorical' ???;
+  \item 'range': ???.
+}}
 
 \item{category_labels}{...}
 
 \item{type_labels}{...}
 
-\item{codes_for_missing}{...}
+\item{codes_for_missing}{A list with the codes used to
+indicate missing values (e.g., \code{NA} or \code{''}).}
 
 \item{group_var}{...}
 
@@ -59,9 +82,10 @@ create_meta_data(
 
 \item{units_of_x}{...}
 
-\item{validated}{...}
+\item{validated}{A character string, notes on whether the
+variable has been data-checked.}
 
-\item{digits}{...}
+\item{digits}{Number of digits to round to for summaries.}
 }
 \value{
 An updated data frame with new attributes for

@@ -47,6 +47,9 @@
 
 known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
+  ### TO DO ###
+  # Direction of scale
+
   if ( is.null( abbreviation ) & subscale == '' ) {
 
     inputs <- c(
@@ -318,6 +321,8 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
   if ( is.null( out ) ) {
     stop( 'Scale or subscale not found' )
+  } else {
+    return( out )
   }
 }
 
@@ -450,23 +455,47 @@ meta_data_for_variable <- function(x) {
 #' (e.g., 'Treatment_groups', 'Session_dates', etc.).
 #'
 #' @param dtf A data frame.
-#' @param column_name ...
-#' @param description ...
-#' @param variable_category ...
-#' @param data_type ...
-#' @param redcap_variables ...
-#' @param values_and_labels ...
+#' @param column_name A character string, the name of the
+#'   column to add attributes to.
+#' @param description A character string, a human-readable
+#'   description of the variable.
+#' @param variable_category The overarching category to which
+#'   a variable belongs (e.g., session details, subject details,
+#'   etc.). By default, the function infers the category using
+#'   the initial 3-letter abbreviation contained in the column
+#'   name.
+#' @param data_type The type of data in a column (e.g.,
+#'   integer, logical, character string, etc.). By default, the
+#'   function infers the data type from the second 3-letter
+#'   abbreviation contained in the column name.
+#' @param redcap_variables A character string, the variable
+#'   name in the raw REDCap data from which the current
+#'   variable was derived.
+#' @param values_and_labels An optional named list of two vectors:
+#'   \enumerate{
+#'     \item Values: A vector of the unique values (e.g., numeric
+#'     codes, abbreviations, logical values) stored in the column;
+#'     \item Labels: A character vector with the descriptive labels
+#'     for each corresponding value.
+#'   }
 #' @param scale_details ...
 #' @param subscale_details ...
-#' @param summary_of_x ...
+#' @param summary_of_x A character string, either...
+#'   \itemize{
+#'     \item 'continuous': ???;
+#'     \item 'categorical' ???;
+#'     \item 'range': ???.
+#'   }
 #' @param category_labels ...
 #' @param type_labels ...
-#' @param codes_for_missing ...
+#' @param codes_for_missing A list with the codes used to
+#'   indicate missing values (e.g., \code{NA} or \code{''}).
 #' @param group_var ...
 #' @param study_var ...
 #' @param units_of_x ...
-#' @param validated ...
-#' @param digits ...
+#' @param validated A character string, notes on whether the
+#'   variable has been data-checked.
+#' @param digits Number of digits to round to for summaries.
 #'
 #' @author Kevin Potter
 #'
@@ -657,7 +686,7 @@ create_meta_data <- function(dtf,
     Data_type = '',
     Description = description,
     REDCap_variables = redcap_variables,
-    Values_and_labels = '',
+    Values_and_labels = values_and_labels,
     Scale = '',
     Subscale = '',
     Summary = '',
