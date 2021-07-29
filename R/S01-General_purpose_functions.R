@@ -229,6 +229,9 @@ create_standardized_filename <- function(description,
   # Determine files in directory
   all_files <- dir()
 
+  # Shorthand for the 'paste0' function
+  p <- paste0
+
   # If not specified, auto-generate file tag
   # based on extension
   if (is.null(tag)) {
@@ -265,10 +268,10 @@ create_standardized_filename <- function(description,
       Sys.Date(),
       date_format
     )
-    file_date <- "-" %p% file_date
+    file_date <- paste0( "-", file_date )
   } else {
     if (file_date != "") {
-      file_date <- "-" %p% file_date
+      file_date <- paste0( "-", file_date )
     }
   }
 
@@ -286,11 +289,11 @@ create_standardized_filename <- function(description,
       only_files_no_placeholder
 
     matching_description <-
-      grepl("-" %p% description %p% "-", all_files, fixed = T) &
+      grepl( p( "-", description, "-" ), all_files, fixed = T) &
       only_files_no_placeholder
 
     matching_extension <-
-      grepl(extension %p% "$", all_files) &
+      grepl( p( extension,  "$" ), all_files) &
       only_files_no_placeholder
 
     # Check for existing file
@@ -314,7 +317,7 @@ create_standardized_filename <- function(description,
       # convert to character string
       nc <- nchar(number)
       if (nc == 1) {
-        number <- paste0("0", number)
+        number <- p("0", number)
       } else {
         number <- as.character(number)
       }
@@ -334,7 +337,7 @@ create_standardized_filename <- function(description,
       # convert to character string
       nc <- nchar(number)
       if (nc == 1) {
-        number <- paste0("0", number)
+        number <- p("0", number)
       } else {
         number <- as.character(number)
       }
@@ -342,13 +345,13 @@ create_standardized_filename <- function(description,
   }
 
   if (!is.null(additional)) {
-    additional <- paste0("-", additional)
+    additional <- p("-", additional)
   } else {
     additional <- ""
   }
 
   # Generate file name
-  filename <- paste0(
+  filename <- p(
     tag,
     number,
     "-",
@@ -386,12 +389,13 @@ create_standardized_filename <- function(description,
 #'   more than one value was found in the subset of rows to consider
 #'   and display a warning message with details if this occurs.
 #' @param allow_multiple Logical; if \code{TRUE} will allow multiple
-#'   return values. By default, it does not override \code{check_for_multiple},
-#'   so remember to change this if applicable.
+#'   return values. By default, it does not override
+#'   \code{check_for_multiple}, so remember to change this
+#'   if applicable.
 #'
 #' @author Kevin Potter, William Schmitt
 #'
-#' @return ...
+#' @return A single value.
 #'
 #' @examples
 #' # Create example data frame

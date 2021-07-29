@@ -40,11 +40,12 @@ more than one value was found in the subset of rows to consider
 and display a warning message with details if this occurs.}
 
 \item{allow_multiple}{Logical; if \code{TRUE} will allow multiple
-return values. By default, it does not override \code{check_for_multiple},
-so remember to change this if applicable.}
+return values. By default, it does not override
+\code{check_for_multiple}, so remember to change this
+if applicable.}
 }
 \value{
-...
+A single value.
 }
 \description{
 A function that will search over a subset of rows in a data frame
