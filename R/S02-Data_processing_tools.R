@@ -82,13 +82,14 @@ postFormJSONToDf <- function(url, params) {
 #### 1.2) redcap_read ####
 #' Read All Records From a REDCap Project
 #'
-#' This function seeks to mimic the [REDCapR::redcap_read()] function,
-#' but with a more robust output that can handle bizarre characters
+#' This function seeks to mimic the \code{redcap_read()}
+#' function for the (now defunct) \code{REDCapR} package,but
+#' with a more robust output that can handle bizarre characters
 #' and calculated fields. This function handles all REST API calls
-#' using httr. This function also uses calls to [furrr] and [future] for
-#' downloading batches from REDCap. The [plan][future::plan()] is not specified.
-#' Instead, the user should use the plan that works best for their
-#' specific use.
+#' using httr. This function also uses calls to [furrr] and [future]
+#' for downloading batches from REDCap. The [plan][future::plan()]
+#' is not specified. Instead, the user should use the plan that
+#' works best for their specific use.
 #'
 #' @param redcap_uri The URI (uniform resource identifier) of the
 #'   REDCap project. Required.
