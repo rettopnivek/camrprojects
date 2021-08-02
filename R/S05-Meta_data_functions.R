@@ -727,8 +727,14 @@ create_meta_data <- function(dtf,
       #|> Close 'Check code for NA'
     } else {
 
-      # Check variable for missing values
-      entries <- !is.na(x) & x == codes_for_missing[[k]]
+      # Only consider non-NA values for missing
+      # if not a date variable
+      if ( class( x ) != 'Date' ) {
+        # Check variable for missing values
+        entries <- !is.na(x) & x == codes_for_missing[[k]]
+      } else {
+        entries <- rep( FALSE, length( entries ) )
+      }
 
       if ( any( entries ) ) {
         # Update logical vector for missing values
@@ -743,7 +749,6 @@ create_meta_data <- function(dtf,
 
     #> Close 'Loop over codes'
   }
-
 
   if ( !any( is_missing ) ) {
     # No missing values found
