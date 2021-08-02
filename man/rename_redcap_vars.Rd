@@ -2,7 +2,7 @@
 % Please edit documentation in R/S23-rename_redcap_vars.R
 \name{rename_redcap_vars}
 \alias{rename_redcap_vars}
-\title{Rename a REDCap data frame to follow CAM Naming Standards}
+\title{Rename a REDCap Data Frame to Follow CAM Naming Standards}
 \usage{
 rename_redcap_vars(rcDtf, metaDtf)
 }

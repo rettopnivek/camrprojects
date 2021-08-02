@@ -2,7 +2,7 @@
 % Please edit documentation in R/S22-validate_var_name.R
 \name{validate_var_name}
 \alias{validate_var_name}
-\title{Validate a string conforms to naming standard}
+\title{Validate that a String Conforms to Naming Standards}
 \usage{
 validate_var_name(str, type = "R")
 }
@@ -26,12 +26,13 @@ vectorized over the input.
 \details{
 The CAM Name Standard: GGG.TTT.Optional.Var_name.
 \itemize{
-  \item `GGG` is the variable's group, which roughly corresponds to data of a
-   similar nature or type. Examples include: IDS for identification
+  \item `GGG` is the variable's group, which roughly corresponds to data
+    of a similar nature or type. Examples include: IDS for identification
    variables, SBJ for subject demographic variables, SSS for important
    study details, INV for inventory measures, etc.
-  \item`TTT` is the variable's type, which corresponds to either a specific R type
-    or a specific REDCap field type. Find permissible types below:
+  \item`TTT` is the variable's type, which corresponds to either a
+    specific R type or a specific REDCap field type. Find permissible
+    types below:
     \itemize{
       \item Possible R Types:
         \itemize{
