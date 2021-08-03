@@ -733,7 +733,7 @@ create_meta_data <- function(dtf,
         # Check variable for missing values
         entries <- !is.na(x) & x == codes_for_missing[[k]]
       } else {
-        entries <- rep( FALSE, length( entries ) )
+        entries <- rep( FALSE, length( x ) )
       }
 
       if ( any( entries ) ) {
