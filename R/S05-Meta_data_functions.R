@@ -9,6 +9,7 @@
 
 ### TO DO ###
 # - Finish function documentation
+# - Alphabetize scales
 
 #### 1) Scale and subscale functions ####
 
@@ -45,33 +46,60 @@
 #'
 #' @export
 
-known_scales <- function( abbreviation = NULL, subscale = '' ) {
-
-  ### TO DO ###
-  # Direction of scale
+known_scales <- function( abbreviation = NULL,
+                          subscale = '',
+                          description = FALSE,
+                          units_of_measurement = FALSE ) {
 
   if ( is.null( abbreviation ) & subscale == '' ) {
 
     inputs <- c(
       'Accepted inputs:\n\n',
-      'Hospital Anxiety Depression Scale\n',
-      '  abbrevation = "HADS"\n',
-      '    subscale = "Anxiety"\n',
-      '    subscale = "Depression"\n\n',
-      'Cannabis Use Disorder Identification Test - Revised\n',
-      '  abbreviation = "CUDIT"\n\n',
+
       'Alcohol Use Disorders Identification Test\n',
       '  abbreviation = "AUDIT"\n\n',
+
       'Athens Insomnia Scale\n',
       '  abbreviation = "AIS"\n\n',
+
       'Brief Pain Inventory (Short form)\n',
       '  abbreviation = "BPI"\n',
       '    subscale = Severity\n',
       '    subscale = Interference\n\n',
+
+      'Cannabis Use Disorder Identification Test - Revised\n',
+      '  abbreviation = "CUDIT"\n\n',
+
+      'Clinical Global Impression scale\n',
+      '  abbreviation = "CGI"\n',
+      '    subscale = "Anxiety"\n',
+      '    subscale = "Depression"\n\n',
+
+      'Concise Health Risk Tracking scale\n',
+      '  abbreviation = "CHRT"\n\n',
+
+      'Hospital Anxiety Depression Scale\n',
+      '  abbrevation = "HADS"\n',
+      '    subscale = "Anxiety"\n',
+      '    subscale = "Depression"\n\n',
+
+      'Marijuana Craving Questionnaire\n',
+      '  abbrevation = "MCQ"\n',
+      '    subscale = "Compulsitivity"\n',
+      '    subscale = "Emotionality"\n',
+      '    subscale = "Expectancy"\n',
+      '    subscale = "Purposefulness"\n\n',
+
       'Pain Catastrophizing Scale\n',
       '  abbreviation = "PCS"\n\n',
+
       'Perceived Stress Scale\n',
-      '  abbreviation = "PSS"\n\n'
+      '  abbreviation = "PSS"\n\n',
+
+      'Short Form Health Survey\n',
+      '  abbreviation = "SF-12"\n',
+      '    subscale = "Physical"\n',
+      '    subscale = "Mental"\n\n'
     )
     message( inputs )
   }
@@ -81,6 +109,7 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
   #### 1.1.1) HADS ####
   if ( abbreviation %in% c( 'HADS' ) ) {
 
+    ### Overall
     out <- list(
       name = 'Hospital Anxiety Depression Scale',
       n_items = 14,
@@ -92,30 +121,65 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'and depression scale. Acta Psychiatrica Scandinavica, ',
         '67 (6), 361-370. ',
         'https://doi.org/10.1111/j.1600-0447.1983.tb09716.x'
+      ),
+      interpretation = paste0(
+        ""
       )
     )
 
+    ### Subscales
     if ( subscale != '' ) {
       out <- NULL
 
+      ### Anxiety
       if ( subscale %in% c( 'Anxiety', 'anxiety' ) ) {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the HADS anxiety subscale - measure ',
+            'of the degree of anxiety in a patient'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed scores"
+        }
 
         out <- list(
           name = 'Anxiety',
           n_items = 7,
           range = c( 0, 21 ),
-          cut_off = c( Borderline = 8, Abnormal = 11 )
+          cut_off = c( Borderline = 8, Abnormal = 11 ),
+          interpretation = paste0(
+            "Higher scores indicate greater anxiety"
+          )
         )
 
       }
 
+      ### Depression
       if ( subscale == 'Depression' ) {
+
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the HADS anxiety subscale - measure ',
+            'of the degree of depression experienced by a patient'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed scores"
+        }
 
         out <- list(
           name = 'Depression',
           n_items = 7,
           range = c( 0, 21 ),
-          cut_off = c( Borderline = 8, Abnormal = 11 )
+          cut_off = c( Borderline = 8, Abnormal = 11 ),
+          interpretation = paste0(
+            "Higher scores indicate greater depression"
+          )
         )
 
       }
@@ -126,6 +190,18 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
   #### 1.1.2) CUDIT-R ####
   if ( abbreviation %in% c( 'CUDIT', 'CUDIT-R' ) ) {
+
+    if ( description ) {
+      out <- paste0(
+        'Scores for the CUDIT-R - measure ',
+        'of the degree of problematic cannabis use behavior ',
+        'for a subject'
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
 
     out <- list(
       name = 'Cannabis Use Disorder Identification Test - Revised',
@@ -140,6 +216,9 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'The cannabis use disorders identification test - revised ',
         '(CUDIT-R). Drug and Alcohol Dependence, 110, 137-143. ',
         'https://doi.org/10.1016/j.drugalcdep.2010.02.017'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate more problematic cannabis use"
       )
     )
 
@@ -147,6 +226,18 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
   #### 1.1.3) AUDIT ####
   if ( abbreviation == 'AUDIT' ) {
+
+    if ( description ) {
+      out <- paste0(
+        'Scores for the AUDIT - measure ',
+        'of the degree of problematic alcohol use behavior ',
+        'for a subject'
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
 
     out <- list(
       name = 'Alcohol Use Disorders Identification Test',
@@ -160,6 +251,10 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'An aid to recognition of alcohol problems in primary ',
         'care patients. Preventive Medicine, 33 (5), 428-433. ',
         'https://doi.org/10.1006/pmed.2001.0910'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate more problematic alcohol use ",
+        "behavior"
       )
     )
 
@@ -167,6 +262,17 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
   #### 1.1.4) AIS ####
   if ( abbreviation == 'AIS' ) {
+
+    if ( description ) {
+      out <- paste0(
+        'Scores for the AIS - measure of the degree of insomnia ',
+        'experienced by a subject'
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
 
     out <- list(
       name = 'Athens Insomnia Scale',
@@ -180,6 +286,9 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'instrument based on ICD-10 criteria. Journal of ',
         'Psychosomatic Research, 48 (6), 555–560. ',
         'https://doi.org/10.1016/s0022-3999(00)00095-7'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate a greater degree of insomnia"
       )
     )
 
@@ -188,6 +297,7 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
   #### 1.1.5) BPI ####
   if ( abbreviation %in% c( 'BPI', 'BPI-SF' ) ) {
 
+    ### Overall
     out <- list(
       name = 'Brief Pain Inventory (Short form)',
       n_items = 11,
@@ -199,30 +309,66 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'Global use of the Brief Pain Inventory. Annals of the ',
         'Academy of Medicine, Singapore, 23(2), 129-138. ',
         'https://pubmed.ncbi.nlm.nih.gov/8080219/'
-      )
+      ),
+      interpretation = ""
     )
 
+    ### Overall
     if ( subscale != '' ) {
       out <- NULL
 
+      ### Severity
       if ( subscale == 'Severity' ) {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the BPI severity subscale - measure of the ',
+            'degree of pain severity experienced by a subject ',
+            'within the last 24 hours'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Average over items"
+        }
 
         out <- list(
           name = 'Pain severity',
           n_items = 4,
           range = c( Min = 0, Max = 10 ),
-          cut_off = NA
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater pain severity ",
+            "in the last 24 hours"
+          )
         )
 
       }
 
+      ### Interference
       if ( subscale == 'Interference' ) {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the BPI interference subscale - measure of ',
+            'the extent pain for a participant interfered with daily ',
+            'functioning'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Average over items"
+        }
 
         out <- list(
           name = 'Pain interference',
           n_items = 7,
           range = c( Min = 0, Max = 10 ),
-          cut_off = NA
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater pain interference ",
+            "in daily function"
+          )
         )
 
       }
@@ -232,7 +378,20 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
   }
 
   #### 1.1.6) PCS ####
+
+  ### Summed scores
   if ( abbreviation == 'PCS' ) {
+
+    if ( description ) {
+      out <- paste0(
+        "Scores for the PCS - measure of the degree to which ",
+        "a subject engages in pain catastrophizing"
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
 
     out <- list(
       name = 'Pain Catastrophizing Scale',
@@ -245,6 +404,44 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
         'The Pain Catastrophizing Scale: Development and ',
         'validation. Psychological Assessment, 7(4), 524–532. ',
         'https://doi.org/10.1037/1040-3590.7.4.524'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate that a subject engages in ",
+        "a greater degree of catastrophizing about pain"
+      )
+    )
+
+  }
+
+  ### Percentages
+  if ( abbreviation == 'PCS (%)' ) {
+
+    if ( description ) {
+      out <- paste0(
+        "Percentages for the PCS - measure of the degree to ",
+        "which a subject engages in pain catastrophizing"
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Percentages"
+    }
+
+    out <- list(
+      name = 'Pain Catastrophizing Scale',
+      n_items = 13,
+      range = c( Min = 0, Max = 100 ),
+      abbreviation = 'PCS (%)',
+      cut_off = NA,
+      reference = paste0(
+        'Sullivan, M. J. L., Bishop, S. R., & Pivik, J. (1995). ',
+        'The Pain Catastrophizing Scale: Development and ',
+        'validation. Psychological Assessment, 7(4), 524–532. ',
+        'https://doi.org/10.1037/1040-3590.7.4.524'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate that a subject engages in ",
+        "a greater degree of catastrophizing about pain"
       )
     )
 
@@ -252,6 +449,18 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 
   #### 1.1.7) PSS ####
   if ( abbreviation == 'PSS' ) {
+
+    if ( description ) {
+      out <- paste0(
+        "Percentages for the PSS - measure of the degree to ",
+        "which subjects view situations in their life ",
+        "as stresslful"
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
 
     out <- list(
       name = 'Perceived Stress Scale',
@@ -273,6 +482,9 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
           'psychology of health: Claremont symposium on ',
           'applied social psychology. Sage Publications, Inc.'
         )
+      ),
+      interpretation = paste0(
+        "Higher scores indicate a greater degree of perceived stress"
       )
     )
 
@@ -281,37 +493,360 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
   #### 1.1.8) SF-12 ####
   if ( abbreviation == 'SF-12' ) {
 
+    ### Overall
     out <- list(
-      name = 'Short-Form 12 Health Survey',
-      n_items = NA,
+      name = 'Short-Form 12-item Health Survey',
+      n_items = 12,
       range = c( NA, NA ),
       abbreviation = 'SF-12',
       cut_off = NA,
       reference = c(
+        paste0(
+          "Ware Jr, J. E., Kosinski, M., & Keller, S. D. (1996). ",
+          "A 12-Item Short-Form Health Survey: construction of scales ",
+          "and preliminary tests of reliability and validity. Medical ",
+          "care, 220-233. ",
+          "https://doi.org/10.1097/00005650-199603000-00003"
+        )
       )
     )
 
+    ### Subscales
     if ( subscale != '' ) {
       out <- NULL
 
+      ### Mental
       if ( subscale == 'Mental' ) {
+
+        if ( description ) {
+          out <- paste0(
+            "Normed scores for the SF-12 mental subscale - ",
+            "measure of the degree of general mental health ",
+            "of the respondent"
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- paste0(
+            "Normed score with a population mean of 50 and ",
+            "standard deviation of 10"
+          )
+        }
 
         out <- list(
           name = 'General mental health',
-          n_items = NA,
+          n_items = 6,
           range = c( Min = 0, Max = 100 ),
-          cut_off = NA
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate indicate better degree of ",
+            "mental health"
+          )
         )
 
       }
 
+      ### Physical
       if ( subscale == 'Physical' ) {
+
+
+        if ( description ) {
+          out <- paste0(
+            "Normed scores for the SF-12 physical subscale - ",
+            "measure of the degree of general physical health of ",
+            "the respondent"
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- paste0(
+            "Normed score with a population mean of 50 and ",
+            "standard deviation of 10"
+          )
+        }
 
         out <- list(
           name = 'General physical health',
-          n_items = NA,
+          n_items = 6,
           range = c( Min = 0, Max = 100 ),
-          cut_off = NA
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate better degree of ",
+            "physical health"
+          )
+        )
+
+      }
+    }
+
+  }
+
+  #### 1.1.9) MCQ-SF ####
+  if ( abbreviation == 'MCQ-sF' ) {
+
+    ### Overall
+    out <- list(
+      name = 'Marijuana Craving Questionnaire (Short form)',
+      n_items = 12,
+      range = c( NA, NA ),
+      abbreviation = 'MCQ',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          "Heishman, S. J., Singleton, E. G., & Liguori, A. (2001). ",
+          "Marijuana Craving Questionnaire: Development and initial ",
+          "validation of a self‐report instrument. Addiction, 96(7), ",
+          "1023-1034. https://doi.org/10.1046/j.1360-0443.2001.967102312.x"
+        ),
+        paste0(
+          "Heishman, S. J., Evans, R. J., Singleton, E. G., Levin, K. H., ",
+          "Copersino, M. L., & Gorelick, D. A. (2009). Reliability and ",
+          "validity of a short form of the Marijuana Craving Questionnaire. ",
+          "Drug and alcohol dependence, 102(1-3), 35-40. ",
+          "https://doi.org/10.1016/j.drugalcdep.2008.12.010"
+        )
+      ),
+      interpretation = ""
+    )
+
+    #### Subscales
+    if ( subscale != '' ) {
+      out <- NULL
+
+      ### Compulsivity
+      if (subscale == 'Compulsivity') {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the MCQ compulsivity subscale - measure ',
+            'of the inability to control marijuana use'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed score"
+        }
+
+        out <- list(
+          name = 'Compulsivity',
+          n_items = 3,
+          range = c( Min = 3, Max = 21 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater difficulty in ",
+            "controlling marijuana use"
+          )
+        )
+
+      }
+
+      ### Emotionality
+      if (subscale == 'Emotionality') {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the MCQ emotionality subscale - measure ',
+            'of the degree participants use marijuana for relief ',
+            'from withdrawal or negative mood'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed score"
+        }
+
+        out <- list(
+          name = 'Emotionality',
+          n_items = 3,
+          range = c( Min = 3, Max = 21 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness to ",
+            "use marijuana to control withdrawal and negative mood"
+          )
+        )
+
+      }
+
+      ### Expectancy
+      if (subscale == 'Expectancy') {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the MCQ expectancy subscale - measure ',
+            'of the degree of anticipation of positive outcomes ',
+            'from using marijuana'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed score"
+        }
+
+        out <- list(
+          name = 'Expectancy',
+          n_items = 3,
+          range = c( Min = 3, Max = 21 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate higher anticipation of ",
+            "postive outcomes from using marijuana"
+          )
+        )
+
+      }
+
+      ### Purposefulness
+      if (subscale == 'Purposefulness') {
+
+        if ( description ) {
+          out <- paste0(
+            'Scores for the MCQ purposefulness subscale - measure ',
+            'of the degree of intention and planning to use ',
+            'marijuana for positive outcomes'
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- "Summed score"
+        }
+
+        out <- list(
+          name = 'Purposefulness',
+          n_items = 3,
+          range = c( Min = 3, Max = 21 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater degree of planning ",
+            "and intent to use marijuana for postive outcomes"
+          )
+        )
+
+      }
+
+    }
+
+  }
+
+  #### 1.1.10) CHRT ####
+  if ( abbreviation == 'CHRT' ) {
+
+    if ( description ) {
+      out <- paste0(
+        ""
+      )
+    }
+
+    if ( units_of_measurement ) {
+      out <- "Summed scores"
+    }
+
+    out <- list(
+      name = 'Concise Health Risk Tracking scale',
+      n_items = 12,
+      range = c( Min = 12, Max = 60 ),
+      abbreviation = 'CHRT',
+      cut_off = c( NA ),
+      reference = c(
+        paste0(
+          "Trivedi, M. H., Wisniewski, S. R., Morris, D. W., Fava, M., ",
+          "Gollan, J. K., Warden, D., Nierenberg, A. A., Gaynes, B. N., ",
+          "Husain, M. M., Luther, J. F., Zisook, S., &  Rush, A. J. ",
+          "(2011). Concise Health Risk Tracking scale: A brief ",
+          "self-report and clinician rating of suicidal risk. The ",
+          "Journal of Clinical Psychiatry, 72(6), 757-764. ",
+          "https://doi.org/10.4088/JCP.11m06837"
+        )
+      ),
+      interpretation = paste0(
+        "Higher scores indicate greater risk of suicide"
+      )
+    )
+
+  }
+
+  #### 1.1.11) CGI ####
+  if ( abbreviation == 'CGI' ) {
+
+    ### Overall
+    out <- list(
+      name = 'Clinical Global Impression scale',
+      n_items = 2,
+      range = c( NA, NA ),
+      abbreviation = 'CGI',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          "Guy, W. (Ed.) (1976). ECDEU assessment manual for ",
+          "psychopharmacology. US Department of Heath, ",
+          "Education, and Welfare; Public Health Service ",
+          "Alcohol, Drug Abuse, and Mental Health Administration."
+        )
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+      out <- NULL
+
+      ### Severity
+      if ( subscale == 'Severity' ) {
+
+        if ( description ) {
+          out <- paste0(
+            "Rating of illness severity at current time ",
+            "based on total clinical experience with particular ",
+            "population"
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- paste0(
+            "Likert scale from 1 = not at all ill to ",
+            "7 = among the most extremely ill patients"
+          )
+        }
+
+        out <- list(
+          name = 'Severity of illness',
+          n_items = 1,
+          range = c( Min = 1, Max = 7 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate indicate greater severity ",
+            "of illness"
+          )
+        )
+
+      }
+
+      ### Improvement
+      if ( subscale == 'Improvement' ) {
+
+
+        if ( description ) {
+          out <- paste0(
+            "Measure of total improvement irrespective of ",
+            "drug treatment compared to previous study ",
+            "visit for participant"
+          )
+        }
+
+        if ( units_of_measurement ) {
+          out <- paste0(
+            "Likert scale from 1 = very much improved to ",
+            "7 = very much worse"
+          )
+        }
+
+        out <- list(
+          name = 'Global improvement',
+          n_items = 1,
+          range = c( Min = 1, Max = 7 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate worsening of condition"
+          )
         )
 
       }
@@ -341,27 +876,36 @@ known_scales <- function( abbreviation = NULL, subscale = '' ) {
 #'   or the 'Cannabis Use Disorder Identification Test').
 #' @param n_items An integer with the number of
 #'   questions/items in the scale (or subscale).
-#' @param range ...
+#' @param range A vector with the lower and upper limits
+#'   for the possible scores the measure can have.
 #' @param abbreviation A character string with the abbreviation
 #'   for the scale (e.g., 'HADS' or 'CUDIT').
 #' @param cut_off An optional numeric vector giving any cut-offs
 #'   used in the scale (e.g., the CUDIT uses a clinical cut-off
 #'   of scores at \code{8} or higher to indicate problematic
 #'   cannabis use).
-#' @param reference ...
+#' @param reference A character vector with APA-style
+#'   references that describe the measure and relevant
+#'   details on its scoring.
+#' @param interpretation A brief note on how to interpret
+#'   measure scores (e.g., describe what higher scores
+#'   indicate, such as how higher scores on the CUDIT
+#'   indicate more problematic cannabis use).
 #' @param subscale Logical; if \code{TRUE}, instead outputs
 #'   the reporting format for subscales (consisting only
 #'   of the subscale name its number of items).
 #'
 #' @author Kevin Potter
 #'
-#' @return ...
+#' @return A list.
 #'
 #' @examples
 #' scale_format(
-#'   'Cannabis Use Disorder Identification Test',
-#'   'CUDIT',
-#'   8
+#'   name = 'Cannabis Use Disorder Identification Test (Revised)',
+#'   n_items = 8,
+#'   range = c( 0, 32 ),
+#'   abbreviation = 'CUDIT-R',
+#'   interpretation = 'Higher scores indicate more problematic cannabis use'
 #' )
 #'
 #' @export
@@ -372,6 +916,7 @@ scale_format <- function(name,
                          abbreviation = '',
                          cut_off = NA,
                          reference = '',
+                         interpretation = '',
                          subscale = FALSE ) {
 
   if ( length( range ) == 1 ) {
@@ -384,7 +929,8 @@ scale_format <- function(name,
       name = name,
       n_items = n_items,
       range = c( Min = range[1], Max = range[2] ),
-      cut_off = cut_off
+      cut_off = cut_off,
+      interpretation = interpretation
     )
 
   } else {
@@ -395,7 +941,8 @@ scale_format <- function(name,
       range = c( Min = range[1], Max = range[2] ),
       abbreviation = abbreviation,
       cut_off = cut_off,
-      reference = reference
+      reference = reference,
+      interpretation = interpretation
     )
   }
 

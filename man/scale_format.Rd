@@ -11,6 +11,7 @@ scale_format(
   abbreviation = "",
   cut_off = NA,
   reference = "",
+  interpretation = "",
   subscale = FALSE
 )
 }
@@ -22,7 +23,8 @@ or the 'Cannabis Use Disorder Identification Test').}
 \item{n_items}{An integer with the number of
 questions/items in the scale (or subscale).}
 
-\item{range}{...}
+\item{range}{A vector with the lower and upper limits
+for the possible scores the measure can have.}
 
 \item{abbreviation}{A character string with the abbreviation
 for the scale (e.g., 'HADS' or 'CUDIT').}
@@ -32,14 +34,21 @@ used in the scale (e.g., the CUDIT uses a clinical cut-off
 of scores at \code{8} or higher to indicate problematic
 cannabis use).}
 
-\item{reference}{...}
+\item{reference}{A character vector with APA-style
+references that describe the measure and relevant
+details on its scoring.}
+
+\item{interpretation}{A brief note on how to interpret
+measure scores (e.g., describe what higher scores
+indicate, such as how higher scores on the CUDIT
+indicate more problematic cannabis use).}
 
 \item{subscale}{Logical; if \code{TRUE}, instead outputs
 the reporting format for subscales (consisting only
 of the subscale name its number of items).}
 }
 \value{
-...
+A list.
 }
 \description{
 Given a scale's name, number of items, and abbreviation,
@@ -51,9 +60,11 @@ diagnosis purposes) and subscale information.
 }
 \examples{
 scale_format(
-  'Cannabis Use Disorder Identification Test',
-  'CUDIT',
-  8
+  name = 'Cannabis Use Disorder Identification Test (Revised)',
+  n_items = 8,
+  range = c( 0, 32 ),
+  abbreviation = 'CUDIT-R',
+  interpretation = 'Higher scores indicate more problematic cannabis use'
 )
 
 }

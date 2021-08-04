@@ -4,7 +4,12 @@
 \alias{known_scales}
 \title{Pre-defined Output for Known Scales and Subscales}
 \usage{
-known_scales(abbreviation = NULL, subscale = "")
+known_scales(
+  abbreviation = NULL,
+  subscale = "",
+  description = FALSE,
+  units_of_measurement = FALSE
+)
 }
 \arguments{
 \item{abbreviation}{The abbreviation for a scale, used to
