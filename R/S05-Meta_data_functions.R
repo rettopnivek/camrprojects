@@ -139,10 +139,12 @@ known_scales <- function( abbreviation = NULL,
             'Scores for the HADS anxiety subscale - measure ',
             'of the degree of anxiety in a patient'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed scores"
+          return( out )
         }
 
         out <- list(
@@ -166,10 +168,12 @@ known_scales <- function( abbreviation = NULL,
             'Scores for the HADS anxiety subscale - measure ',
             'of the degree of depression experienced by a patient'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed scores"
+          return( out )
         }
 
         out <- list(
@@ -197,10 +201,12 @@ known_scales <- function( abbreviation = NULL,
         'of the degree of problematic cannabis use behavior ',
         'for a subject'
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -233,10 +239,12 @@ known_scales <- function( abbreviation = NULL,
         'of the degree of problematic alcohol use behavior ',
         'for a subject'
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -268,10 +276,12 @@ known_scales <- function( abbreviation = NULL,
         'Scores for the AIS - measure of the degree of insomnia ',
         'experienced by a subject'
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -326,10 +336,12 @@ known_scales <- function( abbreviation = NULL,
             'degree of pain severity experienced by a subject ',
             'within the last 24 hours'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Average over items"
+          return( out )
         }
 
         out <- list(
@@ -354,10 +366,12 @@ known_scales <- function( abbreviation = NULL,
             'the extent pain for a participant interfered with daily ',
             'functioning'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Average over items"
+          return( out )
         }
 
         out <- list(
@@ -387,10 +401,12 @@ known_scales <- function( abbreviation = NULL,
         "Scores for the PCS - measure of the degree to which ",
         "a subject engages in pain catastrophizing"
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -421,10 +437,12 @@ known_scales <- function( abbreviation = NULL,
         "Percentages for the PCS - measure of the degree to ",
         "which a subject engages in pain catastrophizing"
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Percentages"
+      return( out )
     }
 
     out <- list(
@@ -456,10 +474,12 @@ known_scales <- function( abbreviation = NULL,
         "which subjects view situations in their life ",
         "as stresslful"
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -524,6 +544,7 @@ known_scales <- function( abbreviation = NULL,
             "measure of the degree of general mental health ",
             "of the respondent"
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
@@ -531,6 +552,7 @@ known_scales <- function( abbreviation = NULL,
             "Normed score with a population mean of 50 and ",
             "standard deviation of 10"
           )
+          return( out )
         }
 
         out <- list(
@@ -556,6 +578,7 @@ known_scales <- function( abbreviation = NULL,
             "measure of the degree of general physical health of ",
             "the respondent"
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
@@ -563,6 +586,7 @@ known_scales <- function( abbreviation = NULL,
             "Normed score with a population mean of 50 and ",
             "standard deviation of 10"
           )
+          return( out )
         }
 
         out <- list(
@@ -621,10 +645,12 @@ known_scales <- function( abbreviation = NULL,
             'Scores for the MCQ compulsivity subscale - measure ',
             'of the inability to control marijuana use'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed score"
+          return( out )
         }
 
         out <- list(
@@ -649,10 +675,12 @@ known_scales <- function( abbreviation = NULL,
             'of the degree participants use marijuana for relief ',
             'from withdrawal or negative mood'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed score"
+          return( out )
         }
 
         out <- list(
@@ -677,10 +705,12 @@ known_scales <- function( abbreviation = NULL,
             'of the degree of anticipation of positive outcomes ',
             'from using marijuana'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed score"
+          return( out )
         }
 
         out <- list(
@@ -705,10 +735,12 @@ known_scales <- function( abbreviation = NULL,
             'of the degree of intention and planning to use ',
             'marijuana for positive outcomes'
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
           out <- "Summed score"
+          return( out )
         }
 
         out <- list(
@@ -733,12 +765,14 @@ known_scales <- function( abbreviation = NULL,
 
     if ( description ) {
       out <- paste0(
-        ""
+        "Measure of risk based on suicidal ideation and intent"
       )
+      return( out )
     }
 
     if ( units_of_measurement ) {
       out <- "Summed scores"
+      return( out )
     }
 
     out <- list(
@@ -798,6 +832,7 @@ known_scales <- function( abbreviation = NULL,
             "based on total clinical experience with particular ",
             "population"
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
@@ -805,6 +840,7 @@ known_scales <- function( abbreviation = NULL,
             "Likert scale from 1 = not at all ill to ",
             "7 = among the most extremely ill patients"
           )
+          return( out )
         }
 
         out <- list(
@@ -830,6 +866,7 @@ known_scales <- function( abbreviation = NULL,
             "drug treatment compared to previous study ",
             "visit for participant"
           )
+          return( out )
         }
 
         if ( units_of_measurement ) {
@@ -837,6 +874,7 @@ known_scales <- function( abbreviation = NULL,
             "Likert scale from 1 = very much improved to ",
             "7 = very much worse"
           )
+          return( out )
         }
 
         out <- list(
