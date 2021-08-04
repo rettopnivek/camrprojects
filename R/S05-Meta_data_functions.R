@@ -83,8 +83,8 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Anxiety"\n',
       '    subscale = "Depression"\n\n',
 
-      'Marijuana Craving Questionnaire\n',
-      '  abbrevation = "MCQ"\n',
+      'Marijuana Craving Questionnaire (Short form)\n',
+      '  abbrevation = "MCQ-SF"\n',
       '    subscale = "Compulsitivity"\n',
       '    subscale = "Emotionality"\n',
       '    subscale = "Expectancy"\n',
@@ -102,6 +102,9 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Mental"\n\n'
     )
     message( inputs )
+
+    # End function call
+    return( invisible( NULL ) )
   }
 
   out <- NULL
@@ -606,14 +609,14 @@ known_scales <- function( abbreviation = NULL,
   }
 
   #### 1.1.9) MCQ-SF ####
-  if ( abbreviation == 'MCQ-sF' ) {
+  if ( abbreviation == 'MCQ-SF' ) {
 
     ### Overall
     out <- list(
       name = 'Marijuana Craving Questionnaire (Short form)',
       n_items = 12,
       range = c( NA, NA ),
-      abbreviation = 'MCQ',
+      abbreviation = 'MCQ-SF',
       cut_off = NA,
       reference = c(
         paste0(
