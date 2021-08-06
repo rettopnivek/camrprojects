@@ -2,23 +2,28 @@
 % Please edit documentation in R/S05-Meta_data_functions.R
 \name{meta}
 \alias{meta}
-\title{Title}
+\title{Extract Dictionary Meta-data From Attributes}
 \usage{
 meta(x = NULL, column = "")
 }
 \arguments{
-\item{x}{...}
+\item{x}{A data frame.}
+
+\item{column}{A column name (non-standard evaluation
+possible) in \code{x} from which to extract
+the attribute of class \code{dictionary_meta_data}.}
 }
 \value{
-Output.
+Either the extracted list with dictionary
+meta-data of class \code{dictionary_meta_data} or
+a logical vector indicating which columns do or
+do not have dictionary meta-data.
 }
 \description{
-Description.
-}
-\details{
-
-}
-\examples{
-# Examples
-
+A function to extract meta-data intended for
+data dictionary purposes for a specified column
+in a data frame. If no column is specified,
+the function returns a logical vector indicating
+which columns in the data frame have attributes
+with the dictionary meta-data and which do not.
 }

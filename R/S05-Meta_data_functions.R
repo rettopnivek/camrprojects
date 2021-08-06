@@ -1,15 +1,16 @@
-# Meta-data functions
+# Dictionary meta-data functions
 # Written by Kevin Potter
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-07-21
+# Last updated 2021-08-05
 
 # Table of contents
 
 ### TO DO ###
 # - Finish function documentation
 # - Alphabetize scales
+# - Add more scales to 'known_scales'
 
 #### 1) Scale and subscale functions ####
 
@@ -29,11 +30,13 @@
 #'
 #' @return Either 1) a list with the scale name, number of items,
 #' vector with the lowest and largest possible values,
-#' abbreviation, a vector of any clinical cut-off values, and
+#' abbreviation, a vector of any clinical cut-off values,
 #' a character vector with APA-style references for the scale,
-#' or 2) a list with the subscale name, number of items, vector
-#' with the lowest and largest possible values, and a vector
-#' with any clinical cut-off values.
+#' and a brief description of how to interpret higher scores
+#' on the scale, or 2) a list with the subscale name, number of
+#' items, vector with the lowest and largest possible values,
+#' a vector with any clinical cut-off values, and a brief
+#' description of how to interpret higher scores.
 #'
 #' @examples
 #' # List all possible inputs (i.e., known
@@ -905,12 +908,9 @@ known_scales <- function( abbreviation = NULL,
 #### 1.2) scale_format ####
 #' Standardized Reporting Format for Scales/Inventories/Questionnaires
 #'
-#' Given a scale's name, number of items, and abbreviation,
-#' creates a character string following a standardized
-#' reporting format to pass into meta-data for data
-#' dictionary purposes. Provides additional options for
-#' reporting cut-offs (e.g., clinical cut-offs used for
-#' diagnosis purposes) and subscale information.
+#' A function to help structure data dictionary information for
+#' scales/inventories/questionnaires into a standardized
+#' format.
 #'
 #' @param name A character string with the full name of
 #'   the scale (e.g., 'Hospital Anxiety Depression Scale'
@@ -991,43 +991,600 @@ scale_format <- function(name,
 }
 
 
-#### 2) meta_data_for_variable ####
+#### 2) variable_name_abbreviations ####
+#' Title
+#'
+#' Description.
+#'
+#' @param var_name ...
+#' @param type ...
+#' @param custom ...
+#' @param n ...
+#' @param separator ...
+#'
+#' @details
+#'
+#' @return Output.
+#'
+#' @examples
+#' # Examples
+#'
+#' @export
 
-meta_data_for_variable <- function(x) {
+variable_name_abbreviations <- function( var_name = '',
+                                         type = NULL,
+                                         custom = NULL,
+                                         n = NA,
+                                         separator = "." ) {
 
-  meta_data_elements <- c(
-    'Column_name',
-    'Variable_category',
-    'Data_type',
-    'Description',
-    'REDCap_variables',
-    'Values_and_labels',
-    'Scale',
-    'Subscale',
-    'Units',
-    'Summary',
-    'Codes_for_missing',
-    'Groups_collected_over',
-    'Times_collected_over',
-    'Studies_collected_over',
-    'Validated'
+  # Pre-defined abbreviations and
+  # labels for variable categories
+  abbr_labels.var_cat <- rbind(
+    c( 'IDS', 'Identifiers' ),
+    c( 'SSS', 'Session details' ),
+    c( 'SBJ', 'Subject details' ),
+    c( 'STD', 'Student details' ),
+    c( 'PNT', 'Patient details' ),
+    c( 'PRT', 'Participant details' ),
+    c( 'DMG', 'Demographic information' ),
+    c( 'URN', 'Urine test data' ),
+    c( 'INV', 'Inventories and questionnaires and scales' ),
+    c( 'QTN', 'Inventories and questionnaires and scales' ),
+    c( 'SCL', 'Inventories and questionnaires and scales' ),
+    c( 'TLF', 'Timeline follow-back data' ),
+    c( 'CTB', 'CANTAB battery data' ),
+    c( 'DRY', 'Phone app diary data' ),
+    c( 'MNI', 'MINI diagnoses results' ),
+    c( 'CNM', 'Concomitant medication details' ),
+    c( 'MRI', 'MRI scan details' ),
+    c( 'SCN', 'Neural imaging scan details' ),
+    c( 'RMT', 'Remote survey results' ),
+    c( 'DTQ', 'Data quality' ),
+    c( 'INC', 'Indices for inclusion' )
+  )
+  colnames( abbr_labels.var_cat ) <- c(
+    'Abbr',
+    'Label'
   )
 
-  if ( all( meta_data_elements %in% names(x) ) ) {
-    class( x ) <- "meta_data_for_variable"
-  } else {
-    stop( paste0(
-      'Input should be a named list with the ',
-      'following elements:\n',
-      paste( meta_data_elements, collapse = '\n' )
-    ) )
+  # Pre-defined abbreviations and labels
+  # for data types
+  abbr_labels.dat_typ <- rbind(
+    c( 'INT', 'Integer' ),
+    c( 'DBL', 'Double precision floating point number' ),
+    c( 'LGC', 'Logical' ),
+    c( 'CHR', 'Character string' ),
+    c( 'DAT', 'R Date-class variable for calendar dates' ),
+    c( 'FCT', 'Enumerated type - factor' ),
+    c( 'DSC', 'Descriptive text field' )
+  )
+  colnames( abbr_labels.dat_typ ) <- c(
+    'Abbr',
+    'Label'
+  )
+
+  # The primary types of abbreviation/label pairs
+  list_of_types <- list(
+    category = c(
+      'Variable categories', 'variable categories',
+      'Variable category', 'variable category',
+      'Variable', 'variable',
+      'Category', 'category',
+      '1'
+    ),
+    type = c(
+      'Data types', 'data types',
+      'Data type', 'data type',
+      'Data', 'data',
+      'Type', 'type',
+      '2'
+    )
+  )
+
+  # Create template for matrix with abbreviations and
+  # labels
+  if ( var_name == '' & is.null( type ) & !is.na( n ) ) {
+
+    out <- cbind(
+      Abbr = rep( 'XXX', n ),
+      Label = rep( 'Description of XXX', n )
+    )
+    return( out )
+
   }
 
-  return( x )
+  # Display pre-defined abbreviations and labels
+  if ( var_name == '' & !is.null( type ) ) {
+
+    # Options for variable categories
+    if ( type %in% list_of_types$category ) {
+
+      message(
+        'Abbreviations and labels for variable categories:\n\n'
+      )
+
+      message( paste(
+        paste0( abbr_labels.var_cat[,1], ' = ',
+                abbr_labels.var_cat[,2], '\n' ),
+        collapse = ''
+      ) )
+
+    }
+
+    # Options for data types
+    if ( type %in% list_of_types$type ) {
+
+      message(
+        'Abbreviations and labels for data types:\n\n'
+      )
+
+      message( paste(
+        paste0( abbr_labels.dat_typ[,1], ' = ',
+                abbr_labels.dat_typ[,2], '\n' ),
+        collapse = ''
+      ) )
+
+    }
+
+  }
+
+  # Match a label to an abbreviation contained within a
+  # variable name (for variable categories/data types)
+  if ( var_name != '' & !is.null( type ) ) {
+
+    # Split variable name into different parts
+    name_parts <- strsplit(
+      var_name,
+      split = separator,
+      fixed = TRUE
+    )[[1]]
+
+    # Abbreviations for variable categories are always the
+    # first part of the variable name
+    if ( type %in% list_of_types$category ) {
+
+      # Check for custom abbreviations/labels
+      if ( !is.null( custom ) ) {
+
+        custom_not_specified_correctly <- TRUE
+
+        if ( is.matrix( custom ) ) {
+          if ( all( colnames( custom ) %in% c( 'Abbr', 'Label' ) ) ) {
+            custom_not_specified_correctly <- FALSE
+
+            abbr_labels.var_cat <- rbind(
+              abbr_labels.var_cat,
+              custom
+            )
+
+          }
+        }
+
+        if ( custom_not_specified_correctly ) {
+          warning( paste0(
+            "Custom abbreviations and labels need to be given as ",
+            "a matrix with columns 'Abbr' and 'Label'; ",
+            "the command 'variable_name_abbreviations(n=1)' ",
+            "will generate a template matrix"
+          ) )
+        }
+      }
+
+      # Extract abbreviation
+      cur_abbr <- name_parts[1]
+      entries <- abbr_labels.var_cat[,1] %in% cur_abbr
+
+      # If a match is found
+      if ( sum(entries) == 1 ) {
+
+        # Return label
+        return( abbr_labels.var_cat[entries,2] )
+
+      } else {
+        stop( 'Abbreviation not found or has duplicates' )
+      }
+
+    }
+
+    # Abbreviations for data types are always the
+    # second part of the variable name
+    if ( type %in% list_of_types$type ) {
+
+      # Check for custom abbreviations/labels
+      if ( !is.null( custom ) ) {
+
+        custom_not_specified_correctly <- TRUE
+
+        if ( is.matrix( custom ) ) {
+          if ( all( colnames( custom ) %in% c( 'Abbr', 'Label' ) ) ) {
+            custom_not_specified_correctly <- FALSE
+
+            abbr_labels.dat_typ <- rbind(
+              abbr_labels.dat_typ,
+              custom
+            )
+
+          }
+        }
+
+        if ( custom_not_specified_correctly ) {
+          warning( paste0(
+            "Custom abbreviations and labels need to be given as ",
+            "a matrix with columns 'Abbr' and 'Label'; ",
+            "the command 'variable_name_abbreviations(n=1)' ",
+            "will generate a template matrix"
+          ) )
+        }
+      }
+
+      # Extract abbreviation
+      cur_abbr <- name_parts[2]
+      entries <- abbr_labels.dat_typ[,1] %in% cur_abbr
+
+      # If a match is found
+      if ( sum(entries) == 1 ) {
+
+        # Return label
+        return( abbr_labels.dat_typ[entries,2] )
+
+      } else {
+        stop( 'Abbreviation not found or has duplicates' )
+      }
+
+    }
+
+  }
+
+  # Custom abbreviations/labels are always the
+  # third part of the variable name
+  if ( var_name != '' & is.null( type ) & !is.null( custom ) ) {
+
+    # Split variable name into different parts
+    name_parts <- strsplit(
+      var_name,
+      split = separator,
+      fixed = TRUE
+    )[[1]]
+
+    custom_not_specified_correctly <- TRUE
+
+    if ( is.matrix( custom ) ) {
+      if ( all( colnames( custom ) %in% c( 'Abbr', 'Label' ) ) ) {
+        custom_not_specified_correctly <- FALSE
+
+        # Extract abbreviation
+        cur_abbr <- name_parts[3]
+        entries <- custom[,1] %in% cur_abbr
+
+        # If a match is found
+        if ( sum(entries) == 1 ) {
+
+          # Return label
+          return( custom[entries,2] )
+
+        } else {
+          stop( 'Abbreviation not found or has duplicates' )
+        }
+
+      }
+    }
+
+    if ( custom_not_specified_correctly ) {
+      warning( paste0(
+        "Custom abbreviations and labels need to be given as ",
+        "a matrix with columns 'Abbr' and 'Label'; ",
+        "the command 'variable_name_abbreviations(n=1)' ",
+        "will generate a template matrix"
+      ) )
+    }
+
+  }
+
 }
 
-#### 3) create_meta_data ####
-#' Create Meta-data for Data Dictionary Purposes
+#### 3) Internal functions
+
+
+#### 1.2) create_summary_for_x ####
+# Title
+#
+# Description.
+#
+# @param 'x_no_missing' ...
+# @param 'missing_values' ...
+# @param 'type' ...
+# @param 'digits' ...
+#
+# @return Output.
+#
+# @examples
+# # Examples
+
+create_summary_for_x <- function( x_no_missing,
+                                  missing_values,
+                                  type,
+                                  digits ) {
+
+  summary_of_x = ''
+
+  if ( type == 'continuous' ) {
+
+    summary_of_x <- list(
+      N = sum( !missing_values ),
+      Mean = round( mean( x_no_missing ), digits ),
+      SD = round( sd( x_no_missing ), digits ),
+      Min = round( min( x_no_missing ), digits ),
+      Q_16 = round( quantile( x_no_missing, .16 ), digits ),
+      Q_25 = round( quantile( x_no_missing, .25 ), digits ),
+      Q_50 = round( quantile( x_no_missing, .5 ), digits ),
+      Q_75 = round( quantile( x_no_missing, .75 ), digits ),
+      Q_84 = round( quantile( x_no_missing, .84 ), digits ),
+      Max = round( max( x_no_missing ), digits ),
+      Missing = sum( missing_values )
+    )
+
+  }
+
+  if ( type == 'categorical' ) {
+
+    freq <- table( x_no_missing )
+
+    summary_of_x <- data.frame(
+      Category = c( names(freq), 'Missing' ),
+      Frequency = c( freq, sum( missing_values ) ),
+      Percentage = c( freq, sum( missing_values ) )/n_obs,
+      stringsAsFactors = F
+    )
+
+  }
+
+  if ( type == 'range' ) {
+
+    summary_of_x <- list(
+      N = sum( !missing_values ),
+      Min = min( x_no_missing ),
+      Max = max( x_no_missing ),
+      Missing = sum( missing_values )
+    )
+
+  }
+
+  return( summary_of_x )
+}
+
+#### 4) Functions for class 'dictionary_meta_data' ####
+
+#### 4.1) new_dictionary_meta_data ####
+#' Constructor Function for Dictionary Meta-data Class
+#'
+#' Description.
+#'
+#' @param Column_name ...
+#' @param Variable_category ...
+#' @param Data_type ...
+#' @param Description ...
+#' @param REDCap_variables ...
+#' @param Values_and_labels ...
+#' @param Scale ...
+#' @param Subscale ...
+#' @param Summary ...
+#' @param Units ...
+#' @param Codes_for_missing ...
+#' @param Groups_collected_over ...
+#' @param Times_collected_over ...
+#' @param Studies_collected_over ...
+#' @param Validated ...
+#' @param Notes ...
+#'
+#' @details
+#'
+#' @return A named list of class \code{dictionary_meta_data}.
+#'
+#' @export
+
+new_dictionary_meta_data <- function( Column_name = '',
+                                      Variable_category = '',
+                                      Data_type = '',
+                                      Sub_category = '',
+                                      Description = '',
+                                      REDCap_variables = '',
+                                      Values_and_labels = '',
+                                      Scale = '',
+                                      Subscale = '',
+                                      Summary = '',
+                                      Units = '',
+                                      Codes_for_missing = '',
+                                      Groups_collected_over = '',
+                                      Times_collected_over = '',
+                                      Studies_collected_over = '',
+                                      Validated = '',
+                                      Notes = '' ) {
+
+  # Create names list for new class
+  # 'dictionary_meta_data'
+  out <- structure(
+    list(
+      Column_name = Column_name,
+      Variable_category = Variable_category,
+      Data_type = Data_type,
+      Sub_category = Sub_category,
+      Description = Description,
+      REDCap_variables = REDCap_variables,
+      Values_and_labels = Values_and_labels,
+      Scale = Scale,
+      Subscale = Subscale,
+      Summary = Summary,
+      Units = Units,
+      Codes_for_missing = Codes_for_missing,
+      Groups_collected_over = Groups_collected_over,
+      Times_collected_over = Times_collected_over,
+      Studies_collected_over = Studies_collected_over,
+      Validated = Validated,
+      Notes = Notes
+    ), class = 'dictionary_meta_data'
+  )
+
+  return( out )
+}
+
+#### 4.2) is.dictionary_meta_data ####
+#' Check if a Variable is of Class Dictionary Meta-data
+#'
+#' Description.
+#'
+#' @param x ...
+#'
+#' @details
+#'
+#' @return Output.
+#'
+#' @examples
+#' # Examples
+#'
+#' @export
+
+is.dictionary_meta_data <- function(x) {
+  return( inherits( x, 'dictionary_meta_data' ) )
+}
+
+#### 4.3) validate_dictionary_meta_data ####
+#' Validate Contents for Dictionary Meta-data Class Variables
+#'
+#' Description.
+#'
+#' @param x ...
+#'
+#' @details
+#'
+#' @return Output.
+#'
+#' @examples
+#' # Examples
+#'
+#' @export
+
+validate_dictionary_meta_data <- function(x) {
+
+
+  if ( is.dictionary_meta_data(x) ) {
+
+    required_elements <- c(
+      "Column_name",
+      "Variable_category",
+      "Data_type",
+      "Description",
+      "REDCap_variables",
+      "Values_and_labels",
+      "Scale",
+      "Subscale",
+      "Summary",
+      "Units",
+      "Codes_for_missing",
+      "Validated"
+    )
+
+    if ( !all( required_elements %in% required_elements ) ) {
+
+      missing_elements <-
+        required_elements[ !required_elements %in% required_elements ]
+
+      stop( paste0(
+        "Missing the following named elements in the list:\n",
+        paste( paste0( "  '", missing_elements, "'\n" ),
+               collapse = "" )
+      ) )
+
+    }
+
+    ### Check specific elements
+
+    # - Column name
+    if ( is.character( x$Column_name ) ) {
+
+      # Error message
+      if ( x$Column_name == '' ) {
+        stop( "Element 'Column_name' must be specified" )
+      }
+
+    } else {
+      # Error message
+      stop( "Element 'Column_name' should be a character string" )
+    }
+
+    # - Variable category
+    if ( is.character( x$Variable_category ) ) {
+      # Error message
+      if ( x$Variable_category == '' ) {
+        warning( "Element 'Variable_category' not specified" )
+      }
+    } else {
+      # Error message
+      stop( "Element 'Variable_category' should be a character string" )
+    }
+
+    # - Data type
+    if ( is.character( x$Data_type ) ) {
+      # Error message
+      if ( x$Data_type == '' ) {
+        warning( "Element 'Data_type' not specified" )
+      }
+    } else {
+      # Error message
+      stop( "Element 'Data_type' should be a character string" )
+    }
+
+    # - Values and labels
+
+    # Check if list
+    lst <- x$Values_and_labels
+    if ( is.list( lst ) ) {
+
+      nms <- names( lst )
+
+      # Check if list with elements 'Values' and 'Labels'
+      if ( !all( nms %in% c( 'Values', 'Labels' ) ) ) {
+        # Error message
+        stop( paste0(
+          "Element 'Values_and_labels' should be list consisting ",
+          "of two vectors of matching length, 'Values' and 'Labels'"
+        ) )
+      }
+
+      # Check if length of 'Values' and 'Labels' match
+      if ( any( 'Values' %in% nms ) & any( 'Labels' %in% nms ) ) {
+
+        if ( length( lst$Values ) != length( lst$Labels ) ) {
+          # Error message
+          stop( paste0(
+            "Element 'Values_and_labels' should be list consisting ",
+            "of two vectors of matching length, 'Values' and 'Labels'"
+          ) )
+        }
+
+      }
+
+    } else {
+      # Check if empty character set
+      if ( lst != '' ) {
+        # Error message
+        stop( paste0(
+          "Element 'Values_and_labels' should be either 1) a list ",
+          "consisting of two vectors of matching length, 'Values' ",
+          "and 'Labels', or 2) the empty character set ''"
+        ) )
+      }
+    }
+
+  } else {
+
+    stop( "Input must be of class 'dictionary_meta_data'" )
+
+  }
+
+}
+
+#### 4.4) add_dictionary_meta_data ####
+#' Add Dictionary Meta-data to Column Attributes
 #'
 #' Updates the attributes for a column in a data frame
 #' with a standardized list of details on the variable
@@ -1066,8 +1623,14 @@ meta_data_for_variable <- function(x) {
 #'     \item Labels: A character vector with the descriptive labels
 #'     for each corresponding value.
 #'   }
-#' @param scale_details ...
-#' @param subscale_details ...
+#' @param scale_details An optional list with information for
+#'   scale/inventory/questionnaire scores. See the functions
+#'   \code{\link{known_scales}} and \code{\link{scale_format}}
+#'   on standardized formats for the input.
+#' @param subscale_details An optional list with information for
+#'   subscale scores. See the functions
+#'   \code{\link{known_scales}} and \code{\link{scale_format}}
+#'   on standardized formats for the input.
 #' @param summary_of_x A character string, either...
 #'   \itemize{
 #'     \item 'continuous': ???;
@@ -1080,390 +1643,223 @@ meta_data_for_variable <- function(x) {
 #'   indicate missing values (e.g., \code{NA} or \code{''}).
 #' @param group_var ...
 #' @param study_var ...
-#' @param units_of_x ...
+#' @param units_of_x A character string detailing the units
+#'   of measurement for the variable (e.g., height in cm,
+#'   summed scores, likert-scale response, etc.).
 #' @param validated A character string, notes on whether the
 #'   variable has been data-checked.
 #' @param digits Number of digits to round to for summaries.
 #'
 #' @author Kevin Potter
 #'
-#' @return An updated data frame with new attributes for
-#' the specified column.
+#' @return An updated data frame where the specified column
+#' has with a new attribute of class 'dictionary_meta_data'
+#' with the data dictionary information.
 #'
 #' @export
 
-create_meta_data <- function(dtf,
-                             column_name,
-                             description = '',
-                             variable_category = NULL,
-                             data_type = NULL,
-                             redcap_variables = '',
-                             values_and_labels = '',
-                             scale_details = NULL,
-                             subscale_details = NULL,
-                             summary_of_x = '',
-                             category_labels = NULL,
-                             type_labels = NULL,
-                             codes_for_missing = list( NA, '', ' ' ),
-                             group_var = NULL,
-                             time_var = NULL,
-                             study_var = NULL,
-                             units_of_x = '',
-                             validated = '',
-                             digits = 2) {
+
+add_dictionary_meta_data <- function(dtf,
+                                     column_name,
+                                     description = '',
+                                     variable_category = NULL,
+                                     data_type = NULL,
+                                     sub_category = '',
+                                     redcap_variables = '',
+                                     values_and_labels = '',
+                                     scale_details = '',
+                                     subscale_details = '',
+                                     summary_of_x = '',
+                                     codes_for_missing =
+                                       list( NA, '', ' ', as.Date(
+                                         '1970-01-01',
+                                         format = '%Y-%m-%d' )
+                                       ),
+                                     units_of_x = '',
+                                     validated = '',
+                                     notes = '',
+                                     group_var = NULL,
+                                     time_var = NULL,
+                                     study_var = NULL,
+                                     abbr_labels = list(),
+                                     digits = 2) {
 
   # Check if column exists in data frame
   if ( !column_name %in% colnames( dtf ) ) {
     stop( 'Column not found in data frame' )
   }
 
-  # Define functions
-  label_for_abbr <- function( column_name,
-                              type = 'category',
-                              add = NULL,
-                              section = NULL,
-                              separator = '.' ) {
-
-    if ( grepl( separator, column_name, fixed = TRUE ) ) {
-      column_name_parts <- strsplit(
-        column_name, split = separator, fixed = TRUE
-      )[[1]]
-    } else {
-      stop( paste0(
-        'Column name cannot be broken into separate ',
-        'sections - each section must be separated by ',
-        separator
-      ) )
-    }
-
-    if ( type %in% c( '1', 'category', 'variable',
-                      'variable category' ) ) {
-
-      tags_labels <- rbind(
-        c( 'IDS', 'Identifiers' ),
-        c( 'SSS', 'Session details' ),
-        c( 'SBJ', 'Subject details' ),
-        c( 'STD', 'Student details' ),
-        c( 'PNT', 'Patient details' ),
-        c( 'DMG', 'Demographic information' ),
-        c( 'URN', 'Urine test data' ),
-        c( 'INV', 'Inventories and questionnaires' ),
-        c( 'QTN', 'Inventories and questionnaires' ),
-        c( 'TLF', 'Timeline follow-back data' ),
-        c( 'CTB', 'CANTAB battery data' ),
-        c( 'DLY', 'Daily diary phone app data' ),
-        c( 'MNI', 'MINI diagnoses results' ),
-        c( 'CNM', 'Concomitant medication details' ),
-        c( 'MRI', 'MRI scan details' ),
-        c( 'RMT', 'Remote survey results' ),
-        c( 'DTQ', 'Data quality' ),
-        c( 'INC', 'Indices for inclusion' )
-      )
-
-      section <- 1
-    }
-
-    if ( type %in% c( '2', 'data', 'data type', 'type' ) ) {
-
-      tags_labels <- rbind(
-        c( 'INT', 'Integer' ),
-        c( 'DBL', 'Double precision floating point number' ),
-        c( 'LGC', 'Logical' ),
-        c( 'CHR', 'Character string' ),
-        c( 'DAT', 'R Date-class variable for calendar dates' ),
-        c( 'FCT', 'Enumerated type - factor' ),
-        c( 'DSC', 'Descriptive text field' )
-      )
-
-      section <- 2
-    }
-
-    if ( !type %in% c( '0', 'custom' ) ) {
-
-      if ( !is.null( add ) ) {
-
-        tags_labels <- rbind(
-          tags_labels,
-          add
-        )
-
-      }
-
-    } else {
-      tags_labels <- add
-    }
-
-    if ( is.null( section ) ) {
-      stop( paste0(
-        "Incorrect input for argument 'type'"
-      ) )
-    }
-
-    tag <- column_name_parts[ section ]
-
-    n_letter <- nchar( column_name_parts[section] )
-
-    entries <- tag == tags_labels[,1]
-
-    if ( sum( entries ) == 1 ) {
-      return( tags_labels[ entries, 2 ] )
-    } else {
-      stop( paste0(
-        n_letter, '-letter abbreviation not found or does ',
-        'not correspond to unique label'
-      ) )
-    }
-  }
-
-  create_summary_for_x <- function( x_no_missing,
-                                    missing_values,
-                                    type,
-                                    digits ) {
-
-    summary_of_x = ''
-
-    if ( type == 'continuous' ) {
-
-      summary_of_x <- list(
-        N = sum( !missing_values ),
-        Mean = round( mean( x_no_missing ), digits ),
-        SD = round( sd( x_no_missing ), digits ),
-        Min = round( min( x_no_missing ), digits ),
-        Q_16 = round( quantile( x_no_missing, .16 ), digits ),
-        Q_25 = round( quantile( x_no_missing, .25 ), digits ),
-        Q_50 = round( quantile( x_no_missing, .5 ), digits ),
-        Q_75 = round( quantile( x_no_missing, .75 ), digits ),
-        Q_84 = round( quantile( x_no_missing, .84 ), digits ),
-        Max = round( max( x_no_missing ), digits ),
-        Missing = sum( missing_values )
-      )
-
-    }
-
-    if ( type == 'categorical' ) {
-
-      freq <- table( x_no_missing )
-
-      summary_of_x <- data.frame(
-        Category = c( names(freq), 'Missing' ),
-        Frequency = c( freq, sum( missing_values ) ),
-        Percentage = c( freq, sum( missing_values ) )/n_obs,
-        stringsAsFactors = F
-      )
-
-    }
-
-    if ( type == 'range' ) {
-
-      summary_of_x <- list(
-        N = sum( !missing_values ),
-        Min = min( x_no_missing ),
-        Max = max( x_no_missing ),
-        Missing = sum( missing_values )
-      )
-
-    }
-
-    return( summary_of_x )
-  }
-
-  # Initialize output
-  lst <- list(
-    Column_name = column_name,
-    Variable_category = '',
-    Data_type = '',
-    Description = description,
-    REDCap_variables = redcap_variables,
-    Values_and_labels = values_and_labels,
-    Scale = '',
-    Subscale = '',
-    Summary = '',
-    Units = units_of_x,
-    Codes_for_missing = '',
-    Groups_collected_over = '',
-    Times_collected_over = '',
-    Studies_collected_over = '',
-    Validated = validated
-  )
-
   # Extract observations
   x <- dtf[[ column_name ]]
 
-  # Number of observations
-  n_obs <- length( x )
-
-  # Identify missing values
-  missing_values <- rep( FALSE, length(x) )
-  # Vector to track whether codes for missing
-  # values found in variable
-  is_missing <- rep( TRUE, length( codes_for_missing ) )
-
-  #< Loop over codes
-  for ( k in 1:length( codes_for_missing ) ) {
-
-    #<| Check code for NA
-    if ( is.na( codes_for_missing[[k]] ) ) {
-
-      if ( any( is.na(x) ) ) {
-        # Update logical vector for missing values
-        missing_values[ is.na( x ) ] <- TRUE
-      } else {
-        # Indicate code not found in variable
-        is_missing[k] <- FALSE
-      }
-
-      #|> Close 'Check code for NA'
-    } else {
-
-      # Only consider non-NA values for missing
-      # if not a date variable
-      if ( class( x ) != 'Date' ) {
-        # Check variable for missing values
-        entries <- !is.na(x) & x == codes_for_missing[[k]]
-      } else {
-        entries <- rep( FALSE, length( x ) )
-      }
-
-      if ( any( entries ) ) {
-        # Update logical vector for missing values
-        missing_values[entries] <- TRUE
-      } else {
-        # Indicate code not found in variable
-        is_missing[k] <- FALSE
-      }
-
-      #|> Close else for 'Check code for NA'
-    }
-
-    #> Close 'Loop over codes'
-  }
-
-  if ( !any( is_missing ) ) {
-    # No missing values found
-    x_no_missing <- x
-    lst$Codes_for_missing <- ''
+  # Determine appropriate codes for missing data and
+  # remove missing data in x
+  lst <- camrprojects::check_for_missing( x, codes_for_missing )
+  x_no_missing <- lst$x_no_missing
+  missing_values <- lst$missing_values
+  if ( !is.null( lst$codes_for_missing ) ) {
+    codes_for_missing <- lst$codes_for_missing
   } else {
-    # Remove missing values
-    x_no_missing <- x[ !missing_values ]
-    # Include only codes actually found in variable
-    lst$Codes_for_missing <- codes_for_missing[ is_missing ]
+    codes_for_missing <- ''
   }
 
   # Determine overarching category for variable
   if ( is.null( variable_category ) ) {
 
-    lst$Variable_category <-
-      label_for_abbr(
+    variable_category <-
+      variable_name_abbreviations(
         column_name,
         type = 'category',
-        add = category_labels
+        custom = abbr_label$variable_category
       )
 
-  } else {
-    lst$Variable_category <- variable_category
   }
 
   # Determine data type
   if ( is.null( data_type ) ) {
 
-    lst$Data_type <-
-      label_for_abbr(
+    data_type <-
+      variable_name_abbreviations(
         column_name,
         type = 'data type',
-        add = type_labels
+        custom = abbr_label$data_type
       )
 
-  } else {
-    lst$Data_type <- data_type
   }
 
-  lst$Summary <- create_summary_for_x(
-    x_no_missing,
-    missing_values,
-    type = summary_of_x,
-    digits
-  )
+  if ( is.null( sub_category ) ) {
+
+    if ( !is.null( abbr_labels$sub_category ) ) {
+      data_type <-
+        variable_name_abbreviations(
+          column_name,
+          custom = abbr_labels$sub_category
+        )
+    } else {
+      warning( paste0(
+        "Setting 'sub_category' to NULL requires ",
+        "passing in to 'abbr_labels' a named list ",
+        "with a slot 'sub_category' containing a ",
+        "matrix of abbreviations and corresponding ",
+        "labels (see 'variable_name_abbreviations')."
+      ) )
+      sub_category <- ''
+    }
+
+  }
+
+  # If applicable, compute summary metrics for variable
+  if ( summary_of_x %in% c( 'continuous', 'categorical',
+                            'range' ) ) {
+    summary_of_x <- create_summary_for_x(
+      x_no_missing,
+      missing_values,
+      type = summary_of_x,
+      digits
+    )
+  }
 
   # Details for inventory/questionnaires
-  if ( !is.null( scale_details ) ) {
-
-    lst$Scale <- c(
-      Name = scale_details[1],
-      N_items = scale_details[2],
-      Abbreviation = scale_details[3],
-      Cut_off = scale_details[4]
-    )
-
-  } else {
-    lst$Scale = ''
+  if ( is.null( scale_details ) ) {
+    scale_details <- ''
   }
 
   # Details for a subscale of inventory/questionnaires
-  if ( !is.null( subscale_details ) ) {
-
-    lst$Subscale <- c(
-      Name = subscale_details[1],
-      N_items = subscale_details[2]
-    )
-
-  } else {
-    lst$Subscale = ''
+  if ( is.null( subscale_details ) ) {
+    subscale_details <- ''
   }
 
+  # If specified, indicate which groups, time points,
+  # and studies variable has values over
+
+  # Groups
   if ( !is.null( group_var ) ) {
-    lst$Groups_collected_over =
+    groups_collected_over =
       unique( dtf[[ group_var ]][ !missing_values ] )
   } else {
-    lst$Groups_collected_over = ''
+    groups_collected_over = ''
   }
 
+  # Time points
   if ( !is.null( time_var ) ) {
-    lst$Times_collected_over =
+    times_collected_over =
       unique( dtf[[ time_var ]][ !missing_values ] )
   } else {
-    lst$Times_collected_over = ''
+    times_collected_over = ''
   }
 
+  # Studies
   if ( !is.null( study_var ) ) {
-    lst$Studies_collected_over =
+    studies_collected_over =
       unique( dtf[[ study_var ]][ !missing_values ] )
   } else {
-    lst$Studies_collected_over = ''
+    studies_collected_over = ''
   }
 
-  lst <- meta_data_for_variable( lst )
+  # Create object of class 'dictionary_meta_data'
+  # with specified inputs
+  out <- new_dictionary_meta_data(
+    Column_name = column_name,
+    Variable_category = variable_category,
+    Data_type = data_type,
+    Sub_category = sub_category,
+    Description = description,
+    REDCap_variables = redcap_variables,
+    Values_and_labels = values_and_labels,
+    Scale = scale_details,
+    Subscale = subscale_details,
+    Summary = summary_of_x,
+    Units = units_of_x,
+    Codes_for_missing = codes_for_missing,
+    Groups_collected_over = groups_collected_over,
+    Times_collected_over = times_collected_over,
+    Studies_collected_over = studies_collected_over,
+    Validated = validated,
+    Notes = notes
+  )
 
+  # Check that inputs are correct
+  validate_dictionary_meta_data( out )
+
+  # Update attributes for specified column to contain
+  # 'dictionary_meta_data' class object
   if ( !is.null( attributes( dtf[[ column_name ]] ) ) ) {
 
-    attributes( dtf[[ column_name ]] )$meta_data_for_variable <- lst
+    # Add to existing list of attributes
+    attributes( dtf[[ column_name ]] )$dictionary_meta_data <- out
 
   } else {
 
+    # Create new list of attributes
     attributes( dtf[[ column_name ]] ) <- list(
-      meta_data_for_variable = lst
+      dictionary_meta_data = out
     )
 
   }
 
+  # Return data frame
   return( dtf )
 }
 
-
-#### 4) Methods ####
-
-#### 4.1) meta ####
-#' Title
+#### 4.5) meta ####
+#' Extract Dictionary Meta-data From Attributes
 #'
-#' Description.
+#' A function to extract meta-data intended for
+#' data dictionary purposes for a specified column
+#' in a data frame. If no column is specified,
+#' the function returns a logical vector indicating
+#' which columns in the data frame have attributes
+#' with the dictionary meta-data and which do not.
 #'
-#' @param x ...
+#' @param x A data frame.
+#' @param column A column name (non-standard evaluation
+#'   possible) in \code{x} from which to extract
+#'   the attribute of class \code{dictionary_meta_data}.
 #'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
+#' @return Either the extracted list with dictionary
+#' meta-data of class \code{dictionary_meta_data} or
+#' a logical vector indicating which columns do or
+#' do not have dictionary meta-data.
 #'
 #' @export
 
@@ -1474,13 +1870,13 @@ meta <- function( x = NULL, column = '' ) {
     V = as.character( substitute( column ) )
 
     if ( V != '' ) {
-      out <- attributes( x[[ V ]] )$meta_data_for_variable
+      out <- attributes( x[[ V ]] )$dictionary_meta_data
     } else {
 
       out = sapply( colnames( x ), function(v) {
         res <- FALSE;
         if ( !is.null( attributes( x[[ v ]] ) ) ) {
-          if ( any( 'meta_data_for_variable' %in%
+          if ( any( 'dictionary_meta_data' %in%
                     names( attributes( x[[ v ]] ) ) ) ) {
             res <- TRUE
           }
@@ -1493,14 +1889,14 @@ meta <- function( x = NULL, column = '' ) {
 
   } else {
 
-    out <- attributes( x )$meta_data_for_variable
+    out <- attributes( x )$dictionary_meta_data
 
   }
 
   return( out )
 }
 
-#### 4.2) is.meta_data_for_variable ####
+#### 4.6) print.dictionary_meta_data ####
 #' Title
 #'
 #' Description.
@@ -1516,27 +1912,7 @@ meta <- function( x = NULL, column = '' ) {
 #'
 #' @export
 
-is.meta_data_for_variable <- function(x) {
-  inherits( x, 'meta_data_for_variable' )
-}
-
-#### 4.3) print.meta_data_for_variable ####
-#' Title
-#'
-#' Description.
-#'
-#' @param x ...
-#'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
-#'
-#' @export
-
-print.meta_data_for_variable <- function(x, digits = 2 ) {
+print.dictionary_meta_data <- function(x, digits = 2 ) {
 
   message( x$Column_name )
   message( '  Category:' )
@@ -1641,6 +2017,17 @@ print.meta_data_for_variable <- function(x, digits = 2 ) {
 
   }
 
+  if ( is.list( x$Scale ) ) {
+
+    message( '  Scale:' )
+
+    msg <- paste0(
+      x$Scale$Name, ' (',
+      x$Scale$Abbreviation, ')'
+    )
+
+  }
+
   if ( x$Units != '' ) {
     message( '  Unit of measurement:' )
     message( paste0( '     ', x$Units ) )
@@ -1648,7 +2035,7 @@ print.meta_data_for_variable <- function(x, digits = 2 ) {
 
 }
 
-#### 4.4) summary.meta_data_for_variable ####
+#### 4.7) summary.dictionary_meta_data ####
 #' Title
 #'
 #' Description.
@@ -1664,16 +2051,16 @@ print.meta_data_for_variable <- function(x, digits = 2 ) {
 #'
 #' @export
 
-summary.meta_data_for_variable <- function( x ) {
+summary.dictionary_meta_data <- function( x ) {
 
-  if ( is.meta_data_for_variable( x ) ) {
+  if ( is.dictionary_meta_data( x ) ) {
     return( x$Summary )
   } else {
-    stop( 'Not of class "meta_data_for_variable"' )
+    stop( 'Not of class "dictionary_meta_data"' )
   }
 }
 
-#### 4.5) subset.meta_data_for_variable ####
+#### 4.8) subset.dictionary_meta_data ####
 #' Title
 #'
 #' Description.
@@ -1689,50 +2076,55 @@ summary.meta_data_for_variable <- function( x ) {
 #'
 #' @export
 
-subset.meta_data_for_variable <- function( x, type = 'category' ) {
+subset.dictionary_meta_data <- function( x, type = 'category' ) {
 
-  if ( is.meta_data_for_variable( x ) ) {
+  if ( is.numeric( type ) ) {
+    return( x[[ type ]] )
+  }
+
+  if ( is.dictionary_meta_data( x ) ) {
 
     if ( type %in% c( 'Variable category', 'variable category',
-                      'Category', 'category',
-                      '2' ) ) {
+                      'Category', 'category' ) ) {
       return( x$Variable_category )
     }
 
     if ( type %in% c( 'Data type', 'data type',
                       'Type', 'type',
-                      'Data', 'data',
-                      '3' ) ) {
+                      'Data', 'data' ) ) {
       return( x$Data_type )
     }
 
     if ( type %in% c( 'Description', 'description',
-                      'Desc', 'desc',
-                      '4' ) ) {
+                      'Desc', 'desc' ) ) {
       return( x$Description )
     }
 
-    if ( type %in% c( 'REDCap', 'redcap',
-                      'Original', 'original',
-                      '5' ) ) {
+    if ( type %in% c( 'REDCap variables',
+                      'redcap variables',
+                      'REDCap', 'redcap',
+                      'Original', 'original' ) ) {
       return( x$REDCap_variables )
     }
 
-    if ( type %in% c( 'Values', 'values',
-                      'Labels', 'labels',
-                      '6' ) ) {
+    if ( type %in% c( 'Values and labels',
+                      'values and lables',
+                      'Values', 'values',
+                      'Labels', 'labels' ) ) {
       return( x$Values_and_labels )
     }
 
     if ( type %in% c( 'Scale', 'scale',
                       'Inventory', 'inventory',
                       'Questionnaire', 'questionnaire',
-                      '7' ) ) {
+                      'Scale details', 'scale details'
+                      ) ) {
       return( x$Scale )
     }
 
     if ( type %in% c( 'Subscale', 'subscale',
-                      '8' ) ) {
+                      'Subscale details',
+                      'subscale details' ) ) {
       return( x$Subscale )
     }
 
@@ -1743,16 +2135,17 @@ subset.meta_data_for_variable <- function( x, type = 'category' ) {
       return( x$Summary )
     }
 
-    if ( type %in% c( 'Missing', 'missing',
+    if ( type %in% c( 'Codes for missing',
+                      'codes for missing',
+                      'Missing', 'missing',
                       'Codes', 'codes',
-                      'Code', 'code',
-                      '11' ) ) {
+                      'Code', 'code' ) ) {
       return( x$Codes_for_missing )
     }
 
     stop( 'Incorrect subset type specified' )
   } else {
-    stop( 'Not of class "meta_data_for_variable"' )
+    stop( "Not of class 'dictionary_meta_data'" )
   }
 }
 

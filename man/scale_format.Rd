@@ -51,12 +51,9 @@ of the subscale name its number of items).}
 A list.
 }
 \description{
-Given a scale's name, number of items, and abbreviation,
-creates a character string following a standardized
-reporting format to pass into meta-data for data
-dictionary purposes. Provides additional options for
-reporting cut-offs (e.g., clinical cut-offs used for
-diagnosis purposes) and subscale information.
+A function to help structure data dictionary information for
+scales/inventories/questionnaires into a standardized
+format.
 }
 \examples{
 scale_format(

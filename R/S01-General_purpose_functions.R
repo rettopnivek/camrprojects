@@ -5,7 +5,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-07-27
+# Last updated 2021-08-05
 
 # Table of contents
 # 1) load_package
@@ -15,6 +15,7 @@
 # 3) extract_unique_value
 # 4) clmn
 # 5) values_labels
+# 6) check_for_missing
 
 #### 1) load_package ####
 #' Installs and Loads an R Package
@@ -88,7 +89,7 @@ load_package <- function( package_name,
 #### 2.1) match_to_files ####
 #' Checks for Partial Matches Between a String and a Set of Files
 #'
-#' Checks if a file is present in the current working directory.
+#' Checks if a file is present in the specified directory.
 #' Can check either for regular files or files using MGH-CAM's
 #' standardized file naming template:
 #' TXX-Description-MM_DD_YYYY-vX.X.X.ext.
@@ -673,6 +674,136 @@ values_labels <- function( dtf, values, labels ) {
       .groups = 'drop'
     ) %>%
     data.frame( stringsAsFactors = F )
+
+  return( out )
+}
+
+#### 6) check_for_missing ####
+#' Checks for Missing Data
+#'
+#' Given a list of different codes for missing
+#' data (e.g., \code{NA}, \code{''}, etc.),
+#' identifies missing data in a vector and
+#' also determines which missing data codes are
+#' applicable.
+#'
+#' @param x A vector of values.
+#' @param codes A list of different codes for
+#'   missing data (e.g., \code{NA}, \code{''}).
+#'
+#' @details Vectors of class \code{Date} are
+#' handled slightly differently, as comparisons
+#' against values that are not dates will return
+#' \code{NA}. Therefore, dates are only checked
+#' against other dates and for \code{NA} values.
+#'
+#' @return A list with...
+#' \itemize{
+#'   \item \code{missing_values}: A logical vector indicating
+#'     which values of \code{x} are missing;
+#'   \item \code{x_no_missing}: All non-missing values of \code{x};
+#'   \item \code{codes_for_missing}: A list with all missing
+#'     value codes that were found in \code{x}. If no missing
+#'     values were found, is \code{NULL}.
+#' }
+#'
+#' @examples
+#' # Vector with two types of missing values
+#' x <- c( 'A', 'B', '', NA, 'C' )
+#' check_for_missing( x )
+#'
+#' # Dates
+#' x <- as.Date( c( '2000-01-01', '1970-01-01', '2000-02-02', NA ),
+#'               format = '%Y-%m-%d' )
+#' check_for_missing( x )
+#'
+#' @export
+
+check_for_missing <- function( x,
+                               codes = list(
+                                 NA, '',
+                                 as.Date( '1970-01-01',
+                                          format = '%Y-%m-%d' )
+                                 )
+                               ) {
+
+  # Number of observations
+  n_obs <- length( x )
+
+  # Number of missing value codes
+  n_codes <- length( codes )
+
+  # Identify missing values
+  missing_values <- rep( FALSE, n_obs )
+  # Vector to track whether codes for missing
+  # values found in variable
+  is_missing <- rep( TRUE, n_codes )
+
+  #< Loop over codes
+  for ( k in 1:n_codes ) {
+
+    #<| Check code for NA
+    if ( is.na( codes[[k]] ) ) {
+
+      if ( any( is.na(x) ) ) {
+        # Update logical vector for missing values
+        missing_values[ is.na( x ) ] <- TRUE
+      } else {
+        # Indicate code not found in variable
+        is_missing[k] <- FALSE
+      }
+
+      #|> Close 'Check code for NA'
+    } else {
+
+      # Only consider non-NA values for missing
+      # if not a date variable
+      if ( class( x ) != 'Date' ) {
+
+        if ( class( codes[[k]] ) != 'Date' ) {
+          # Check variable for missing values
+          entries <- !is.na(x) & x == codes[[k]]
+        } else {
+          entries <- rep( FALSE, n_obs )
+        }
+
+      } else {
+
+        if ( class( codes[[k]] ) == 'Date' ) {
+          entries <- x == codes[[k]]
+          entries[ is.na(x) ] <- TRUE
+        } else {
+          entries <- rep( FALSE, n_obs )
+        }
+
+      }
+
+      if ( any( entries ) ) {
+        # Update logical vector for missing values
+        missing_values[entries] <- TRUE
+      } else {
+        # Indicate code not found in variable
+        is_missing[k] <- FALSE
+      }
+
+      #|> Close else for 'Check code for NA'
+    }
+
+    #> Close 'Loop over codes'
+  }
+
+  out <- list(
+    missing_values = missing_values,
+    x_no_missing = x,
+    codes_for_missing = NULL
+  )
+
+  if ( any( is_missing ) ) {
+    # Remove missing values
+    out$x_no_missing <- x[ !missing_values ]
+    # Include only codes actually found in variable
+    out$codes_for_missing <- codes[ is_missing ]
+  }
 
   return( out )
 }

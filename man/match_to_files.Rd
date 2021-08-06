@@ -35,7 +35,7 @@ Either...
 }
 }
 \description{
-Checks if a file is present in the current working directory.
+Checks if a file is present in the specified directory.
 Can check either for regular files or files using MGH-CAM's
 standardized file naming template:
 TXX-Description-MM_DD_YYYY-vX.X.X.ext.

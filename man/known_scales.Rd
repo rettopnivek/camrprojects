@@ -22,11 +22,13 @@ output.}
 \value{
 Either 1) a list with the scale name, number of items,
 vector with the lowest and largest possible values,
-abbreviation, a vector of any clinical cut-off values, and
+abbreviation, a vector of any clinical cut-off values,
 a character vector with APA-style references for the scale,
-or 2) a list with the subscale name, number of items, vector
-with the lowest and largest possible values, and a vector
-with any clinical cut-off values.
+and a brief description of how to interpret higher scores
+on the scale, or 2) a list with the subscale name, number of
+items, vector with the lowest and largest possible values,
+a vector with any clinical cut-off values, and a brief
+description of how to interpret higher scores.
 }
 \description{
 A convenience function that, given an abbreviation
