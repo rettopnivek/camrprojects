@@ -4,12 +4,7 @@
 \alias{known_scales}
 \title{Pre-defined Output for Known Scales and Subscales}
 \usage{
-known_scales(
-  abbreviation = NULL,
-  subscale = "",
-  description = FALSE,
-  units_of_measurement = FALSE
-)
+known_scales(abbreviation = NULL, subscale = "")
 }
 \arguments{
 \item{abbreviation}{The abbreviation for a scale, used to
@@ -20,15 +15,13 @@ given above, used to look up the relevant ancillary
 output.}
 }
 \value{
-Either 1) a list with the scale name, number of items,
-vector with the lowest and largest possible values,
-abbreviation, a vector of any clinical cut-off values,
-a character vector with APA-style references for the scale,
-and a brief description of how to interpret higher scores
-on the scale, or 2) a list with the subscale name, number of
-items, vector with the lowest and largest possible values,
-a vector with any clinical cut-off values, and a brief
-description of how to interpret higher scores.
+A list consisting of...
+\itemize{
+  \item \code{Description} ...
+  \item \code{Scale} ...
+  \item \code{Subscale} ...
+  \item \code{Units} ...
+}
 }
 \description{
 A convenience function that, given an abbreviation

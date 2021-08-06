@@ -9,7 +9,6 @@
 
 ### TO DO ###
 # - Finish function documentation
-# - Alphabetize scales
 # - Add more scales to 'known_scales'
 
 #### 1) Scale and subscale functions ####
@@ -28,15 +27,13 @@
 #'   given above, used to look up the relevant ancillary
 #'   output.
 #'
-#' @return Either 1) a list with the scale name, number of items,
-#' vector with the lowest and largest possible values,
-#' abbreviation, a vector of any clinical cut-off values,
-#' a character vector with APA-style references for the scale,
-#' and a brief description of how to interpret higher scores
-#' on the scale, or 2) a list with the subscale name, number of
-#' items, vector with the lowest and largest possible values,
-#' a vector with any clinical cut-off values, and a brief
-#' description of how to interpret higher scores.
+#' @return A list consisting of...
+#' \itemize{
+#'   \item \code{Description} ...
+#'   \item \code{Scale} ...
+#'   \item \code{Subscale} ...
+#'   \item \code{Units} ...
+#' }
 #'
 #' @examples
 #' # List all possible inputs (i.e., known
@@ -50,9 +47,7 @@
 #' @export
 
 known_scales <- function( abbreviation = NULL,
-                          subscale = '',
-                          description = FALSE,
-                          units_of_measurement = FALSE ) {
+                          subscale = '' ) {
 
   if ( is.null( abbreviation ) & subscale == '' ) {
 
@@ -110,18 +105,23 @@ known_scales <- function( abbreviation = NULL,
     return( invisible( NULL ) )
   }
 
-  out <- NULL
+  out <- list(
+    Description = NULL,
+    Scale = NULL,
+    Subscale = NULL,
+    Units = NULL
+  )
 
   #### 1.1.1) HADS ####
   if ( abbreviation %in% c( 'HADS' ) ) {
 
     ### Overall
-    out <- list(
+    out$Scale <- list(
       name = 'Hospital Anxiety Depression Scale',
       n_items = 14,
       range = c( NA, NA ),
       abbreviation = 'HADS',
-      cut_off = c( 8 ),
+      cut_off = NA,
       reference = paste0(
         'Zigmond, A. S., & Snaith, R. P. (1983). The hospital anxiety ',
         'and depression scale. Acta Psychiatrica Scandinavica, ',
@@ -135,25 +135,18 @@ known_scales <- function( abbreviation = NULL,
 
     ### Subscales
     if ( subscale != '' ) {
-      out <- NULL
 
       ### Anxiety
       if ( subscale %in% c( 'Anxiety', 'anxiety' ) ) {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the HADS anxiety subscale - measure ',
-            'of the degree of anxiety in a patient'
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the HADS anxiety subscale - measure ',
+          'of the degree of anxiety in a patient'
+        )
 
-        if ( units_of_measurement ) {
-          out <- "Summed scores"
-          return( out )
-        }
+        out$Units <- "Summed scores"
 
-        out <- list(
+        out$Subscale <- list(
           name = 'Anxiety',
           n_items = 7,
           range = c( 0, 21 ),
@@ -169,20 +162,14 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale == 'Depression' ) {
 
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the HADS anxiety subscale - measure ',
-            'of the degree of depression experienced by a patient'
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the HADS anxiety subscale - measure ',
+          'of the degree of depression experienced by a patient'
+        )
 
-        if ( units_of_measurement ) {
-          out <- "Summed scores"
-          return( out )
-        }
+        out$Units <- "Summed scores"
 
-        out <- list(
+        out$Subscale <- list(
           name = 'Depression',
           n_items = 7,
           range = c( 0, 21 ),
@@ -201,21 +188,15 @@ known_scales <- function( abbreviation = NULL,
   #### 1.1.2) CUDIT-R ####
   if ( abbreviation %in% c( 'CUDIT', 'CUDIT-R' ) ) {
 
-    if ( description ) {
-      out <- paste0(
-        'Scores for the CUDIT-R - measure ',
-        'of the degree of problematic cannabis use behavior ',
-        'for a subject'
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      'Scores for the CUDIT-R - measure ',
+      'of the degree of problematic cannabis use behavior ',
+      'for a subject'
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Units <- "Summed scores"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Cannabis Use Disorder Identification Test - Revised',
       n_items = 8,
       range = c( Min = 0, Max = 32 ),
@@ -239,21 +220,15 @@ known_scales <- function( abbreviation = NULL,
   #### 1.1.3) AUDIT ####
   if ( abbreviation == 'AUDIT' ) {
 
-    if ( description ) {
-      out <- paste0(
-        'Scores for the AUDIT - measure ',
-        'of the degree of problematic alcohol use behavior ',
-        'for a subject'
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      'Scores for the AUDIT - measure ',
+      'of the degree of problematic alcohol use behavior ',
+      'for a subject'
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Units <- "Summed scores"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Alcohol Use Disorders Identification Test',
       n_items = 10,
       range = c( Min = 0, Max = 40 ),
@@ -277,20 +252,14 @@ known_scales <- function( abbreviation = NULL,
   #### 1.1.4) AIS ####
   if ( abbreviation == 'AIS' ) {
 
-    if ( description ) {
-      out <- paste0(
-        'Scores for the AIS - measure of the degree of insomnia ',
-        'experienced by a subject'
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      'Scores for the AIS - measure of the degree of insomnia ',
+      'experienced by a subject'
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Units <- "Summed scores"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Athens Insomnia Scale',
       n_items = 8,
       range = c( Min = 0, Max = 24 ),
@@ -314,7 +283,7 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation %in% c( 'BPI', 'BPI-SF' ) ) {
 
     ### Overall
-    out <- list(
+    out$Scale <- list(
       name = 'Brief Pain Inventory (Short form)',
       n_items = 11,
       range = c( NA, NA ),
@@ -331,26 +300,19 @@ known_scales <- function( abbreviation = NULL,
 
     ### Overall
     if ( subscale != '' ) {
-      out <- NULL
 
       ### Severity
       if ( subscale == 'Severity' ) {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the BPI severity subscale - measure of the ',
-            'degree of pain severity experienced by a subject ',
-            'within the last 24 hours'
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the BPI severity subscale - measure of the ',
+          'degree of pain severity experienced by a subject ',
+          'within the last 24 hours'
+        )
 
-        if ( units_of_measurement ) {
-          out <- "Average over items"
-          return( out )
-        }
+        out$Units <- "Average over items"
 
-        out <- list(
+        out$Subscale <- list(
           name = 'Pain severity',
           n_items = 4,
           range = c( Min = 0, Max = 10 ),
@@ -366,21 +328,15 @@ known_scales <- function( abbreviation = NULL,
       ### Interference
       if ( subscale == 'Interference' ) {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the BPI interference subscale - measure of ',
-            'the extent pain for a participant interfered with daily ',
-            'functioning'
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the BPI interference subscale - measure of ',
+          'the extent pain for a participant interfered with daily ',
+          'functioning'
+        )
 
-        if ( units_of_measurement ) {
-          out <- "Average over items"
-          return( out )
-        }
+        out$Units <- "Average over items"
 
-        out <- list(
+        out$Subscale <- list(
           name = 'Pain interference',
           n_items = 7,
           range = c( Min = 0, Max = 10 ),
@@ -402,20 +358,14 @@ known_scales <- function( abbreviation = NULL,
   ### Summed scores
   if ( abbreviation == 'PCS' ) {
 
-    if ( description ) {
-      out <- paste0(
-        "Scores for the PCS - measure of the degree to which ",
-        "a subject engages in pain catastrophizing"
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      "Scores for the PCS - measure of the degree to which ",
+      "a subject engages in pain catastrophizing"
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Units <- "Summed scores"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Pain Catastrophizing Scale',
       n_items = 13,
       range = c( Min = 0, Max = 52 ),
@@ -438,18 +388,12 @@ known_scales <- function( abbreviation = NULL,
   ### Percentages
   if ( abbreviation == 'PCS (%)' ) {
 
-    if ( description ) {
-      out <- paste0(
-        "Percentages for the PCS - measure of the degree to ",
-        "which a subject engages in pain catastrophizing"
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      "Percentages for the PCS - measure of the degree to ",
+      "which a subject engages in pain catastrophizing"
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Percentages"
-      return( out )
-    }
+    out$Units <- "Percentages"
 
     out <- list(
       name = 'Pain Catastrophizing Scale',
@@ -474,21 +418,15 @@ known_scales <- function( abbreviation = NULL,
   #### 1.1.7) PSS ####
   if ( abbreviation == 'PSS' ) {
 
-    if ( description ) {
-      out <- paste0(
-        "Percentages for the PSS - measure of the degree to ",
-        "which subjects view situations in their life ",
-        "as stresslful"
-      )
-      return( out )
-    }
+    out$Description <- paste0(
+      "Percentages for the PSS - measure of the degree to ",
+      "which subjects view situations in their life ",
+      "as stresslful"
+    )
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Units <- "Summed scores"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Perceived Stress Scale',
       n_items = 10,
       range = c( Min = 0, Max = 40 ),
@@ -520,7 +458,7 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation == 'SF-12' ) {
 
     ### Overall
-    out <- list(
+    out$Scale <- list(
       name = 'Short-Form 12-item Health Survey',
       n_items = 12,
       range = c( NA, NA ),
@@ -539,29 +477,22 @@ known_scales <- function( abbreviation = NULL,
 
     ### Subscales
     if ( subscale != '' ) {
-      out <- NULL
 
       ### Mental
       if ( subscale == 'Mental' ) {
 
-        if ( description ) {
-          out <- paste0(
-            "Normed scores for the SF-12 mental subscale - ",
-            "measure of the degree of general mental health ",
-            "of the respondent"
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          "Normed scores for the SF-12 mental subscale - ",
+          "measure of the degree of general mental health ",
+          "of the respondent"
+        )
 
-        if ( units_of_measurement ) {
-          out <- paste0(
-            "Normed score with a population mean of 50 and ",
-            "standard deviation of 10"
-          )
-          return( out )
-        }
+        out$Units <- paste0(
+          "Normed score with a population mean of 50 and ",
+          "standard deviation of 10"
+        )
 
-        out <- list(
+        out$Subscale <- list(
           name = 'General mental health',
           n_items = 6,
           range = c( Min = 0, Max = 100 ),
@@ -578,24 +509,18 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale == 'Physical' ) {
 
 
-        if ( description ) {
-          out <- paste0(
-            "Normed scores for the SF-12 physical subscale - ",
-            "measure of the degree of general physical health of ",
-            "the respondent"
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          "Normed scores for the SF-12 physical subscale - ",
+          "measure of the degree of general physical health of ",
+          "the respondent"
+        )
 
-        if ( units_of_measurement ) {
-          out <- paste0(
-            "Normed score with a population mean of 50 and ",
-            "standard deviation of 10"
-          )
-          return( out )
-        }
+        out$Units <- paste0(
+          "Normed score with a population mean of 50 and ",
+          "standard deviation of 10"
+        )
 
-        out <- list(
+        out$Subscale <- list(
           name = 'General physical health',
           n_items = 6,
           range = c( Min = 0, Max = 100 ),
@@ -615,7 +540,7 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation == 'MCQ-SF' ) {
 
     ### Overall
-    out <- list(
+    out$Scale <- list(
       name = 'Marijuana Craving Questionnaire (Short form)',
       n_items = 12,
       range = c( NA, NA ),
@@ -641,25 +566,21 @@ known_scales <- function( abbreviation = NULL,
 
     #### Subscales
     if ( subscale != '' ) {
-      out <- NULL
 
       ### Compulsivity
       if (subscale == 'Compulsivity') {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the MCQ compulsivity subscale - measure ',
-            'of the inability to control marijuana use'
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- "Summed score"
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the MCQ compulsivity subscale - measure ',
+          'of the inability to control marijuana use'
+        )
 
-        out <- list(
+
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
           name = 'Compulsivity',
           n_items = 3,
           range = c( Min = 3, Max = 21 ),
@@ -675,21 +596,17 @@ known_scales <- function( abbreviation = NULL,
       ### Emotionality
       if (subscale == 'Emotionality') {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the MCQ emotionality subscale - measure ',
-            'of the degree participants use marijuana for relief ',
-            'from withdrawal or negative mood'
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- "Summed score"
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the MCQ emotionality subscale - measure ',
+          'of the degree participants use marijuana for relief ',
+          'from withdrawal or negative mood'
+        )
 
-        out <- list(
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
           name = 'Emotionality',
           n_items = 3,
           range = c( Min = 3, Max = 21 ),
@@ -705,21 +622,17 @@ known_scales <- function( abbreviation = NULL,
       ### Expectancy
       if (subscale == 'Expectancy') {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the MCQ expectancy subscale - measure ',
-            'of the degree of anticipation of positive outcomes ',
-            'from using marijuana'
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- "Summed score"
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the MCQ expectancy subscale - measure ',
+          'of the degree of anticipation of positive outcomes ',
+          'from using marijuana'
+        )
 
-        out <- list(
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
           name = 'Expectancy',
           n_items = 3,
           range = c( Min = 3, Max = 21 ),
@@ -735,21 +648,17 @@ known_scales <- function( abbreviation = NULL,
       ### Purposefulness
       if (subscale == 'Purposefulness') {
 
-        if ( description ) {
-          out <- paste0(
-            'Scores for the MCQ purposefulness subscale - measure ',
-            'of the degree of intention and planning to use ',
-            'marijuana for positive outcomes'
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- "Summed score"
-          return( out )
-        }
+        out$Description <- paste0(
+          'Scores for the MCQ purposefulness subscale - measure ',
+          'of the degree of intention and planning to use ',
+          'marijuana for positive outcomes'
+        )
 
-        out <- list(
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
           name = 'Purposefulness',
           n_items = 3,
           range = c( Min = 3, Max = 21 ),
@@ -769,19 +678,15 @@ known_scales <- function( abbreviation = NULL,
   #### 1.1.10) CHRT ####
   if ( abbreviation == 'CHRT' ) {
 
-    if ( description ) {
-      out <- paste0(
-        "Measure of risk based on suicidal ideation and intent"
-      )
-      return( out )
-    }
 
-    if ( units_of_measurement ) {
-      out <- "Summed scores"
-      return( out )
-    }
+    out$Description <- paste0(
+      "Measure of risk based on suicidal ideation and intent"
+    )
 
-    out <- list(
+
+    out$Units <- "Summed scores"
+
+    out$Scale <- list(
       name = 'Concise Health Risk Tracking scale',
       n_items = 12,
       range = c( Min = 12, Max = 60 ),
@@ -809,7 +714,7 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation == 'CGI' ) {
 
     ### Overall
-    out <- list(
+    out$Scale <- list(
       name = 'Clinical Global Impression scale',
       n_items = 2,
       range = c( NA, NA ),
@@ -827,29 +732,24 @@ known_scales <- function( abbreviation = NULL,
 
     ### Subscales
     if ( subscale != '' ) {
-      out <- NULL
 
       ### Severity
       if ( subscale == 'Severity' ) {
 
-        if ( description ) {
-          out <- paste0(
-            "Rating of illness severity at current time ",
-            "based on total clinical experience with particular ",
-            "population"
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- paste0(
-            "Likert scale from 1 = not at all ill to ",
-            "7 = among the most extremely ill patients"
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          "Rating of illness severity at current time ",
+          "based on total clinical experience with particular ",
+          "population"
+        )
 
-        out <- list(
+
+        out$Units <- paste0(
+          "Likert scale from 1 = not at all ill to ",
+          "7 = among the most extremely ill patients"
+        )
+
+        out$Subscale <- list(
           name = 'Severity of illness',
           n_items = 1,
           range = c( Min = 1, Max = 7 ),
@@ -866,24 +766,20 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale == 'Improvement' ) {
 
 
-        if ( description ) {
-          out <- paste0(
-            "Measure of total improvement irrespective of ",
-            "drug treatment compared to previous study ",
-            "visit for participant"
-          )
-          return( out )
-        }
 
-        if ( units_of_measurement ) {
-          out <- paste0(
-            "Likert scale from 1 = very much improved to ",
-            "7 = very much worse"
-          )
-          return( out )
-        }
+        out$Description <- paste0(
+          "Measure of total improvement irrespective of ",
+          "drug treatment compared to previous study ",
+          "visit for participant"
+        )
 
-        out <- list(
+
+        out$Units <- paste0(
+          "Likert scale from 1 = very much improved to ",
+          "7 = very much worse"
+        )
+
+        out$Subscale <- list(
           name = 'Global improvement',
           n_items = 1,
           range = c( Min = 1, Max = 7 ),
@@ -898,9 +794,14 @@ known_scales <- function( abbreviation = NULL,
 
   }
 
-  if ( is.null( out ) ) {
+  if ( is.null( out$Scale ) ) {
     stop( 'Scale or subscale not found' )
   } else {
+
+    if ( is.null( out$Subscale ) ) {
+      out$Subscale <- ''
+    }
+
     return( out )
   }
 }
@@ -1654,6 +1555,7 @@ validate_dictionary_meta_data <- function(x) {
 #' @param time_var ...
 #' @param study_var ...
 #' @param abbr_labels ...
+#' @param known_scale ...
 #' @param digits Number of digits to round to for summaries.
 #'
 #' @author Kevin Potter
@@ -1688,6 +1590,7 @@ add_dictionary_meta_data <- function(dtf,
                                      time_var = NULL,
                                      study_var = NULL,
                                      abbr_labels = list(),
+                                     known_scale = NULL,
                                      digits = 2) {
 
   # Check if column exists in data frame
@@ -1765,14 +1668,15 @@ add_dictionary_meta_data <- function(dtf,
     )
   }
 
-  # Details for inventory/questionnaires
-  if ( is.null( scale_details ) ) {
-    scale_details <- ''
-  }
+  # If information for a known scale is provided
+  if ( !is.null( known_scale ) ) {
+    description <- known_scale$Description
+    scale_details <- known_scale$Scale
+    subscale_details <- known_scale$Subscale
+    units_of_x <- known_scale$Units
 
-  # Details for a subscale of inventory/questionnaires
-  if ( is.null( subscale_details ) ) {
-    subscale_details <- ''
+    if( is.null( subscale_details ) )
+      subscale_details <- ''
   }
 
   # If specified, indicate which groups, time points,
@@ -1927,32 +1831,38 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
   message( paste0( '     ', x$Data_type ) )
   message( '  Description: ' )
 
-  dsc <- x$Description
-  each_word <- strsplit( dsc, split = ' ', fixed = TRUE )[[1]]
 
-  n_w <- length( each_word )
-  lns <- rep( '', n_w )
+  lines_of_text <- function( string ) {
 
-  cur_ln <- each_word
-  for ( i in 1:n_w ) {
+    each_word <- strsplit( string, split = ' ', fixed = TRUE )[[1]]
 
-    sel_w <- cumsum( nchar( cur_ln ) ) < 50
+    n_w <- length( each_word )
+    lns <- rep( '', n_w )
 
-    lns[i] <- paste0(
-      '     ',
-      paste( cur_ln[ sel_w ], collapse = ' ' )
-    )
-    if ( any( !sel_w ) ) {
-      cur_ln <- cur_ln[ !sel_w ]
-    } else {
-      break()
+    cur_ln <- each_word
+    for ( i in 1:n_w ) {
+
+      sel_w <- cumsum( nchar( cur_ln ) ) < 50
+
+      lns[i] <- paste0(
+        '     ',
+        paste( cur_ln[ sel_w ], collapse = ' ' )
+      )
+      if ( any( !sel_w ) ) {
+        cur_ln <- cur_ln[ !sel_w ]
+      } else {
+        break()
+      }
+
     }
+
+    lns <- lns[ lns != '' ]
+    lns <- paste0( paste( lns, collapse = '\n' ) )
+    message( lns )
 
   }
 
-  lns <- lns[ lns != '' ]
-  lns <- paste0( paste( lns, collapse = '\n' ) )
-  message( lns )
+  lines_of_text( x$Description )
 
   if ( x$REDCap_variables != '' ) {
     message( '  Original REDCap variable:' )
@@ -2028,9 +1938,38 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
     message( '  Scale:' )
 
     msg <- paste0(
-      x$Scale$Name, ' (',
-      x$Scale$Abbreviation, ')'
+      x$Scale$name, ' (',
+      x$Scale$abbreviation, ')'
     )
+    lines_of_text( msg )
+
+    if ( !is.list( x$Subscale ) ) {
+
+      msg <- paste0(
+        x$Scale$n_items, ' items (',
+        x$Scale$range[1],
+        ' to ',
+        x$Scale$range[2], ')'
+      )
+      lines_of_text( msg )
+
+    } else {
+
+      msg <- paste0(
+        'Subscale - ',
+        x$Subscale$name
+      )
+      lines_of_text( msg )
+
+      msg <- paste0(
+        x$Subscale$n_items, 'items (',
+        x$Subscale$range[1],
+        ' to ',
+        x$Subscale$range[2], ')'
+      )
+      lines_of_text( msg )
+
+    }
 
   }
 
@@ -2124,7 +2063,7 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
                       'Inventory', 'inventory',
                       'Questionnaire', 'questionnaire',
                       'Scale details', 'scale details'
-                      ) ) {
+    ) ) {
       return( x$Scale )
     }
 

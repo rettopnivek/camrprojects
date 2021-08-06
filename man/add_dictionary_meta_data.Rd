@@ -24,6 +24,7 @@ add_dictionary_meta_data(
   time_var = NULL,
   study_var = NULL,
   abbr_labels = list(),
+  known_scale = NULL,
   digits = 2
 )
 }
@@ -95,6 +96,8 @@ variable has been data-checked.}
 \item{study_var}{...}
 
 \item{abbr_labels}{...}
+
+\item{known_scale}{...}
 
 \item{digits}{Number of digits to round to for summaries.}
 
