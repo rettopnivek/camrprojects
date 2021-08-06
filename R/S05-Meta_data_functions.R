@@ -1305,6 +1305,9 @@ create_summary_for_x <- function( x_no_missing,
                                   type,
                                   digits ) {
 
+
+  n_obs <- length( missing_values )
+
   summary_of_x = ''
 
   if ( type == 'continuous' ) {
