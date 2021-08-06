@@ -1335,7 +1335,7 @@ create_summary_for_x <- function( x_no_missing,
     summary_of_x <- data.frame(
       Category = c( names(freq), 'Missing' ),
       Frequency = c( freq, sum( missing_values ) ),
-      Percentage = c( freq, sum( missing_values ) )/length(x),
+      Percentage = c( freq, sum( missing_values ) )/n_obs,
       stringsAsFactors = F
     )
 
