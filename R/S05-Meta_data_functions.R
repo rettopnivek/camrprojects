@@ -1641,13 +1641,16 @@ validate_dictionary_meta_data <- function(x) {
 #' @param type_labels ...
 #' @param codes_for_missing A list with the codes used to
 #'   indicate missing values (e.g., \code{NA} or \code{''}).
-#' @param group_var ...
-#' @param study_var ...
 #' @param units_of_x A character string detailing the units
 #'   of measurement for the variable (e.g., height in cm,
 #'   summed scores, likert-scale response, etc.).
 #' @param validated A character string, notes on whether the
 #'   variable has been data-checked.
+#' @param notes ...
+#' @param group_var ...
+#' @param time_var ...
+#' @param study_var ...
+#' @param abbr_labels ...
 #' @param digits Number of digits to round to for summaries.
 #'
 #' @author Kevin Potter
@@ -1710,7 +1713,7 @@ add_dictionary_meta_data <- function(dtf,
       variable_name_abbreviations(
         column_name,
         type = 'category',
-        custom = abbr_label$variable_category
+        custom = abbr_labels$variable_category
       )
 
   }
@@ -1722,7 +1725,7 @@ add_dictionary_meta_data <- function(dtf,
       variable_name_abbreviations(
         column_name,
         type = 'data type',
-        custom = abbr_label$data_type
+        custom = abbr_labels$data_type
       )
 
   }

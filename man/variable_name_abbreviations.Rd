@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 variable_name_abbreviations(
-  var_name = NULL,
+  var_name = "",
   type = NULL,
   custom = NULL,
   n = NA,

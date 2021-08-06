@@ -17,12 +17,13 @@ add_dictionary_meta_data(
   subscale_details = "",
   summary_of_x = "",
   codes_for_missing = list(NA, "", " ", as.Date("1970-01-01", format = "\%Y-\%m-\%d")),
-  group_var = NULL,
-  time_var = NULL,
-  study_var = NULL,
   units_of_x = "",
   validated = "",
   notes = "",
+  group_var = NULL,
+  time_var = NULL,
+  study_var = NULL,
+  abbr_labels = list(),
   digits = 2
 )
 }
@@ -78,16 +79,22 @@ on standardized formats for the input.}
 \item{codes_for_missing}{A list with the codes used to
 indicate missing values (e.g., \code{NA} or \code{''}).}
 
-\item{group_var}{...}
-
-\item{study_var}{...}
-
 \item{units_of_x}{A character string detailing the units
 of measurement for the variable (e.g., height in cm,
 summed scores, likert-scale response, etc.).}
 
 \item{validated}{A character string, notes on whether the
 variable has been data-checked.}
+
+\item{notes}{...}
+
+\item{group_var}{...}
+
+\item{time_var}{...}
+
+\item{study_var}{...}
+
+\item{abbr_labels}{...}
 
 \item{digits}{Number of digits to round to for summaries.}
 
