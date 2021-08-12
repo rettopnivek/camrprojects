@@ -48,6 +48,9 @@ integer, logical, character string, etc.). By default, the
 function infers the data type from the second 3-letter
 abbreviation contained in the column name.}
 
+\item{sub_category}{The label for an optional sub-category
+of abbreviation (e.g., time points for wide-form data).}
+
 \item{redcap_variables}{A character string, the variable
 name in the raw REDCap data from which the current
 variable was derived.}
@@ -72,9 +75,15 @@ on standardized formats for the input.}
 
 \item{summary_of_x}{A character string, either...
 \itemize{
-  \item 'continuous': ???;
-  \item 'categorical' ???;
-  \item 'range': ???.
+  \item \code{continuous}: The mean, standard
+    deviation, min, 16% quantile, 1st quartile,
+    median, 3rd quartile, 84% quantile, and max,
+    along with the frequency and percent missing;
+  \item \code{categorical}: The frequency and percent
+    for each category, along with frequency and
+    percent missing.
+  \item \code{range}: The min and max values, along
+    with frequency and percent missing.
 }}
 
 \item{codes_for_missing}{A list with the codes used to
@@ -100,10 +109,6 @@ variable has been data-checked.}
 \item{known_scale}{...}
 
 \item{digits}{Number of digits to round to for summaries.}
-
-\item{category_labels}{...}
-
-\item{type_labels}{...}
 }
 \value{
 An updated data frame where the specified column

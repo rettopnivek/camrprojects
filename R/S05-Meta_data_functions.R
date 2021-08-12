@@ -3,7 +3,7 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-08-05
+# Last updated 2021-08-06
 
 # Table of contents
 
@@ -29,10 +29,16 @@
 #'
 #' @return A list consisting of...
 #' \itemize{
-#'   \item \code{Description} ...
-#'   \item \code{Scale} ...
-#'   \item \code{Subscale} ...
-#'   \item \code{Units} ...
+#'   \item \code{Description} A brief description of the
+#'     scale/subscale and its purposek
+#'   \item \code{Scale} A list with the scale name, abbreviation,
+#'     number of items, lowest to highest possible score (if
+#'     applicable), clinical cut-offs (if applicable), and
+#'     APA-styled references for the scale development/interpretation;
+#'   \item \code{Subscale} A list with the subscale name,
+#'     number of items, lowest to highest possible score,
+#'     clinical cut-offs (if applicable).
+#'   \item \code{Units} The units of measurement.
 #' }
 #'
 #' @examples
@@ -859,6 +865,8 @@ scale_format <- function(name,
                          cut_off = NA,
                          reference = '',
                          interpretation = '',
+                         description = '',
+                         units_of_x = '',
                          subscale = FALSE ) {
 
   if ( length( range ) == 1 ) {
@@ -892,31 +900,65 @@ scale_format <- function(name,
 }
 
 
-#### 2) variable_name_abbreviations ####
-#' Title
+#### 2) column_abbreviations ####
+#' Abbreviations and Labels for Column Names
 #'
-#' Description.
+#' Function to match labels describing
+#' variable categories and data types to
+#' abbreviations contained within a column
+#' name.
 #'
-#' @param var_name ...
-#' @param type ...
-#' @param custom ...
-#' @param n ...
-#' @param separator ...
+#' @param column_name A standardized variable name
+#'   (i.e., 'AAA.BBB.Description' or
+#'   'AAA.BBB.CCC.Description').
+#' @param type The type of abbreviation whose
+#'   label is to be extracted.
+#' @param custom An optional matrix with two
+#'   columns, 'Abbr' and 'Label', for
+#'   custom abbreviations and labels,
+#'   respectively.
+#' @param n The number of rows to create when
+#'   generating a template for the matrix to
+#'   pass to the \code{custom} argument.
+#' @param separator The punctuation used
+#'   to separate abbreviations, typically
+#'   a period.
 #'
-#' @details
-#'
-#' @return Output.
+#' @return A character string. If only \code{n} is
+#'   provided, a matrix with \code{n} rows with
+#'   columns 'Abbr' and 'Label' to use as a
+#'   template for custom abbreviations/labels.
 #'
 #' @examples
-#' # Examples
+#' # List pre-defined abbreviations and labels
+#' column_abbreviations( type = 'category' )
+#' column_abbreviations( type = 'data type' )
+#'
+#' # Match abbreviation for variable categories
+#' column_abbreviations(
+#'   'IDS.CHR.Subject', type = 'category'
+#' )
+#'
+#' # Match abbreviation for data type
+#' column_abbreviations(
+#'   'IDS.CHR.Subject', type = 'data type'
+#' )
+#'
+#' # Create template for custom abbreviations
+#' # and labels
+#' M <- column_abbreviations( n = 3 )
+#' M[,1] <- c( 'BL', 'Y1', 'Y2' )
+#' M[,2] <- c( 'Baseline', 'Year 1', 'Year 2' )
+#' column_abbreviations( 'SMK.INT.BL.Quit_status', custom = M )
+#' column_abbreviations( 'SMK.INT.Y2.Quit_status', custom = M )
 #'
 #' @export
 
-variable_name_abbreviations <- function( var_name = '',
-                                         type = NULL,
-                                         custom = NULL,
-                                         n = NA,
-                                         separator = "." ) {
+column_abbreviations <- function( column_name = '',
+                                  type = NULL,
+                                  custom = NULL,
+                                  n = NA,
+                                  separator = "." ) {
 
   # Pre-defined abbreviations and
   # labels for variable categories
@@ -984,7 +1026,7 @@ variable_name_abbreviations <- function( var_name = '',
 
   # Create template for matrix with abbreviations and
   # labels
-  if ( var_name == '' & is.null( type ) & !is.na( n ) ) {
+  if ( column_name == '' & is.null( type ) & !is.na( n ) ) {
 
     out <- cbind(
       Abbr = rep( 'XXX', n ),
@@ -995,7 +1037,7 @@ variable_name_abbreviations <- function( var_name = '',
   }
 
   # Display pre-defined abbreviations and labels
-  if ( var_name == '' & !is.null( type ) ) {
+  if ( column_name == '' & !is.null( type ) ) {
 
     # Options for variable categories
     if ( type %in% list_of_types$category ) {
@@ -1031,11 +1073,11 @@ variable_name_abbreviations <- function( var_name = '',
 
   # Match a label to an abbreviation contained within a
   # variable name (for variable categories/data types)
-  if ( var_name != '' & !is.null( type ) ) {
+  if ( column_name != '' & !is.null( type ) ) {
 
     # Split variable name into different parts
     name_parts <- strsplit(
-      var_name,
+      column_name,
       split = separator,
       fixed = TRUE
     )[[1]]
@@ -1065,7 +1107,7 @@ variable_name_abbreviations <- function( var_name = '',
           warning( paste0(
             "Custom abbreviations and labels need to be given as ",
             "a matrix with columns 'Abbr' and 'Label'; ",
-            "the command 'variable_name_abbreviations(n=1)' ",
+            "the command 'column_abbreviations(n=1)' ",
             "will generate a template matrix"
           ) )
         }
@@ -1112,7 +1154,7 @@ variable_name_abbreviations <- function( var_name = '',
           warning( paste0(
             "Custom abbreviations and labels need to be given as ",
             "a matrix with columns 'Abbr' and 'Label'; ",
-            "the command 'variable_name_abbreviations(n=1)' ",
+            "the command 'column_abbreviations(n=1)' ",
             "will generate a template matrix"
           ) )
         }
@@ -1138,11 +1180,11 @@ variable_name_abbreviations <- function( var_name = '',
 
   # Custom abbreviations/labels are always the
   # third part of the variable name
-  if ( var_name != '' & is.null( type ) & !is.null( custom ) ) {
+  if ( column_name != '' & is.null( type ) & !is.null( custom ) ) {
 
     # Split variable name into different parts
     name_parts <- strsplit(
-      var_name,
+      column_name,
       split = separator,
       fixed = TRUE
     )[[1]]
@@ -1174,7 +1216,7 @@ variable_name_abbreviations <- function( var_name = '',
       warning( paste0(
         "Custom abbreviations and labels need to be given as ",
         "a matrix with columns 'Abbr' and 'Label'; ",
-        "the command 'variable_name_abbreviations(n=1)' ",
+        "the command 'column_abbreviations(n=1)' ",
         "will generate a template matrix"
       ) )
     }
@@ -1183,23 +1225,32 @@ variable_name_abbreviations <- function( var_name = '',
 
 }
 
-#### 3) Internal functions
-
+#### 3) Internal functions ####
 
 #### 1.2) create_summary_for_x ####
-# Title
+# Summaries for Continuous and Categorical Variables
 #
-# Description.
+# Computes a descriptive statistical summary for
+# continuous or categorical variables.
 #
-# @param 'x_no_missing' ...
-# @param 'missing_values' ...
-# @param 'type' ...
-# @param 'digits' ...
+# @param 'x_no_missing' A vector of values with
+#   missing cases removed.
+# @param 'missing_values' A logical vector for
+#   all cases marked TRUE when missing.
+# @param 'type' The type of summary to compute...
+#   'continuous' = The mean, standard deviation,
+#     min, 16% quantile, 1st quartile, median,
+#     3rd quartile, 84% quantile, and max, along
+#     with the total number of cases, and
+#     frequency and percent missing.
+#   'categorical' = The frequency and percent
+#     for each category, along with frequency
+#     and percent missing.
+#   'range' = The min and max values, along with
+#     frequency and percent missing.
+# @param 'digits' The number of digits to round to.
 #
-# @return Output.
-#
-# @examples
-# # Examples
+# @return A list.
 
 create_summary_for_x <- function( x_no_missing,
                                   missing_values,
@@ -1261,26 +1312,50 @@ create_summary_for_x <- function( x_no_missing,
 #### 4.1) new_dictionary_meta_data ####
 #' Constructor Function for Dictionary Meta-data Class
 #'
-#' Description.
+#' A function to create a list with the proper
+#' slots for the class \code{dictionary_meta_data}.
 #'
-#' @param Column_name ...
-#' @param Variable_category ...
-#' @param Data_type ...
-#' @param Description ...
-#' @param REDCap_variables ...
-#' @param Values_and_labels ...
-#' @param Scale ...
-#' @param Subscale ...
-#' @param Summary ...
-#' @param Units ...
-#' @param Codes_for_missing ...
+#' @param Column_name A standardized column name,
+#'   (e.g., 'AAA.BBB.Description' or
+#'   'AAA.BBB.CCC.Description', where 'AAA' is
+#'   an abbreviation for the variable category,
+#'   'BBB' is an abbreviation for the data type,
+#'   and 'CCC' is an optional abbreviation for
+#'   a sub-category).
+#' @param Variable_category The label associated with
+#'   the 3-letter abbreviation giving the overarching
+#'   category to which the column belongs.
+#' @param Data_type The label associated with the
+#'   3-letter abbreviation for the data type of
+#'   the column.
+#' @param Sub_category If specified, the label associated
+#'   with the optional abbreviation for any sub-categories.
+#' @param Description A brief description of what the
+#'   variable is.
+#' @param REDCap_variables If specified, a character vector
+#'   with the variable names from the raw data frame downloaded
+#'   from REDCap used to create the current column.
+#' @param Values_and_labels If specified, a named list
+#'   with two vectors, \code{Values} and \code{Labels},
+#'   giving the raw values and the corresponding
+#'   labels (e.g., for Likert-scale responses).
+#' @param Scale If specified, a list ..
+#' @param Subscale If specified, a list...
+#' @param Summary If specified, a list with a descriptive
+#'   statistical summary of the non-missing values for
+#'   the column.
+#' @param Units If specified, a character string describing
+#'   the units of measurement for the column.
+#' @param Codes_for_missing A list of the codes (e.g.,
+#'   \code{NA}, \code{''}, etc.) for missing values.
 #' @param Groups_collected_over ...
 #' @param Times_collected_over ...
 #' @param Studies_collected_over ...
-#' @param Validated ...
-#' @param Notes ...
-#'
-#' @details
+#' @param Validated A character string briefly describing
+#'   if and how the values in the column were validated
+#'   and data checked.
+#' @param Notes A character string with any additional
+#'   notes.
 #'
 #' @return A named list of class \code{dictionary_meta_data}.
 #'
@@ -1334,16 +1409,13 @@ new_dictionary_meta_data <- function( Column_name = '',
 #### 4.2) is.dictionary_meta_data ####
 #' Check if a Variable is of Class Dictionary Meta-data
 #'
-#' Description.
+#' Method to check if an R object is of class
+#' \code{dictionary_meta_data}.
 #'
-#' @param x ...
+#' @param x An R object to be checked.
 #'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
+#' @return A logical value, \code{TRUE} if \code{x}
+#' is of class \code{dictionary_meta_data}.
 #'
 #' @export
 
@@ -1354,16 +1426,14 @@ is.dictionary_meta_data <- function(x) {
 #### 4.3) validate_dictionary_meta_data ####
 #' Validate Contents for Dictionary Meta-data Class Variables
 #'
-#' Description.
+#' A function to check whether the content for
+#' R objects of class \code{dictionary_meta_data}
+#' have been correctly specified.
 #'
-#' @param x ...
+#' @param x An R object of class \code{dictionary_meta_data}.
 #'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
+#' @return If any content is misspecified for \code{x}
+#' returns an informative error message.
 #'
 #' @export
 
@@ -1517,6 +1587,8 @@ validate_dictionary_meta_data <- function(x) {
 #'   integer, logical, character string, etc.). By default, the
 #'   function infers the data type from the second 3-letter
 #'   abbreviation contained in the column name.
+#' @param sub_category The label for an optional sub-category
+#'   of abbreviation (e.g., time points for wide-form data).
 #' @param redcap_variables A character string, the variable
 #'   name in the raw REDCap data from which the current
 #'   variable was derived.
@@ -1537,12 +1609,16 @@ validate_dictionary_meta_data <- function(x) {
 #'   on standardized formats for the input.
 #' @param summary_of_x A character string, either...
 #'   \itemize{
-#'     \item 'continuous': ???;
-#'     \item 'categorical' ???;
-#'     \item 'range': ???.
+#'     \item \code{continuous}: The mean, standard
+#'       deviation, min, 16% quantile, 1st quartile,
+#'       median, 3rd quartile, 84% quantile, and max,
+#'       along with the frequency and percent missing;
+#'     \item \code{categorical}: The frequency and percent
+#'       for each category, along with frequency and
+#'       percent missing.
+#'     \item \code{range}: The min and max values, along
+#'       with frequency and percent missing.
 #'   }
-#' @param category_labels ...
-#' @param type_labels ...
 #' @param codes_for_missing A list with the codes used to
 #'   indicate missing values (e.g., \code{NA} or \code{''}).
 #' @param units_of_x A character string detailing the units
@@ -1616,7 +1692,7 @@ add_dictionary_meta_data <- function(dtf,
   if ( is.null( variable_category ) ) {
 
     variable_category <-
-      variable_name_abbreviations(
+      column_abbreviations(
         column_name,
         type = 'category',
         custom = abbr_labels$variable_category
@@ -1628,7 +1704,7 @@ add_dictionary_meta_data <- function(dtf,
   if ( is.null( data_type ) ) {
 
     data_type <-
-      variable_name_abbreviations(
+      column_abbreviations(
         column_name,
         type = 'data type',
         custom = abbr_labels$data_type
@@ -1640,7 +1716,7 @@ add_dictionary_meta_data <- function(dtf,
 
     if ( !is.null( abbr_labels$sub_category ) ) {
       data_type <-
-        variable_name_abbreviations(
+        column_abbreviations(
           column_name,
           custom = abbr_labels$sub_category
         )
@@ -1650,7 +1726,7 @@ add_dictionary_meta_data <- function(dtf,
         "passing in to 'abbr_labels' a named list ",
         "with a slot 'sub_category' containing a ",
         "matrix of abbreviations and corresponding ",
-        "labels (see 'variable_name_abbreviations')."
+        "labels (see 'column_abbreviations')."
       ) )
       sub_category <- ''
     }
@@ -1766,9 +1842,9 @@ add_dictionary_meta_data <- function(dtf,
 #'   possible) in \code{x} from which to extract
 #'   the attribute of class \code{dictionary_meta_data}.
 #'
-#' @return Either the extracted list with dictionary
-#' meta-data of class \code{dictionary_meta_data} or
-#' a logical vector indicating which columns do or
+#' @return Either the extracted list of class
+#' \code{dictionary_meta_data} or a logical
+#' vector indicating which columns do or
 #' do not have dictionary meta-data.
 #'
 #' @export
@@ -2006,7 +2082,7 @@ summary.dictionary_meta_data <- function( x ) {
 }
 
 #### 4.8) subset.dictionary_meta_data ####
-#' Title
+#' Extract Components From Dictionary Meta-data
 #'
 #' Description.
 #'
@@ -2038,6 +2114,12 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
                       'Type', 'type',
                       'Data', 'data' ) ) {
       return( x$Data_type )
+    }
+
+    if ( type %in% c( 'Sub-category', 'sub-category',
+                      'Sub category', 'sub category',
+                      'Sub', 'sub' ) ) {
+      return( x$Sub_category )
     }
 
     if ( type %in% c( 'Description', 'description',
@@ -2075,8 +2157,7 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
 
     if ( type %in% c( 'Summary', 'summary',
                       'Range', 'range',
-                      'Statistics', 'statistics',
-                      '8' ) ) {
+                      'Statistics', 'statistics' ) ) {
       return( x$Summary )
     }
 

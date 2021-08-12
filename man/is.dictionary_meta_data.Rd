@@ -7,18 +7,13 @@
 is.dictionary_meta_data(x)
 }
 \arguments{
-\item{x}{...}
+\item{x}{An R object to be checked.}
 }
 \value{
-Output.
+A logical value, \code{TRUE} if \code{x}
+is of class \code{dictionary_meta_data}.
 }
 \description{
-Description.
-}
-\details{
-
-}
-\examples{
-# Examples
-
+Method to check if an R object is of class
+\code{dictionary_meta_data}.
 }

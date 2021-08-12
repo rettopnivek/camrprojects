@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Meta_data_functions.R
 \name{subset.dictionary_meta_data}
 \alias{subset.dictionary_meta_data}
-\title{Title}
+\title{Extract Components From Dictionary Meta-data}
 \usage{
 \method{subset}{dictionary_meta_data}(x, type = "category")
 }

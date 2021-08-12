@@ -7,18 +7,14 @@
 validate_dictionary_meta_data(x)
 }
 \arguments{
-\item{x}{...}
+\item{x}{An R object of class \code{dictionary_meta_data}.}
 }
 \value{
-Output.
+If any content is misspecified for \code{x}
+returns an informative error message.
 }
 \description{
-Description.
-}
-\details{
-
-}
-\examples{
-# Examples
-
+A function to check whether the content for
+R objects of class \code{dictionary_meta_data}
+have been correctly specified.
 }

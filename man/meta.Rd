@@ -14,9 +14,9 @@ possible) in \code{x} from which to extract
 the attribute of class \code{dictionary_meta_data}.}
 }
 \value{
-Either the extracted list with dictionary
-meta-data of class \code{dictionary_meta_data} or
-a logical vector indicating which columns do or
+Either the extracted list of class
+\code{dictionary_meta_data} or a logical
+vector indicating which columns do or
 do not have dictionary meta-data.
 }
 \description{

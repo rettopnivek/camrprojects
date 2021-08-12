@@ -12,6 +12,8 @@ scale_format(
   cut_off = NA,
   reference = "",
   interpretation = "",
+  description = "",
+  units_of_x = "",
   subscale = FALSE
 )
 }

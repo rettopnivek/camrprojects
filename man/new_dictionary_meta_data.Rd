@@ -25,27 +25,50 @@ new_dictionary_meta_data(
 )
 }
 \arguments{
-\item{Column_name}{...}
+\item{Column_name}{A standardized column name,
+(e.g., 'AAA.BBB.Description' or
+'AAA.BBB.CCC.Description', where 'AAA' is
+an abbreviation for the variable category,
+'BBB' is an abbreviation for the data type,
+and 'CCC' is an optional abbreviation for
+a sub-category).}
 
-\item{Variable_category}{...}
+\item{Variable_category}{The label associated with
+the 3-letter abbreviation giving the overarching
+category to which the column belongs.}
 
-\item{Data_type}{...}
+\item{Data_type}{The label associated with the
+3-letter abbreviation for the data type of
+the column.}
 
-\item{Description}{...}
+\item{Sub_category}{If specified, the label associated
+with the optional abbreviation for any sub-categories.}
 
-\item{REDCap_variables}{...}
+\item{Description}{A brief description of what the
+variable is.}
 
-\item{Values_and_labels}{...}
+\item{REDCap_variables}{If specified, a character vector
+with the variable names from the raw data frame downloaded
+from REDCap used to create the current column.}
 
-\item{Scale}{...}
+\item{Values_and_labels}{If specified, a named list
+with two vectors, \code{Values} and \code{Labels},
+giving the raw values and the corresponding
+labels (e.g., for Likert-scale responses).}
 
-\item{Subscale}{...}
+\item{Scale}{If specified, a list ..}
 
-\item{Summary}{...}
+\item{Subscale}{If specified, a list...}
 
-\item{Units}{...}
+\item{Summary}{If specified, a list with a descriptive
+statistical summary of the non-missing values for
+the column.}
 
-\item{Codes_for_missing}{...}
+\item{Units}{If specified, a character string describing
+the units of measurement for the column.}
+
+\item{Codes_for_missing}{A list of the codes (e.g.,
+\code{NA}, \code{''}, etc.) for missing values.}
 
 \item{Groups_collected_over}{...}
 
@@ -53,16 +76,17 @@ new_dictionary_meta_data(
 
 \item{Studies_collected_over}{...}
 
-\item{Validated}{...}
+\item{Validated}{A character string briefly describing
+if and how the values in the column were validated
+and data checked.}
 
-\item{Notes}{...}
+\item{Notes}{A character string with any additional
+notes.}
 }
 \value{
 A named list of class \code{dictionary_meta_data}.
 }
 \description{
-Description.
-}
-\details{
-
+A function to create a list with the proper
+slots for the class \code{dictionary_meta_data}.
 }
