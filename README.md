@@ -8,6 +8,8 @@ An R package with portable functions used in R projects for the Center for Addic
 
 The program R ( version >= 3.0 )
 
+The R package 'fs'
+
 The R package 'stringr'
 
 The R package 'jsonlite'

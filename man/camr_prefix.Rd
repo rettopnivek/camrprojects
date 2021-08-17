@@ -6,6 +6,10 @@
 \usage{
 camr_prefix(prefix = getwd())
 }
+\arguments{
+\item{prefix}{Optional. A path to the desired data directory. Defaults to the
+working directory.}
+}
 \description{
 Set a directory prefix for data files.
 }

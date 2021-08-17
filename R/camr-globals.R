@@ -18,7 +18,20 @@ camr_cache <- function () {
   if (file_exists('.cache'))
     camr <<- readRDS('.cache')
   else
-    camr <<- list()
+    camr <<- list(origin=getwd())
+}
+
+#' Reset the global cache object. Delete the `.cache` file.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_reset <- function () {
+  if (file_exists('.cache'))
+    file_delete('.cache')
+  rm(camr, pos=1)
+  camr_cache()
 }
 
 #' Save the global cache object to disk.
@@ -30,7 +43,7 @@ camr_cache <- function () {
 #' @export
 #' @md
 camr_save <- function () {
-  saveRDS(camr, file='.cache')
+  saveRDS(camr, file=path(camr$origin, '.cache'))
 }
 
 #' Construct and check the existence of paths given the prefix directory.
@@ -61,7 +74,7 @@ camr_paths <- function () {
 
 #' Set a directory prefix for data files.
 #'
-#' @prefix Optional. A path to the desired data directory. Defaults to the
+#' @param prefix Optional. A path to the desired data directory. Defaults to the
 #' working directory.
 #'
 #' @author Michael Pascale
@@ -69,6 +82,16 @@ camr_paths <- function () {
 #' @export
 #' @md
 camr_prefix <- function (prefix=getwd()) {
+
+  if (!is_absolute_path(prefix) && getwd() != camr$origin)
+    warning('Relative prefix set outside of the camr origin.')
+
+  prefix <- path_real(prefix)
+
+  if (prefix == getwd() && prefix != camr$origin)
+    warning('Prefix set implicitly outside of the camr origin.')
+
+
   camr$prefix <<- prefix
   camr_save()
 }
@@ -87,3 +110,39 @@ camr_set <- function (name, value) {
   camr[name] <<- value
   camr_save()
 }
+
+#' Push a path to the directory stack.
+#'
+#' @param path Optional. The path to save. Defaults to the working directory.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_pushd <- function (path = getwd()) {
+  path = path_real(path)
+  if (dir_exists(path)) {
+    camr$stack <<- c(path, camr$stack)
+    camr_save()
+  } else {
+    warning('Path does not exist and so has not been added to the stack.')
+  }
+}
+
+#' Pop the last path from the directory stack and switch into it.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_popd <- function () {
+  if (length(camr$stack)) {
+    setwd(camr$stack[1])
+    camr$stack <<- camr$stack[-1]
+    camr_save()
+  } else {
+    warning('The directory stack is empty.')
+  }
+}
+
+
