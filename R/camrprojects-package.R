@@ -9,7 +9,7 @@
 # Please email me directly if you
 #   have any questions or comments
 # Last updated:
-#   2021-08-05
+#   2021-08-15
 
 # Package development
 # library( devtools )

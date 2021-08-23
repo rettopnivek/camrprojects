@@ -1,6 +1,5 @@
 # REDCap and API tools
 # Written by...
-#   Kevin Potter
 #   William Schmitt
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
@@ -15,7 +14,6 @@
 #   2.1) validate_var_name
 #   2.2) rename_redcap_vars
 # 3) pull_git_version
-# 4) source_scripts
 
 #### 1) Functions to read from REDCap ####
 
@@ -590,7 +588,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
 #' @return A character string giving the version number, in the
 #'   format of MAJOR.MINOR.PATCH.
 #'
-#' @author Willam Schmitt
+#' @author William Schmitt
 #'
 #' @export
 
@@ -632,50 +630,4 @@ pull_git_version <- function() {
   setwd( cur_dir )
 
   return( out )
-}
-
-#### 4) source_scripts ####
-
-#' Source in Multiple Scripts in a Folder
-#'
-#' A convenience function that loops through
-#' and sources files stored in a folder
-#' located in the current working directory
-#' (typically 'R').
-#'
-#' @param files_to_include A vector of either...
-#'   \itemize{
-#'     \item Numeric indices denoting which files
-#'       to include;
-#'     \item A character vector with the full file names
-#'       for the files to include.
-#'   }
-#' @param path The folder name with the scripts to source.
-#'
-#' @author Kevin Potter
-#'
-#' @export
-
-source_scripts = function( files_to_include = NULL,
-                           path = 'R' ) {
-
-  # Folders to load
-  all_files <- dir(
-    path = path
-  )
-  if ( !is.null( files_to_include ) ) {
-    if ( is.numeric( files_to_include ) ) {
-      files_to_source <- all_files[ files_to_include ]
-    }
-    if ( is.character( files_to_include ) ) {
-      files_to_source <- all_files[ all_files %in% files_to_include ]
-    }
-  } else {
-    files_to_source <- all_files
-  }
-
-  sapply( 1:length( files_to_source ), function(i) {
-    source( paste0( path, "/", files_to_source[i] ) )
-  } )
-
 }

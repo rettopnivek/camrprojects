@@ -3,13 +3,14 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-08-06
+# Last updated 2021-08-17
 
 # Table of contents
 
 ### TO DO ###
 # - Finish function documentation
 # - Add more scales to 'known_scales'
+# - Add more checks to 'validate_dictionary_meta_data'
 
 #### 1) Scale and subscale functions ####
 
@@ -30,7 +31,7 @@
 #' @return A list consisting of...
 #' \itemize{
 #'   \item \code{Description} A brief description of the
-#'     scale/subscale and its purposek
+#'     scale/subscale and its purpose
 #'   \item \code{Scale} A list with the scale name, abbreviation,
 #'     number of items, lowest to highest possible score (if
 #'     applicable), clinical cut-offs (if applicable), and
@@ -909,8 +910,8 @@ scale_format <- function(name,
 #' name.
 #'
 #' @param column_name A standardized variable name
-#'   (i.e., 'AAA.BBB.Description' or
-#'   'AAA.BBB.CCC.Description').
+#'   (i.e., 'GGG.TTT.Var_name' or
+#'   'GGG.TTT.Optional.Var_name').
 #' @param type The type of abbreviation whose
 #'   label is to be extracted.
 #' @param custom An optional matrix with two
@@ -1316,15 +1317,15 @@ create_summary_for_x <- function( x_no_missing,
 #' slots for the class \code{dictionary_meta_data}.
 #'
 #' @param Column_name A standardized column name,
-#'   (e.g., 'AAA.BBB.Description' or
-#'   'AAA.BBB.CCC.Description', where 'AAA' is
-#'   an abbreviation for the variable category,
-#'   'BBB' is an abbreviation for the data type,
-#'   and 'CCC' is an optional abbreviation for
-#'   a sub-category).
+#'   (e.g., 'GGG.TTT.Var_name' or
+#'   'GGG.TTT.Optional.Var_name', where 'GGG' is
+#'   an abbreviation for the overarching group for a
+#'   variable, 'TTT' is an abbreviation for the data type,
+#'   and 'Optional' can (if specified) refer to
+#'   abbreviations for a sub-category).
 #' @param Variable_category The label associated with
 #'   the 3-letter abbreviation giving the overarching
-#'   category to which the column belongs.
+#'   variable group to which the column belongs.
 #' @param Data_type The label associated with the
 #'   3-letter abbreviation for the data type of
 #'   the column.
@@ -1565,12 +1566,16 @@ validate_dictionary_meta_data <- function(x) {
 #' that can be then used to create a data dictionary.
 #' Columns are assumed to be named according to a
 #' standardized scheme, typically in the style
-#' 'AAA.BBB.Description', where 'AAA' is a 3-letter
-#' abbreviation giving the overarching category for
-#' a variable (e.g., 'Identifiers', 'Session details', etc.),
-#' 'BBB' is a 3-letter abbreviation for the type of data
-#' (e.g., 'Integer', 'Character string', etc.), and
-#' 'Description' is a human-readable label
+#' 'GGG.TTT.Var_name' or 'GGG.TTT.Optional.Var_name',
+#' where 'GGG' is a 3-letter abbreviation giving the
+#' overarching group for a variable
+#' (e.g., 'Identifiers', 'Session details', etc.),
+#' 'TTT' is a 3-letter abbreviation for the type of data
+#' (e.g., 'Integer', 'Character string', etc.),
+#' 'Optional' is an optional sub-category (e.g.,
+#' indicators for time points like 'BL' for baseline
+#' and 'Y1' or 'Y2' or subsequent years), and
+#' 'Var_name' is a human-readable label
 #' (e.g., 'Treatment_groups', 'Session_dates', etc.).
 #'
 #' @param dtf A data frame.
@@ -1626,12 +1631,27 @@ validate_dictionary_meta_data <- function(x) {
 #'   summed scores, likert-scale response, etc.).
 #' @param validated A character string, notes on whether the
 #'   variable has been data-checked.
-#' @param notes ...
-#' @param group_var ...
-#' @param time_var ...
-#' @param study_var ...
-#' @param abbr_labels ...
-#' @param known_scale ...
+#' @param notes An character string, a free text field for
+#'   any additional notes regarding the variable.
+#' @param group_var An optional character string giving
+#'   the column in \code{dtf} containing the group labels
+#'   (e.g., labels for intervention versus control groups).
+#' @param time_var An optional character string giving the
+#'   the column in \code{dtf} containing the different
+#'   time points (e.g., baseline versus follow-up time points).
+#' @param study_var An optional character string giving
+#'   the column in \code{dtf} containing the study labels
+#'   (e.g., labels for pilot versus active studies).
+#' @param abbr_labels An optional named list (either
+#'   \code{variable_category}, \code{date_type}, or
+#'   \code{sub_category}) containing the matrix to
+#'   pass to the \code{custom} argument for the
+#'   \code{\link{column_abbreviations}} function.
+#' @param known_scale An optional argument to pass
+#'   along output from the \code{\link{known_scales}}
+#'   function, which can be used in lieu of the
+#'   \code{scale_details} and \code{subscale_details}
+#'   arguments.
 #' @param digits Number of digits to round to for summaries.
 #'
 #' @author Kevin Potter
@@ -1883,15 +1903,21 @@ meta <- function( x = NULL, column = '' ) {
 }
 
 #### 4.6) print.dictionary_meta_data ####
-#' Title
+#' Display Dictionary Meta-data Information
 #'
-#' Description.
+#' A print method for the \code{dictionary_meta_data}
+#' class, printing to the console key information
+#' contained within the dictionary meta-data fields.
 #'
-#' @param x ...
+#' @param x An R object of class \code{dictionary_meta_data}.
 #'
-#' @details
-#'
-#' @return Output.
+#' @return The method prints to console, at a minimum, the
+#' the variable's overarching group, data type, and
+#' associated description. Additional information may include
+#' the original REDCap variable used to create the current
+#' variable, the unit of measurement, a brief statistical
+#' summary when appropriate, and details for scales,
+#' inventory, or questionnaire measures.
 #'
 #' @examples
 #' # Examples
@@ -2038,7 +2064,7 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
       lines_of_text( msg )
 
       msg <- paste0(
-        x$Subscale$n_items, 'items (',
+        x$Subscale$n_items, ' items (',
         x$Subscale$range[1],
         ' to ',
         x$Subscale$range[2], ')'
@@ -2057,7 +2083,7 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 }
 
 #### 4.7) summary.dictionary_meta_data ####
-#' Title
+#' Extract Statistical Summaries From Dictionary Meta-data
 #'
 #' Description.
 #'
@@ -2175,21 +2201,9 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
   }
 }
 
-#### 10) transfer_meta ####
-
-# transfer_meta <- function() {}
-
-#### 11) update_meta_data ####
+#### 4.9) update_meta_data ####
 
 # update_meta_data <- function() {}
-
-#### 12) create_data_dictionary ####
-
-# create_data_dictionary <- function() {}
-
-#### 13) meta_data_template ####
-
-
 
 
 
