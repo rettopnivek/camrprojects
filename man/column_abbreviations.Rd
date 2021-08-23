@@ -14,8 +14,8 @@ column_abbreviations(
 }
 \arguments{
 \item{column_name}{A standardized variable name
-(i.e., 'AAA.BBB.Description' or
-'AAA.BBB.CCC.Description').}
+(i.e., 'GGG.TTT.Var_name' or
+'GGG.TTT.Optional.Var_name').}
 
 \item{type}{The type of abbreviation whose
 label is to be extracted.}

@@ -2,21 +2,26 @@
 % Please edit documentation in R/S05-Meta_data_functions.R
 \name{print.dictionary_meta_data}
 \alias{print.dictionary_meta_data}
-\title{Title}
+\title{Display Dictionary Meta-data Information}
 \usage{
 \method{print}{dictionary_meta_data}(x, digits = 2)
 }
 \arguments{
-\item{x}{...}
+\item{x}{An R object of class \code{dictionary_meta_data}.}
 }
 \value{
-Output.
+The method prints to console, at a minimum, the
+the variable's overarching group, data type, and
+associated description. Additional information may include
+the original REDCap variable used to create the current
+variable, the unit of measurement, a brief statistical
+summary when appropriate, and details for scales,
+inventory, or questionnaire measures.
 }
 \description{
-Description.
-}
-\details{
-
+A print method for the \code{dictionary_meta_data}
+class, printing to the console key information
+contained within the dictionary meta-data fields.
 }
 \examples{
 # Examples

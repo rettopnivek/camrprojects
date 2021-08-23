@@ -26,16 +26,16 @@ new_dictionary_meta_data(
 }
 \arguments{
 \item{Column_name}{A standardized column name,
-(e.g., 'AAA.BBB.Description' or
-'AAA.BBB.CCC.Description', where 'AAA' is
-an abbreviation for the variable category,
-'BBB' is an abbreviation for the data type,
-and 'CCC' is an optional abbreviation for
-a sub-category).}
+(e.g., 'GGG.TTT.Var_name' or
+'GGG.TTT.Optional.Var_name', where 'GGG' is
+an abbreviation for the overarching group for a
+variable, 'TTT' is an abbreviation for the data type,
+and 'Optional' can (if specified) refer to
+abbreviations for a sub-category).}
 
 \item{Variable_category}{The label associated with
 the 3-letter abbreviation giving the overarching
-category to which the column belongs.}
+variable group to which the column belongs.}
 
 \item{Data_type}{The label associated with the
 3-letter abbreviation for the data type of

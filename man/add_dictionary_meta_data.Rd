@@ -96,17 +96,32 @@ summed scores, likert-scale response, etc.).}
 \item{validated}{A character string, notes on whether the
 variable has been data-checked.}
 
-\item{notes}{...}
+\item{notes}{An character string, a free text field for
+any additional notes regarding the variable.}
 
-\item{group_var}{...}
+\item{group_var}{An optional character string giving
+the column in \code{dtf} containing the group labels
+(e.g., labels for intervention versus control groups).}
 
-\item{time_var}{...}
+\item{time_var}{An optional character string giving the
+the column in \code{dtf} containing the different
+time points (e.g., baseline versus follow-up time points).}
 
-\item{study_var}{...}
+\item{study_var}{An optional character string giving
+the column in \code{dtf} containing the study labels
+(e.g., labels for pilot versus active studies).}
 
-\item{abbr_labels}{...}
+\item{abbr_labels}{An optional named list (either
+\code{variable_category}, \code{date_type}, or
+\code{sub_category}) containing the matrix to
+pass to the \code{custom} argument for the
+\code{\link{column_abbreviations}} function.}
 
-\item{known_scale}{...}
+\item{known_scale}{An optional argument to pass
+along output from the \code{\link{known_scales}}
+function, which can be used in lieu of the
+\code{scale_details} and \code{subscale_details}
+arguments.}
 
 \item{digits}{Number of digits to round to for summaries.}
 }
@@ -121,12 +136,16 @@ with a standardized list of details on the variable
 that can be then used to create a data dictionary.
 Columns are assumed to be named according to a
 standardized scheme, typically in the style
-'AAA.BBB.Description', where 'AAA' is a 3-letter
-abbreviation giving the overarching category for
-a variable (e.g., 'Identifiers', 'Session details', etc.),
-'BBB' is a 3-letter abbreviation for the type of data
-(e.g., 'Integer', 'Character string', etc.), and
-'Description' is a human-readable label
+'GGG.TTT.Var_name' or 'GGG.TTT.Optional.Var_name',
+where 'GGG' is a 3-letter abbreviation giving the
+overarching group for a variable
+(e.g., 'Identifiers', 'Session details', etc.),
+'TTT' is a 3-letter abbreviation for the type of data
+(e.g., 'Integer', 'Character string', etc.),
+'Optional' is an optional sub-category (e.g.,
+indicators for time points like 'BL' for baseline
+and 'Y1' or 'Y2' or subsequent years), and
+'Var_name' is a human-readable label
 (e.g., 'Treatment_groups', 'Session_dates', etc.).
 }
 \author{

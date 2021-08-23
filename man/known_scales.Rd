@@ -18,7 +18,7 @@ output.}
 A list consisting of...
 \itemize{
   \item \code{Description} A brief description of the
-    scale/subscale and its purposek
+    scale/subscale and its purpose
   \item \code{Scale} A list with the scale name, abbreviation,
     number of items, lowest to highest possible score (if
     applicable), clinical cut-offs (if applicable), and

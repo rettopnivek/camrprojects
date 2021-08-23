@@ -5,18 +5,19 @@
 # email: kevin.w.potter@gmail.com
 # Please email me directly if you
 # have any questions or comments
-# Last updated 2021-08-15
+# Last updated 2021-08-23
 
 # Table of contents
 # 1) load_package
-# 2) Functions for file names
+# 2) Functions for files
 #   2.1) match_to_files
 #   2.2) create_standardized_filename
+#   2.3) source_scripts
+#   2.4) file_paths
 # 3) extract_unique_value
 # 4) clmn
 # 5) values_labels
 # 6) check_for_missing
-# 7) source_scripts
 
 #### 1) load_package ####
 #' Installs and Loads an R Package
@@ -365,6 +366,163 @@ create_standardized_filename <- function(description,
   )
 
   return(filename)
+}
+
+#### 2.3) source_scripts ####
+#' Source in Multiple R Scripts in a Folder
+#'
+#' A convenience function that loops through
+#' and reads in code in .R files stored in a
+#' folder located in the current working directory.
+#'
+#' @param files_to_include A vector of either...
+#'   \itemize{
+#'     \item Numeric indices denoting which files
+#'       to include;
+#'     \item A character string matching the initial
+#'        set of letters across all relevant files (e.g., if
+#'        all scripts of interest start with the letter 'S');
+#'     \item A character vector with the full file names
+#'       for the files to include.
+#'   }
+#' @param path The folder name with the scripts to source.
+#'
+#' @author Kevin Potter
+#'
+#' @export
+
+source_scripts = function( files_to_include = NULL,
+                           path = 'R' ) {
+
+  # Folders to load
+  all_files <- dir(
+    path = path
+  )
+
+  # Identify R scripts
+
+  f <- function( x ) {
+    grepl( x, all_files, fixed = T )
+  }
+  # Files must have extension .R
+  r_files <-
+    ( f( '.R' ) | f( '.r' ) ) &
+    !( f( '.RData' ) | f( '.rdata' ) |
+         f( '.Rmd' ) | f( '.rmd' ) |
+         f( '.rda' )
+    )
+
+  # Isolate .R files
+  if ( any( r_files ) ) {
+    all_files <- all_files[ r_files ]
+  } else {
+    stop( 'No .R files found' )
+  }
+
+  # Check if subset of files should be included
+  if ( !is.null( files_to_include ) ) {
+
+    # If numeric indices were provided
+    if ( is.numeric( files_to_include ) ) {
+      files_to_source <- all_files[ files_to_include ]
+    }
+
+    # If a character vector was provided
+    if ( is.character( files_to_include ) ) {
+
+      # If a single character string with no '.R' extension
+      # was provided
+      if ( length( files_to_include ) == 1 &
+           !any( grepl( '.R', files_to_include, fixed = T ) ) ) {
+
+        n_letters <- nchar( files_to_include )
+
+        to_check <- substr( all_files, start = 1, stop = n_letters )
+
+        files_to_source <- all_files[
+          files_to_include %in% to_check
+        ]
+
+      } else {
+        # Exact matching to file names
+        files_to_source <- all_files[ all_files %in% files_to_include ]
+      }
+
+    }
+  } else {
+    # Otherwise take all files in folder
+    files_to_source <- all_files
+  }
+
+  # Source in all specified R scripts
+  if ( length( files_to_source ) > 0 ) {
+    sapply( 1:length( files_to_source ), function(i) {
+      source( paste0( path, "/", files_to_source[i] ) )
+    } )
+  } else {
+    stop( 'No files found matching given criteria' )
+  }
+
+}
+
+#### 2.4) file_paths ####
+#' Returns File/Folder Paths
+#'
+#' Returns an absolute file or folder path.
+#' Folder paths can be extracted from a
+#' pre-specified environmental variable.
+#'
+#' @param file_name A character string, a
+#'   partial match to the file of interest.
+#' @param env_var A character string, the name for
+#'   the environment variable.
+#' @param path A character string, a relative or
+#'   absolute path to a folder.
+#' @param latest Logical; if \code{TRUE} returns only
+#'   the latest version of a file whose name contains
+#'   a date.
+#'
+#' @return A character string.
+#'
+#' @export
+
+file_paths <- function( file_name = NULL,
+                        env_var = NULL,
+                        path = NULL,
+                        latest = TRUE ) {
+
+  if ( !is.null( env_var ) ) {
+    path = Sys.getenv( env_var )
+    if ( path == '' ) {
+      stop( 'Environmental variable for path not found' )
+    }
+  }
+
+  if ( is.null( path ) ) {
+    path <- getwd()
+  }
+
+  if ( !is.null( file_name ) ) {
+
+    x <- arfpam::find_file_name(
+      file_name, output = 'name',
+      path = path
+    )
+
+    if ( length( x ) == 0 ) {
+      stop( 'File not found' )
+    }
+
+    if ( latest ) {
+      return( paste0( path, '/', sort( x )[ length(x) ] ))
+    } else {
+      return( paste0( path, '/', sort( x ) ))
+    }
+
+  } else {
+    return( path )
+  }
+
 }
 
 #### 3) extract_unique_value ####
@@ -725,8 +883,8 @@ check_for_missing <- function( x,
                                  NA, '',
                                  as.Date( '1970-01-01',
                                           format = '%Y-%m-%d' )
-                                 )
-                               ) {
+                               )
+) {
 
   # Number of observations
   n_obs <- length( x )
@@ -809,99 +967,4 @@ check_for_missing <- function( x,
   return( out )
 }
 
-#### 7) source_scripts ####
-#' Source in Multiple R Scripts in a Folder
-#'
-#' A convenience function that loops through
-#' and reads in code in .R files stored in a
-#' folder located in the current working directory.
-#'
-#' @param files_to_include A vector of either...
-#'   \itemize{
-#'     \item Numeric indices denoting which files
-#'       to include;
-#'     \item A character string matching the initial
-#'        set of letters across all relevant files (e.g., if
-#'        all scripts of interest start with the letter 'S');
-#'     \item A character vector with the full file names
-#'       for the files to include.
-#'   }
-#' @param path The folder name with the scripts to source.
-#'
-#' @author Kevin Potter
-#'
-#' @export
 
-source_scripts = function( files_to_include = NULL,
-                           path = 'R' ) {
-
-  # Folders to load
-  all_files <- dir(
-    path = path
-  )
-
-  # Identify R scripts
-
-  f <- function( x ) {
-    grepl( x, all_files, fixed = T )
-  }
-  # Files must have extension .R
-  r_files <-
-    ( f( '.R' ) | f( '.r' ) ) &
-    !( f( '.RData' ) | f( '.rdata' ) |
-       f( '.Rmd' ) | f( '.rmd' ) |
-       f( '.rda' )
-    )
-
-  # Isolate .R files
-  if ( any( r_files ) ) {
-    all_files <- all_files[ r_files ]
-  } else {
-    stop( 'No .R files found' )
-  }
-
-  # Check if subset of files should be included
-  if ( !is.null( files_to_include ) ) {
-
-    # If numeric indices were provided
-    if ( is.numeric( files_to_include ) ) {
-      files_to_source <- all_files[ files_to_include ]
-    }
-
-    # If a character vector was provided
-    if ( is.character( files_to_include ) ) {
-
-      # If a single character string with no '.R' extension
-      # was provided
-      if ( length( files_to_include ) == 1 &
-         !any( grepl( '.R', files_to_include, fixed = T ) ) ) {
-
-        n_letters <- nchar( files_to_include )
-
-        to_check <- substr( all_files, start = 1, stop = n_letters )
-
-        files_to_source <- all_files[
-          files_to_include %in% to_check
-        ]
-
-      } else {
-        # Exact matching to file names
-        files_to_source <- all_files[ all_files %in% files_to_include ]
-      }
-
-    }
-  } else {
-    # Otherwise take all files in folder
-    files_to_source <- all_files
-  }
-
-  # Source in all specified R scripts
-  if ( length( files_to_source ) > 0 ) {
-    sapply( 1:length( files_to_source ), function(i) {
-      source( paste0( path, "/", files_to_source[i] ) )
-    } )
-  } else {
-    stop( 'No files found matching given criteria' )
-  }
-
-}

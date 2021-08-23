@@ -15,5 +15,5 @@ A function to extract the git version for an R project
 that has auto-generated change logs.
 }
 \author{
-Willam Schmitt
+William Schmitt
 }
