@@ -1735,7 +1735,7 @@ add_dictionary_meta_data <- function(dtf,
   if ( is.null( sub_category ) ) {
 
     if ( !is.null( abbr_labels$sub_category ) ) {
-      data_type <-
+      sub_category <-
         column_abbreviations(
           column_name,
           custom = abbr_labels$sub_category
