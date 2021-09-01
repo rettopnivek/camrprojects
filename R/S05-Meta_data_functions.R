@@ -1,16 +1,51 @@
 # Dictionary meta-data functions
-# Written by Kevin Potter
-# email: kevin.w.potter@gmail.com
-# Please email me directly if you
+# Written by...
+#   Kevin Potter
+# Maintained by...
+#   Michael Pascale
+#   Kevin Potter
+# email: mppascale@mgh.harvard.edu
+#        kpotter5@mgh.harvard.edu
+# Please email us directly if you
+# have any questions or comments
 # have any questions or comments
 # Last updated 2021-08-17
 
 # Table of contents
+# 1) Scale and subscale functions
+#   1.1) known_scales
+#     1.1.1) HADS
+#     1.1.2) CUDIT-R
+#     1.1.3) AUDIT
+#     1.1.4) AIS
+#     1.1.5) BPI
+#     1.1.6) PCS
+#     1.1.7) PSS
+#     1.1.8) SF-12
+#     1.1.9) MCQ-SF
+#     1.1.10) CHRT
+#     1.1.11) CGI
+#   1.2) scale_format
+# 2) column_abbreviations
+# 3) Internal functions
+#   1.2) create_summary_for_x
+# 4) Functions for class 'dictionary_meta_data'
+#   4.1) new_dictionary_meta_data
+#   4.2) is.dictionary_meta_data
+#   4.3) validate_dictionary_meta_data
+#   4.4) add_dictionary_meta_data
+#   4.5) meta
+#   4.6) print.dictionary_meta_data
+#   4.7) summary.dictionary_meta_data
+#   4.8) subset.dictionary_meta_data
+#   4.9) update_meta_data
 
 ### TO DO ###
 # - Finish function documentation
 # - Add more scales to 'known_scales'
 # - Add more checks to 'validate_dictionary_meta_data'
+# - Add examples to functions
+# - Create sample data set
 
 #### 1) Scale and subscale functions ####
 
@@ -27,6 +62,8 @@
 #' @param subscale The name of a subscale of the scale
 #'   given above, used to look up the relevant ancillary
 #'   output.
+#'
+#' @author  Kevin Potter
 #'
 #' @return A list consisting of...
 #' \itemize{
@@ -900,7 +937,6 @@ scale_format <- function(name,
   return( out )
 }
 
-
 #### 2) column_abbreviations ####
 #' Abbreviations and Labels for Column Names
 #'
@@ -924,6 +960,8 @@ scale_format <- function(name,
 #' @param separator The punctuation used
 #'   to separate abbreviations, typically
 #'   a period.
+#'
+#' @author  Kevin Potter
 #'
 #' @return A character string. If only \code{n} is
 #'   provided, a matrix with \code{n} rows with
@@ -1251,6 +1289,8 @@ column_abbreviations <- function( column_name = '',
 #     frequency and percent missing.
 # @param 'digits' The number of digits to round to.
 #
+# @author Kevin Potter
+#
 # @return A list.
 
 create_summary_for_x <- function( x_no_missing,
@@ -1358,6 +1398,8 @@ create_summary_for_x <- function( x_no_missing,
 #' @param Notes A character string with any additional
 #'   notes.
 #'
+#' @author  Kevin Potter
+#'
 #' @return A named list of class \code{dictionary_meta_data}.
 #'
 #' @export
@@ -1415,6 +1457,8 @@ new_dictionary_meta_data <- function( Column_name = '',
 #'
 #' @param x An R object to be checked.
 #'
+#' @author  Kevin Potter
+#'
 #' @return A logical value, \code{TRUE} if \code{x}
 #' is of class \code{dictionary_meta_data}.
 #'
@@ -1432,6 +1476,8 @@ is.dictionary_meta_data <- function(x) {
 #' have been correctly specified.
 #'
 #' @param x An R object of class \code{dictionary_meta_data}.
+#'
+#' @author  Kevin Potter
 #'
 #' @return If any content is misspecified for \code{x}
 #' returns an informative error message.
@@ -1911,6 +1957,8 @@ meta <- function( x = NULL, column = '' ) {
 #'
 #' @param x An R object of class \code{dictionary_meta_data}.
 #'
+#' @author  Kevin Potter
+#'
 #' @return The method prints to console, at a minimum, the
 #' the variable's overarching group, data type, and
 #' associated description. Additional information may include
@@ -1918,9 +1966,6 @@ meta <- function( x = NULL, column = '' ) {
 #' variable, the unit of measurement, a brief statistical
 #' summary when appropriate, and details for scales,
 #' inventory, or questionnaire measures.
-#'
-#' @examples
-#' # Examples
 #'
 #' @export
 
@@ -2085,7 +2130,7 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 #### 4.7) summary.dictionary_meta_data ####
 #' Extract Statistical Summaries From Dictionary Meta-data
 #'
-#' Description.
+#' Function to extract the
 #'
 #' @param x ...
 #'

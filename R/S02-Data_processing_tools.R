@@ -1,8 +1,12 @@
 # REDCap and API tools
 # Written by...
 #   William Schmitt
-# email: kevin.w.potter@gmail.com
-# Please email me directly if you
+# Maintained by...
+#   Michael Pascale
+#   Kevin Potter
+# email: mppascale@mgh.harvard.edu
+#        kpotter5@mgh.harvard.edu
+# Please email us directly if you
 # have any questions or comments
 # Last updated 2021-05-25
 
@@ -579,7 +583,6 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
 }
 
 #### 3) pull_git_version ####
-
 #' Determine Git Version for Project
 #'
 #' A function to extract the git version for an R project

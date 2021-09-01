@@ -69,3 +69,6 @@ column_abbreviations( 'SMK.INT.BL.Quit_status', custom = M )
 column_abbreviations( 'SMK.INT.Y2.Quit_status', custom = M )
 
 }
+\author{
+Kevin Potter
+}

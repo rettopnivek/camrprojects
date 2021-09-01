@@ -18,3 +18,6 @@ A function to check whether the content for
 R objects of class \code{dictionary_meta_data}
 have been correctly specified.
 }
+\author{
+Kevin Potter
+}

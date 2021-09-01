@@ -17,3 +17,6 @@ is of class \code{dictionary_meta_data}.
 Method to check if an R object is of class
 \code{dictionary_meta_data}.
 }
+\author{
+Kevin Potter
+}

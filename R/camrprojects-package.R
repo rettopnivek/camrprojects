@@ -9,7 +9,7 @@
 # Please email me directly if you
 #   have any questions or comments
 # Last updated:
-#   2021-08-15
+#   2021-08-27
 
 # Package development
 # library( devtools )
@@ -31,6 +31,7 @@
 #' Mass General Brigham (MGB) hospital. A complete list
 #' of the functions available in the package can be
 #' obtained via the command
-#' \code{ls(pos = "package:camrprojects")}.
+#' \code{ls(pos = "package:camrprojects")} after
+#' loading in the package via a call to \code{library}.
 
 NULL

@@ -90,3 +90,6 @@ A named list of class \code{dictionary_meta_data}.
 A function to create a list with the proper
 slots for the class \code{dictionary_meta_data}.
 }
+\author{
+Kevin Potter
+}

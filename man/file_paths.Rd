@@ -28,3 +28,6 @@ Returns an absolute file or folder path.
 Folder paths can be extracted from a
 pre-specified environmental variable.
 }
+\author{
+Kevin Potter
+}

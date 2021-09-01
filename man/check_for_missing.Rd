@@ -51,3 +51,6 @@ x <- as.Date( c( '2000-01-01', '1970-01-01', '2000-02-02', NA ),
 check_for_missing( x )
 
 }
+\author{
+Kevin Potter
+}

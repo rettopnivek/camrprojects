@@ -45,3 +45,6 @@ known_scales( 'HADS' )
 known_scales( 'HADS', subscale = 'Anxiety' )
 
 }
+\author{
+Kevin Potter
+}

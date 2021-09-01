@@ -1,9 +1,12 @@
 # Scoring scripts for inventories and scales
 # Written by...
 #   Eylul Akman
+# Maintained by...
+#   Michael Pascale
 #   Kevin Potter
-# email: kevin.w.potter@gmail.com
-# Please email me directly if you
+# email: mppascale@mgh.harvard.edu
+#        kpotter5@mgh.harvard.edu
+# Please email us directly if you
 # have any questions or comments
 # Last updated 2021-05-26
 

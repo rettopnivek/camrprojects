@@ -23,7 +23,6 @@ A print method for the \code{dictionary_meta_data}
 class, printing to the console key information
 contained within the dictionary meta-data fields.
 }
-\examples{
-# Examples
-
+\author{
+Kevin Potter
 }

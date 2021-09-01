@@ -2,8 +2,12 @@
 # Written by...
 #   Kevin Potter
 #   William Schmitt
-# email: kevin.w.potter@gmail.com
-# Please email me directly if you
+# Maintained by...
+#   Michael Pascale
+#   Kevin Potter
+# email: mppascale@mgh.harvard.edu
+#        kpotter5@mgh.harvard.edu
+# Please email us directly if you
 # have any questions or comments
 # Last updated 2021-08-23
 
@@ -484,6 +488,8 @@ source_scripts = function( files_to_include = NULL,
 #'
 #' @return A character string.
 #'
+#' @author Kevin Potter
+#'
 #' @export
 
 file_paths <- function( file_name = NULL,
@@ -866,6 +872,8 @@ values_labels <- function( dtf, values, labels ) {
 #'     values were found, is \code{NULL}.
 #' }
 #'
+#' @author  Kevin Potter
+#'
 #' @examples
 #' # Vector with two types of missing values
 #' x <- c( 'A', 'B', '', NA, 'C' )
@@ -883,8 +891,7 @@ check_for_missing <- function( x,
                                  NA, '',
                                  as.Date( '1970-01-01',
                                           format = '%Y-%m-%d' )
-                               )
-) {
+                               ) ) {
 
   # Number of observations
   n_obs <- length( x )

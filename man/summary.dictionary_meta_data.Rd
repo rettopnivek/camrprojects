@@ -13,7 +13,7 @@
 Output.
 }
 \description{
-Description.
+Function to extract the
 }
 \details{
 
