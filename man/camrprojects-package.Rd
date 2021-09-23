@@ -4,13 +4,14 @@
 \name{camrprojects-package}
 \alias{camrprojects-package}
 \alias{camrprojects}
-\title{Portable Functions for R Projects at CAM-MGH}
+\title{Portable Functions for R Projects at CAM-MGB}
 \description{
 The \pkg{camrprojects} package implements a set of
 portable functions commonly used in R projects
 from the Center for Addiction Medicine (CAM) at the
-Massachusetts General Hospital (MGH). A complete list
+Mass General Brigham (MGB) hospital. A complete list
 of the functions available in the package can be
 obtained via the command
-\code{ls(pos = "package:camrprojects")}.
+\code{ls(pos = "package:camrprojects")} after
+loading in the package via a call to \code{library}.
 }

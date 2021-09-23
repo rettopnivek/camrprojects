@@ -1,4 +1,9 @@
-#' Sends a POST Form via httr and converts JSON return to a data.frame
+#### Files ####
+
+
+#### Network ####
+
+#' Sends a POST Form via httr and Converts JSON Return to a Data Frame
 #'
 #' This function uses httr to submit a POST form to the given url and
 #' converts the response (expected to be a JSON array) to a data.frame.
@@ -17,7 +22,6 @@
 #' @author William Schmitt
 #'
 #' @md
-
 
 postFormJSONToDf <- function(url, params) {
 
@@ -54,6 +58,6 @@ postFormJSONToDf <- function(url, params) {
     out <- list(data = respDF, status = SUCCESS_STATUS_CODE)
 
   },
-    error = function(e) list(data = data.frame(), status = AFTER_REQUEST_ERROR)
+  error = function(e) list(data = data.frame(), status = AFTER_REQUEST_ERROR)
   )
 }
