@@ -145,4 +145,17 @@ camr_popd <- function () {
   }
 }
 
+#' Regular expression to extract datetimes from strings.
+#'
+#' Expects dates dash or forward-slash delimited and optionally followed by a
+#' time component. Use with [stringr::str_extract()] to pull out datetimes from
+#' character vectors.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_const_datetime_regex <- '\\d{1,4}[-\\/]\\d{1,2}[-\\/]\\d{1,4}([\\s,]*\\d{1,2}:\\d{2}(:\\d{2})?\\s*([aApP][mM])?)?'
+
+
 

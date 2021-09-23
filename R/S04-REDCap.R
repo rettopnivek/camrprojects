@@ -522,3 +522,219 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   names(dtf) <- nameMap$newName
   return(dtf)
 }
+
+#' Verify REDCap data dictionary.
+#'
+#' @param dict REDCap metadata table as downloaded by [redcap_read()].
+#'
+#' @author Michael Pascale
+#'
+#' @examples
+#'
+#' @export
+camr_ckdict <- function (dict) {
+  msg <- ''
+  field_prefixes_list <- list()
+  var_instrument_list <- list()
+  var_name_list <- c()
+
+  pad_len = 40
+
+
+  for (i in 1:nrow(dict)) {
+
+    row <- dict[i,]
+    field_type <- row$field_type
+    field_name <- row$field_name
+    field_instrument <- row$form_name
+    field_choices <- row$select_choices_or_calculations
+    field_annotation <- row$field_annotation
+
+    #### Validate Field Name ####
+
+    if (stringr::str_length(field_name) > 26) {
+      msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is greater than 26 characters long.'), sep='\n')
+    }
+
+    field_prefix <- stringr::str_match(field_name, '^[:alnum:]+')
+    field_suffix <- stringr::str_match(field_name, '_[:alnum:]+$')
+
+    if (is.na(field_prefix) || is.na(field_suffix)) {
+      msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is not of valid format.'), sep='\n')
+    }
+
+    #### Validate VARNAME ####
+
+    if (field_type != 'descriptive') {
+      var_name <- stringr::str_match(field_annotation, '(?<=VARNAME=)[\\w\\.]+')
+
+      if (is.na(var_name)) {
+        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has no VARNAME defined in its field annotations.'), sep='\n')
+      }
+
+      var_decomposed <- stringr::str_match(var_name, '(\\w+?)\\.(\\w+?)\\.(?:(\\w+?)\\.)?(.*)')
+      var_group <- var_decomposed[2]
+      var_type <- var_decomposed[3]
+      var_instrument <- var_decomposed[4]
+      var_tail <- var_decomposed[5]
+
+      ##### Check VARNAME Format #####
+
+      if(any(is.na(c(var_group, var_type, var_tail)))) {
+        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an improperly formatted VARNAME, "', var_name, '".'), sep='\n')
+        next
+      }
+
+      if(!is.element(var_group, c('IDS', 'SBJ', 'INV', 'QCC'))) {
+        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid group annotation of ', var_group, '.'), sep='\n')
+      }
+
+      if(!is.element(var_type, c('DAT', 'INT', 'DBL', 'CHR', 'CLC', 'MCQ', 'CKB', 'YNQ', 'FLE', 'VAS', 'DSC'))) {
+        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid type annotation of ', var_type, '.'), sep='\n')
+      }
+
+      if (!is.na(var_instrument)) {
+        if (is.null(unlist(field_prefixes_list[field_prefix]))) {
+          field_prefixes_list[field_prefix] = var_instrument
+        } else {
+          if (field_prefixes_list[field_prefix] != var_instrument){
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has inconsistent instrument annotations of ', field_prefixes_list[field_prefix], ' and ', var_instrument, '.'), sep='\n')
+          }
+        }
+
+        if (is.null(unlist(var_instrument_list[var_instrument]))) {
+          var_instrument_list[var_instrument] = field_prefix
+        } else {
+          if (var_instrument_list[var_instrument] != field_prefix){
+            msg <- paste(msg, paste('Instrument label ', var_instrument, ' is utilized with multiple field prefixes: ', var_instrument_list[var_instrument], ' and ', field_prefix, '.'), sep='\n')
+          }
+        }
+      }
+
+      var_name_list <- c(var_name_list, var_name)
+
+      ##### Check Field Type Against VARNAME #####
+
+      if (field_type == 'text') {
+        validation <- row$text_validation_type_or_show_slider_number
+
+        if (validation == '' && var_type != 'CHR')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" without validation but was typed ', var_type, ', not CHR.'), sep='\n')
+
+        if (validation == 'integer' && var_type != 'INT')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with integer validation but was typed ', var_type, ', not INT.'), sep='\n')
+
+        if (validation == 'number' && !is.element(var_type, c('INT', 'DBL')))
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', neither INT nor DBL.'), sep='\n')
+
+        if (stringr::str_detect(validation, 'number\\ddp') && var_type != 'DBL')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not DBL.'), sep='\n')
+
+        if (stringr::str_detect(validation, '^(date|time)') && var_type != 'DAT')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not DAT.'), sep='\n')
+
+        if (is.element(validation, c('alpha_only', 'email', 'phone', 'zipcode', 'ssn', 'mrn_10d')) && var_type != 'CHR')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not CHR.'), sep='\n')
+
+      } else if (field_type == 'radio') {
+
+        pairs <- stringr::str_split(field_choices, '\\|')
+        pairs <- sapply(pairs, stringr::str_trim)
+        pairs <- sapply(pairs, stringr::str_match, '^\\d+,\\s*\\d+$')
+        integer_choices <- all(!is.na(pairs))
+
+        if (var_type == 'INT') {
+
+          if (!integer_choices)
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' was typed ', var_type, ', but does not have integer choices.'), sep='\n')
+
+        } else if (var_type != 'MCQ') {
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "radio" but was typed ', var_type, ', not MCQ.'), sep='\n')
+        } else if (integer_choices) {
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "radio" and was typed MCQ but could be typed INT as all choices are integers.'), sep='\n')
+        }
+
+      } else if (field_type == 'checkbox') {
+
+        if (var_type != 'CKB')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "checkbox" but was typed ', var_type, ', not CKB.'), sep='\n')
+
+      } else if (field_type == 'yesno') {
+
+        if (var_type != 'YNQ')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "yesno" but was typed ', var_type, ', not YNQ.'), sep='\n')
+
+      } else if (field_type == 'dropdown') {
+
+        if (var_type != 'MCQ')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "dropdown" but was typed ', var_type, ', not MCQ.'), sep='\n')
+
+      } else if (field_type == 'calc') {
+
+        if (var_type != 'CLC')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "calc" but was typed ', var_type, ', not CLC.'), sep='\n')
+
+      } else if (field_type == 'file') {
+
+        if (var_type != 'FLE')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "file" but was typed ', var_type, ', not FLE.'), sep='\n')
+
+      } else if (field_type == 'notes') {
+
+        if (var_type != 'CHR')
+          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "notes" but was typed ', var_type, ', not CHR.'), sep='\n')
+
+      } else {
+        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid field type, "', field_type, '".'), sep='\n')
+      }
+
+      #### Check Quality Control Fields ####
+
+      if (!is.na(field_suffix)) {
+        if (field_suffix == 'compby') {
+
+          if (var_group != 'QCC' || var_type != 'CHR' || var_tail != 'compby')
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.compby.'), sep='\n')
+
+        } else if (field_suffix == 'ptinitials') {
+
+          if (var_group != 'QCC' || var_type != 'CHR' || var_tail != 'ptinitials')
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.ptinitials.'), sep='\n')
+
+        } else if (field_suffix == 'date') {
+
+          if (var_group != 'QCC' || var_type != 'DAT' || var_tail != 'date')
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.date.'), sep='\n')
+
+        } else if (field_suffix == 'ptinitials_date') {
+
+          if (var_group != 'QCC' || var_type != 'DAT' || var_tail != 'ptinitials_date')
+            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.ptinitials_date.'), sep='\n')
+
+        }
+      }
+
+      ##### Construct New VARNAME #####
+
+      new_var_name <- stringr::str_c(na.omit(c(var_group, var_type, var_instrument, var_tail)), collapse='.')
+      new_annotation <- stringr::str_replace(field_annotation, '(?<=VARNAME=)[\\w\\.]+', new_var_name)
+    }
+  }
+
+  for (dup in  dict$field_name[which(duplicated(dict$field_name))])
+    msg <- paste(msg, paste(dup, ' is not unique.'), sep='\n')
+
+  for (dup in var_name_list[which(duplicated(var_name_list))])
+    msg <- paste(msg, paste(dup, ' is not unique.'), sep='\n')
+
+  calculation_references <- unlist(stringr::str_match_all(dict$select_choices_or_calculations, '(?<=\\[)\\w+(?=\\])'))
+  for (ref in calculation_references[which(!(calculation_references %in% dict$field_name))])
+    msg <- paste(msg, paste(ref, ' is referenced in a calculation but does not exist.'), sep='\n')
+
+  branching_references <- unlist(stringr::str_match_all(dict$branching_logic, '(?<=\\[)\\w+(?=\\])'))
+  for (ref in branching_references[which(!(branching_references %in% dict$field_name))])
+    msg <- paste(msg, paste(ref, ' is referenced in branching logic but does not exist.'), sep='\n')
+
+  msg
+} # camr_ckdict
+
