@@ -12,19 +12,23 @@ Description: A set of portable functions commonly
 Depends:
     R (>= 3.0)
 Imports:
-    dplyr,
-    stringr,
-    jsonlite,
+    arfpam,
     devtools,
-    tidyr,
-    rlang,
-    magrittr,
-    httr,
-    purrr,
+    dplyr,
+    fs,
     furrr,
-    progressr,
+    git2r,
+    httr,
+    jsonlite,
+    magrittr,
+    pkgdown,
     progress,
-    git2r
+    progressr,
+    purrr,
+    rlang,
+    stringr,
+    testthat,
+    tidyr
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true

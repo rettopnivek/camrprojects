@@ -111,6 +111,18 @@ camr_set <- function (name, value) {
   camr_save()
 }
 
+#' Get an item fromm the global `camr` object.
+#'
+#' @param name The property to get.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_get <- function (name) {
+  camr[name]
+}
+
 #' Push a path to the directory stack.
 #'
 #' @param path Optional. The path to save. Defaults to the working directory.
