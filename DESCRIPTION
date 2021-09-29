@@ -1,11 +1,24 @@
 Package: camrprojects
 Title: Portable Functions for R Projects at CAM-MGH
-Version: 1.2.0
-Authors@R: 
+Version: 2.0.0
+Authors@R: c(
     person(given = "Kevin",
            family = "Potter",
            role = c("aut", "cre"),
-           email = "kevin.w.potter@gmail.com")
+           email = "kevin.w.potter@gmail.com"),
+    person(given = "William",
+           family = "Schmitt",
+           role = c("aut")),
+    person(given = "Michael",
+           family = "Pascale",
+           role = c("aut"),
+           email = "mpascale AT psyc DOT dev"),
+    person(given = "Eylul",
+           family = "Ackman",
+           role = c("ctb")),
+    person(given = "Lindsay",
+           family = "Nielsen",
+           role = c("ctb")))
 Description: A set of portable functions commonly 
   used in R projects for the Center for Addiction 
   Medicine - CAM - at the Massachusetts General Hospital - MGH.
