@@ -533,13 +533,16 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
 #'
 #' @export
 camr_ckdict <- function (dict) {
-  msg <- ''
+  dict[is.na(dict)] <- ''
   field_prefixes_list <- list()
   var_instrument_list <- list()
   var_name_list <- c()
-
-  pad_len = 40
-
+  issue_list <- data.frame(
+    severity = integer(),
+    issue = character(),
+    field = character(),
+    variable = character()
+  )
 
   for (i in 1:nrow(dict)) {
 
@@ -553,14 +556,14 @@ camr_ckdict <- function (dict) {
     #### Validate Field Name ####
 
     if (stringr::str_length(field_name) > 26) {
-      msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is greater than 26 characters long.'), sep='\n')
+      issue_list <- dplyr::bind_rows(issue_list, list(severity=3, field=field_name, type=field_type, issue='Field name is greater than 26 characters long.'))
     }
 
     field_prefix <- stringr::str_match(field_name, '^[:alnum:]+')
     field_suffix <- stringr::str_match(field_name, '_[:alnum:]+$')
 
     if (is.na(field_prefix) || is.na(field_suffix)) {
-      msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is not of valid format.'), sep='\n')
+      issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, issue='Field name is not of standard format.'))
     }
 
     #### Validate VARNAME ####
@@ -569,7 +572,7 @@ camr_ckdict <- function (dict) {
       var_name <- stringr::str_match(field_annotation, '(?<=VARNAME=)[\\w\\.]+')
 
       if (is.na(var_name)) {
-        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has no VARNAME defined in its field annotations.'), sep='\n')
+        issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, issue='Field has no VARNAME defined in its field annotations.'))
       }
 
       var_decomposed <- stringr::str_match(var_name, '(\\w+?)\\.(\\w+?)\\.(?:(\\w+?)\\.)?(.*)')
@@ -581,24 +584,24 @@ camr_ckdict <- function (dict) {
       ##### Check VARNAME Format #####
 
       if(any(is.na(c(var_group, var_type, var_tail)))) {
-        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an improperly formatted VARNAME, "', var_name, '".'), sep='\n')
+        issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field has an impropertly formatted VARNAME in its field annotations.'))
         next
       }
 
       if(!is.element(var_group, c('IDS', 'SBJ', 'INV', 'QCC'))) {
-        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid group annotation of ', var_group, '.'), sep='\n')
+        issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field has an invalid group tag in its VARNAME annotation.'))
       }
 
       if(!is.element(var_type, c('DAT', 'INT', 'DBL', 'CHR', 'CLC', 'MCQ', 'CKB', 'YNQ', 'FLE', 'VAS', 'DSC'))) {
-        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid type annotation of ', var_type, '.'), sep='\n')
+        issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field has an invalid type tag in its VARNAME annotation.'))
       }
 
       if (!is.na(var_instrument)) {
         if (is.null(unlist(field_prefixes_list[field_prefix]))) {
           field_prefixes_list[field_prefix] = var_instrument
         } else {
-          if (field_prefixes_list[field_prefix] != var_instrument){
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has inconsistent instrument annotations of ', field_prefixes_list[field_prefix], ' and ', var_instrument, '.'), sep='\n')
+          if (field_prefixes_list[field_prefix] != var_instrument) {
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field has an instrument tag in its VARNAME annotation which is inconsistent with other field of the same prefix.'))
           }
         }
 
@@ -606,7 +609,7 @@ camr_ckdict <- function (dict) {
           var_instrument_list[var_instrument] = field_prefix
         } else {
           if (var_instrument_list[var_instrument] != field_prefix){
-            msg <- paste(msg, paste('Instrument label ', var_instrument, ' is utilized with multiple field prefixes: ', var_instrument_list[var_instrument], ' and ', field_prefix, '.'), sep='\n')
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Instrument tag is utilized with multiple different field prefixes.'))
           }
         }
       }
@@ -618,23 +621,19 @@ camr_ckdict <- function (dict) {
       if (field_type == 'text') {
         validation <- row$text_validation_type_or_show_slider_number
 
-        if (validation == '' && var_type != 'CHR')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" without validation but was typed ', var_type, ', not CHR.'), sep='\n')
+        if ( !is.na(validation) &&
+          any(
+            (validation == '' && var_type != 'CHR'),
+            (validation == 'integer' && var_type != 'INT'),
+            (validation == 'number' && !is.element(var_type, c('INT', 'DBL'))),
+            (stringr::str_detect(validation, 'number\\ddp') && var_type != 'DBL'),
+            (stringr::str_detect(validation, '^(date|time)') && var_type != 'DAT'),
+            (is.element(validation, c('alpha_only', 'email', 'phone', 'zipcode', 'ssn', 'mrn_10d')) && var_type != 'CHR')
+          )
+        ) {
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation.'))
+        }
 
-        if (validation == 'integer' && var_type != 'INT')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with integer validation but was typed ', var_type, ', not INT.'), sep='\n')
-
-        if (validation == 'number' && !is.element(var_type, c('INT', 'DBL')))
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', neither INT nor DBL.'), sep='\n')
-
-        if (stringr::str_detect(validation, 'number\\ddp') && var_type != 'DBL')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not DBL.'), sep='\n')
-
-        if (stringr::str_detect(validation, '^(date|time)') && var_type != 'DAT')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not DAT.'), sep='\n')
-
-        if (is.element(validation, c('alpha_only', 'email', 'phone', 'zipcode', 'ssn', 'mrn_10d')) && var_type != 'CHR')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "text" with ', validation,' validation but was typed ', var_type, ', not CHR.'), sep='\n')
 
       } else if (field_type == 'radio') {
 
@@ -646,46 +645,46 @@ camr_ckdict <- function (dict) {
         if (var_type == 'INT') {
 
           if (!integer_choices)
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' was typed ', var_type, ', but does not have integer choices.'), sep='\n')
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field lacks integer choices despite type tag in its VARNAME annotation.'))
 
         } else if (var_type != 'MCQ') {
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "radio" but was typed ', var_type, ', not MCQ.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend MCQ.'))
         } else if (integer_choices) {
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "radio" and was typed MCQ but could be typed INT as all choices are integers.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=3, field=field_name, type=field_type, variable=var_name, issue='Field has only integer choices despite type tag in its VARNAME annotation.'))
         }
 
       } else if (field_type == 'checkbox') {
 
         if (var_type != 'CKB')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "checkbox" but was typed ', var_type, ', not CKB.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend CKB.'))
 
       } else if (field_type == 'yesno') {
 
         if (var_type != 'YNQ')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "yesno" but was typed ', var_type, ', not YNQ.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend YNQ.'))
 
       } else if (field_type == 'dropdown') {
 
         if (var_type != 'MCQ')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "dropdown" but was typed ', var_type, ', not MCQ.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend MCQ.'))
 
       } else if (field_type == 'calc') {
 
         if (var_type != 'CLC')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "calc" but was typed ', var_type, ', not CLC.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend CLC.'))
 
       } else if (field_type == 'file') {
 
         if (var_type != 'FLE')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "file" but was typed ', var_type, ', not FLE.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend FLE.'))
 
       } else if (field_type == 'notes') {
 
         if (var_type != 'CHR')
-          msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is "notes" but was typed ', var_type, ', not CHR.'), sep='\n')
+          issue_list <- dplyr::bind_rows(issue_list, list(severity=2, field=field_name, type=field_type, variable=var_name, issue='Field validation does not correspond with type tag in VARNAME annotation. Recommend CHR.'))
 
       } else {
-        msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' has an invalid field type, "', field_type, '".'), sep='\n')
+        issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=field_name, type=field_type, variable=var_name, issue='Field validation invalid.'))
       }
 
       #### Check Quality Control Fields ####
@@ -694,23 +693,22 @@ camr_ckdict <- function (dict) {
         if (field_suffix == 'compby') {
 
           if (var_group != 'QCC' || var_type != 'CHR' || var_tail != 'compby')
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.compby.'), sep='\n')
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=field_name, type=field_type, variable=var_name, issue='Field is for quality control but VARNAME annotation is not of form QCC.CHR.XXXX.compby.'))
 
         } else if (field_suffix == 'ptinitials') {
 
           if (var_group != 'QCC' || var_type != 'CHR' || var_tail != 'ptinitials')
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.ptinitials.'), sep='\n')
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=field_name, type=field_type, variable=var_name, issue='Field is for quality control but VARNAME annotation is not of form QCC.CHR.XXXX.ptinitials.'))
 
         } else if (field_suffix == 'date') {
 
           if (var_group != 'QCC' || var_type != 'DAT' || var_tail != 'date')
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.date.'), sep='\n')
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=field_name, type=field_type, variable=var_name, issue='Field is for quality control but VARNAME annotation is not of form QCC.CHR.XXXX.date.'))
 
         } else if (field_suffix == 'ptinitials_date') {
 
           if (var_group != 'QCC' || var_type != 'DAT' || var_tail != 'ptinitials_date')
-            msg <- paste(msg, paste(stringr::str_pad(field_name, pad_len, 'right'), ' is quality control field but is not of form QCC.CHR.XXXX.ptinitials_date.'), sep='\n')
-
+            issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=field_name, type=field_type, variable=var_name, issue='Field is for quality control but VARNAME annotation is not of form QCC.CHR.XXXX.ptinitials_date.'))
         }
       }
 
@@ -722,19 +720,19 @@ camr_ckdict <- function (dict) {
   }
 
   for (dup in  dict$field_name[which(duplicated(dict$field_name))])
-    msg <- paste(msg, paste(dup, ' is not unique.'), sep='\n')
+    issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=dup, issue='Field name not unique.'))
 
   for (dup in var_name_list[which(duplicated(var_name_list))])
-    msg <- paste(msg, paste(dup, ' is not unique.'), sep='\n')
+    issue_list <- dplyr::bind_rows(issue_list, list(severity=1, variable=dup, issue='VARNAME not unique.'))
 
   calculation_references <- unlist(stringr::str_match_all(dict$select_choices_or_calculations, '(?<=\\[)\\w+(?=\\])'))
   for (ref in calculation_references[which(!(calculation_references %in% dict$field_name))])
-    msg <- paste(msg, paste(ref, ' is referenced in a calculation but does not exist.'), sep='\n')
+    issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=ref, issue='Field does not exist but is referenced in a calculation.'))
 
   branching_references <- unlist(stringr::str_match_all(dict$branching_logic, '(?<=\\[)\\w+(?=\\])'))
   for (ref in branching_references[which(!(branching_references %in% dict$field_name))])
-    msg <- paste(msg, paste(ref, ' is referenced in branching logic but does not exist.'), sep='\n')
+    issue_list <- dplyr::bind_rows(issue_list, list(severity=1, field=ref, issue='Field does not exist but is referenced in branching logic.'))
 
-  msg
+  issue_list
 } # camr_ckdict
 
