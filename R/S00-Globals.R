@@ -157,6 +157,43 @@ camr_popd <- function () {
   }
 }
 
+#' Wrapper around [keyring::key_get()] with ability to pull keyring name from
+#' the project `config.yml` and sensible defaults given the project structure.
+#'
+#' @param service The path to save. Defaults to the working directory.
+#' 
+#' @param username Optional. The username of the account to lookup. If NULL
+#' (default), the name of the current project will be used as defined in the
+#' `config.yml`. If empty string, [keyring::key_get()] returns the first key
+#' in the keyring matching the service.
+#' 
+#' @param keyring Optional. The name of the keyring on which the key is stored.
+#' If NULL (default), the keyrind specified in `config.yml` will be used.
+#' 
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_key <- function (service, username=NULL, keyring=NULL) {
+  checkmate::assert_character(service,  pattern='\\w+')
+  checkmate::assert_character(username, null.ok=TRUE)
+  checkmate::assert_character(keyring,  pattern='\\w+', null.ok=TRUE)
+
+  if (is.null(username)) {
+    username <- config::get('project')
+  }
+
+  if (is.null(keyring)) {
+    keyring <- config::get('keyring')
+  }
+
+  keyring::key_get(
+    service = service,
+    username = username,
+    keyring = keyring
+  )
+}
+
 #' Regular expression to extract datetimes from strings.
 #'
 #' Expects dates dash or forward-slash delimited and optionally followed by a
