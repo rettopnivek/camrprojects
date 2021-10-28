@@ -8,8 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# have any questions or comments
-# Last updated 2021-08-17
+# Last updated 2021-10-11
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -25,6 +24,11 @@
 #     1.1.9) MCQ-SF
 #     1.1.10) CHRT
 #     1.1.11) CGI
+#     1.1.12) MASQ
+#     1.1.13) UPPS-P
+#     1.1.14) MMM
+#     1.1.15) CES-D
+#     1.1.16) CWS
 #   1.2) scale_format
 # 2) column_abbreviations
 # 3) Internal functions
@@ -132,6 +136,21 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Expectancy"\n',
       '    subscale = "Purposefulness"\n\n',
 
+      'Marijuana Motives Measure\n',
+      '  abbrevation = "MMM"\n',
+      '    subscale = "Coping"\n',
+      '    subscale = "Conformity"\n',
+      '    subscale = "Social"\n',
+      '    subscale = "Enhancement"\n',
+      '    subscale = "Expansion"\n\n',
+
+      'Mood and Anxiety Symptom Questionnaire\n',
+      '  abbreviation = "MASQ"\n',
+      '    subscale = "General distress anxious symptoms"\n',
+      '    subscale = "Anxious arousal"\n',
+      '    subscale = "General distress depressive symptoms"\n',
+      '    subscale = "Anhedonic depression"\n\n',
+
       'Pain Catastrophizing Scale\n',
       '  abbreviation = "PCS"\n\n',
 
@@ -141,7 +160,18 @@ known_scales <- function( abbreviation = NULL,
       'Short Form Health Survey\n',
       '  abbreviation = "SF-12"\n',
       '    subscale = "Physical"\n',
-      '    subscale = "Mental"\n\n'
+      '    subscale = "Mental"\n\n',
+
+      'Urgency, Premeditation (lack of), Perseverance \n',
+      '(lack of), Sensation Seeking, Positive Urgency, \n',
+      'Impulsive Behavior Scale\n',
+      '  abbreviation = "UPPS-P"\n',
+      '    subscale = "Negative urgency"\n',
+      '    subscale = "Lack of premeditation"\n',
+      '    subscale = "Lack of perseverance"\n',
+      '    subscale = "Sensation seeking"\n',
+      '    subscale = "Positive urgency"\n\n'
+
     )
     message( inputs )
 
@@ -188,7 +218,7 @@ known_scales <- function( abbreviation = NULL,
           'of the degree of anxiety in a patient'
         )
 
-        out$Units <- "Summed scores"
+        out$Units <- "Summed score"
 
         out$Subscale <- list(
           name = 'Anxiety',
@@ -200,6 +230,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Anxiety'
       }
 
       ### Depression
@@ -211,7 +242,7 @@ known_scales <- function( abbreviation = NULL,
           'of the degree of depression experienced by a patient'
         )
 
-        out$Units <- "Summed scores"
+        out$Units <- "Summed score"
 
         out$Subscale <- list(
           name = 'Depression',
@@ -223,10 +254,13 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Depression'
       }
 
+      # Close 'Subscales'
     }
 
+    # Close 'HADS'
   }
 
   #### 1.1.2) CUDIT-R ####
@@ -238,7 +272,7 @@ known_scales <- function( abbreviation = NULL,
       'for a subject'
     )
 
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Cannabis Use Disorder Identification Test - Revised',
@@ -259,6 +293,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'CUDIT-R'
   }
 
   #### 1.1.3) AUDIT ####
@@ -270,7 +305,7 @@ known_scales <- function( abbreviation = NULL,
       'for a subject'
     )
 
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Alcohol Use Disorders Identification Test',
@@ -291,6 +326,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'AUDIT'
   }
 
   #### 1.1.4) AIS ####
@@ -301,7 +337,7 @@ known_scales <- function( abbreviation = NULL,
       'experienced by a subject'
     )
 
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Athens Insomnia Scale',
@@ -321,6 +357,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'AIS'
   }
 
   #### 1.1.5) BPI ####
@@ -367,6 +404,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Severity'
       }
 
       ### Interference
@@ -391,15 +429,18 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Interference'
       }
 
+      # Close 'Subscales'
     }
 
+    # Close 'BPI'
   }
 
   #### 1.1.6) PCS ####
 
-  ### Summed scores
+  ### Summed score
   if ( abbreviation == 'PCS' ) {
 
     out$Description <- paste0(
@@ -407,7 +448,7 @@ known_scales <- function( abbreviation = NULL,
       "a subject engages in pain catastrophizing"
     )
 
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Pain Catastrophizing Scale',
@@ -427,6 +468,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'PCS'
   }
 
   ### Percentages
@@ -457,6 +499,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'PCS (%)'
   }
 
   #### 1.1.7) PSS ####
@@ -468,7 +511,7 @@ known_scales <- function( abbreviation = NULL,
       "as stresslful"
     )
 
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Perceived Stress Scale',
@@ -496,6 +539,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'PSS'
   }
 
   #### 1.1.8) SF-12 ####
@@ -547,6 +591,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Mental'
       }
 
       ### Physical
@@ -575,9 +620,13 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Physical'
       }
+
+      # Close 'Subscales'
     }
 
+    # Close 'SF-12'
   }
 
   #### 1.1.9) MCQ-SF ####
@@ -635,6 +684,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Compulsivity'
       }
 
       ### Emotionality
@@ -661,6 +711,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Emotionality'
       }
 
       ### Expectancy
@@ -687,6 +738,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Expectancy'
       }
 
       ### Purposefulness
@@ -713,22 +765,23 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Purposefulness'
       }
 
+      # Close 'Subscales'
     }
 
+    # Close 'MCQ-SF'
   }
 
   #### 1.1.10) CHRT ####
   if ( abbreviation == 'CHRT' ) {
 
-
     out$Description <- paste0(
       "Measure of risk based on suicidal ideation and intent"
     )
 
-
-    out$Units <- "Summed scores"
+    out$Units <- "Summed score"
 
     out$Scale <- list(
       name = 'Concise Health Risk Tracking scale',
@@ -752,6 +805,7 @@ known_scales <- function( abbreviation = NULL,
       )
     )
 
+    # Close 'CHRT'
   }
 
   #### 1.1.11) CGI ####
@@ -804,6 +858,7 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Severity'
       }
 
       ### Improvement
@@ -833,9 +888,681 @@ known_scales <- function( abbreviation = NULL,
           )
         )
 
+        # Close 'Improvement'
       }
+
+      # Close 'Subscales'
     }
 
+    # Close 'CGI'
+  }
+
+  #### 1.1.12) MASQ ####
+  if ( abbreviation == 'MASQ' ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Mood and Anxiety Symptom Questionnaires',
+      n_items = 62,
+      range = c( NA, NA ),
+      abbreviation = 'MASQ',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          "Watson, D., Weber, K., Assenheimer, J. S., ",
+          "Clark, L. A., Strauss, M. E., & McCormick, R. A. ",
+          "(1995). Testing a tripartite model: I. Evaluating ",
+          "the convergent and discriminant validity of anxiety ",
+          "and depression symptom scales. ",
+          "Journal of Abnormal Psychology, 104 (1), 4-14. ",
+          "https://doi.org/10.1037/0021-843X.104.1.3"
+        ),
+        paste0(
+          "Watson, D., & Clark, L. A. (1991). The mood and anxiety ",
+          "symptom questionnaire. Unpublished manuscript."
+        )
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### General distress anxious symptoms
+      if ( subscale %in% c(
+        'GDA',
+        'General distress anxious symptoms',
+        'General Distress Anxious Symptoms'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the MASQ anxious general distress ",
+          "anxious symptoms subscale - measure of anxious ",
+          "mood"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'General distress anxious symptoms',
+          n_items = 11,
+          range = c( Min = 11, Max = 55 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater degree ",
+            "of general distress and anxiety"
+          )
+        )
+
+        # Close 'Mood and Anxiety Symptom Questionnaires'
+      }
+
+      ### Anxious arousal
+      if ( subscale %in% c(
+        'AA',
+        'Anxious arousal',
+        'Anxious Arousal'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MASQ anxious arousal subscale - ",
+          "measure of symptoms of somatic tension and hyperarousal ",
+          "specific to anxiety"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Anxious arousal',
+          n_items = 17,
+          range = c( Min = 17, Max = 85 ),
+          cut_off = NA,
+          interpretation = paste0(
+            ""
+          )
+        )
+
+        # Close 'Anxious arousal'
+      }
+
+      ### General distress depressive symptoms
+      if ( subscale %in% c(
+        'GDD',
+        'General distress depressive symptoms',
+        'General Distress Depressive Symptoms'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the MASQ anxious general distress ",
+          "depressive symptoms subscale - measure of depressed ",
+          "mood"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'General distress depressive symptoms',
+          n_items = 12,
+          range = c( Min = 12, Max = 60 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater degree ",
+            "of general distress and depression"
+          )
+        )
+
+        # Close 'General distress depressive symptoms'
+      }
+
+      ### Anhedonic depression
+      if ( subscale %in% c(
+        'AD',
+        'Anhedonic depression',
+        'Anhedonic Depression'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MASQ anhedonic depression ",
+          "subscale - measure of anhedonia and low ",
+          "positive affect"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Anhedonic depression',
+          n_items = 22,
+          range = c( Min = 22, Max = 110 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater degree of anhedonia ",
+            "and depression"
+          )
+        )
+
+        # Close 'Anhedonic depression'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # 1 Not at All/Slightly
+    # 2	A Little
+    # 3	Moderately
+    # 4	Quite a Bit
+    # 5	Extremely
+
+    # Close 'MASQ'
+  }
+
+  #### 1.1.13) UPPS-P ####
+  if ( abbreviation == 'UPPS-P' ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = '',
+      n_items = 59,
+      range = c( NA, NA ),
+      abbreviation = 'UPPS-P',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          "Whiteside, S. P., & Lynam, D. R. (2001). ",
+          "The five factor model and impulsivity: Using a ",
+          "structural model of personality to understand ",
+          "impulsivity. Personality and Individual Differences, ",
+          "30 (4), 669-689. ",
+          "https://doi.org/10.1016/S0191-8869(00)00064-7"
+          ),
+        paste0(
+          "Cyders, M. A., Smith, G. T., Spillane, N. S., Fischer, ",
+          "S., Annus, A. M., & Peterson, C. (2007). Integration of ",
+          "impulsivity and positive mood to predict risky behavior: ",
+          "Development and validation of a measure of positive ",
+          "urgency. Psychological Assessment, 19 (1), 107-118. ",
+          "https://doi.org/10.1037/1040-3590.19.1.107"
+        )
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Negative urgency
+      if ( subscale %in% c(
+        'Negative urgency',
+        '(Negative) Urgency',
+        'Urgency'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the UPPS-P negative urgency ",
+          "subscale - measure of the tendency for ",
+          "a person to act rashly under extreme ",
+          "negative emotions"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Negative urgency',
+          n_items = 12,
+          range = c( Min = 12, Max = 48 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater tendency ",
+            "towards rashness during negative moods"
+          )
+        )
+
+        # Close 'Negative urgency'
+      }
+
+      ### Lack of premeditation
+      if ( subscale %in% c(
+        'Lack of premeditation',
+        '(Lack of) Premeditation',
+        'Premeditation'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the UPPS-P lack of premeditation ",
+          "subscale - measure of the tendency for a ",
+          "person to act without thinking"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Lack of premeditation',
+          n_items = 11,
+          range = c( Min = 11, Max = 44 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater ",
+            "tendency to act without thinking beforehand"
+          )
+        )
+
+        # Close 'Lack of premeditation'
+      }
+
+      ### Lack of perseverance
+      if ( subscale %in% c(
+        'Lack of perseverance',
+        '(Lack of) Perseverance',
+        'Perseverance'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the UPPS-P lack of perseverance ",
+          "subscale - a measure of the inability to ",
+          "remain focused on a task"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Lack of premeditation',
+          n_items = 10,
+          range = c( Min = 10, Max = 40 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater ",
+            "inability to remain focused on a task"
+          )
+        )
+
+        # Close 'Lack of perseverance'
+      }
+
+      ### Sensation seeking
+      if ( subscale %in% c(
+        'Sensation seeking',
+        'Sensation Seeking'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the UPPS-P sensation seeking ",
+          "subscale - measure of the tendency for a ",
+          "person to seek out novel and thrilling experiences"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Sensation seeking',
+          n_items = 12,
+          range = c( Min = 12, Max = 48 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater ",
+            "willingness to seek out novel and ",
+            "thrilling experiences"
+          )
+        )
+
+        # Close 'Sensation seeking'
+      }
+
+      ### Positive urgency
+      if ( subscale %in% c(
+        'Positive urgency',
+        'Positive Urgency'
+      ) ) {
+
+
+        out$Description <- paste0(
+          "Scores for the UPPS-P positive urgency ",
+          "subscale - measure of the tendency for ",
+          "a person to act rashly under extreme ",
+          "positive emotions"
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Sensation seeking',
+          n_items = 14,
+          range = c( Min = 14, Max = 56 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater ",
+            "tendency to act rashly during ",
+            "positive moods"
+          )
+        )
+
+        # Close 'Positive urgency'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # Raw scale
+    # 1	= Agree Strongly
+    # 2	= Agree Somewhat
+    # 3	= Disagree Somewhat
+    # 4	= Disagree Strongly
+
+    # Flipped to indicate greater
+    # endorsement of impulsivity
+    # 1	= Disagree Strongly
+    # 2	= Disagree Somewhat
+    # 3	= Agree Somewhat
+    # 4	= Agree Strongly
+
+    # Close 'UPPS-P'
+  }
+
+  #### 1.1.14) MMM ####
+  if ( abbreviation == 'MMM' ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Marijuana Motives Measure',
+      n_items = 25,
+      range = c( NA, NA ),
+      abbreviation = 'MMM',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          "Simons, J., Correia, C. J., Carey, K. B., & Borsari, ",
+          "B. E. (1998). Validating a five-factor marijuana motives ",
+          "measure: Relations with use, problems, and alcohol motives. ",
+          "Journal of Counseling Psychology, 45 (3), 265–273. ",
+          "https://doi.org/10.1037/0022-0167.45.3.265"
+        )
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Coping
+      if ( subscale %in% c(
+        'Coping'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MMM coping ",
+          "subscale - measure of degree ",
+          "to which someone uses cannabis ",
+          "to help cope with negative feelings ",
+          "and situations"
+        )
+
+        out$Units <- "Mean score"
+
+        out$Subscale <- list(
+          name = '',
+          n_items = 5,
+          range = c( Min = 1, Max = 5 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness ",
+            "to use cannabis to cope with negative ",
+            "feelings and situations"
+          )
+        )
+
+        # Close 'Coping'
+      }
+
+      ### Conformity
+      if ( subscale %in% c(
+        'Conformity'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MMM conformity ",
+          "subscale - measure of degree ",
+          "to which someone uses cannabis ",
+          "to conform with expectations of peers"
+        )
+
+        out$Units <- "Mean score"
+
+        out$Subscale <- list(
+          name = '',
+          n_items = 5,
+          range = c( Min = 1, Max = 5 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness ",
+            "to use cannabis in order to conform to the ",
+            "expectations of others"
+          )
+        )
+
+        # Close 'Conformity'
+      }
+
+      ### Social
+      if ( subscale %in% c(
+        'Social'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MMM social ",
+          "subscale - measure of degree ",
+          "to which someone uses cannabis ",
+          "to better enjoy social situations"
+        )
+
+        out$Units <- "Mean score"
+
+        out$Subscale <- list(
+          name = '',
+          n_items = 5,
+          range = c( Min = 1, Max = 5 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness ",
+            "to use cannabis to better enjoy social situations"
+          )
+        )
+
+        # Close 'Social'
+      }
+
+      ### Enhancement
+      if ( subscale %in% c(
+        'Enhancement'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MMM enhancement ",
+          "subscale - measure of degree ",
+          "to which someone uses cannabis ",
+          "for pleasurable feelings"
+        )
+
+        out$Units <- "Mean score"
+
+        out$Subscale <- list(
+          name = '',
+          n_items = 5,
+          range = c( Min = 1, Max = 5 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness ",
+            "to use cannabis for pleasurable feelings"
+          )
+        )
+
+        # Close 'Enhancement'
+      }
+
+      ### Expansion
+      if ( subscale %in% c(
+        'Expansion'
+      ) ) {
+
+        out$Description <- paste0(
+          "Scores for the MMM expansion ",
+          "subscale - measure of degree ",
+          "to which someone uses cannabis ",
+          "to be more open to new experiences"
+        )
+
+        out$Units <- "Mean score"
+
+        out$Subscale <- list(
+          name = '',
+          n_items = 5,
+          range = c( Min = 1, Max = 5 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater willingness ",
+            'to use cannabis for new experiences'
+          )
+        )
+
+        # Close 'Expansion'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # 1 = Almost never/never
+    # 2	= Some of the time
+    # 3	= Half of the time
+    # 4	= Most of the time
+    # 5	= Almost always/always
+
+    # Close 'MMM'
+  }
+
+  #### 1.1.15) CES-D ####
+  if ( abbreviation == 'CES-D' ) {
+
+    out$Description <- paste0(
+      'Scores for the CES-D - measure ',
+      'of depressive symptomatology'
+    )
+
+    out$Units <- "Summed score"
+
+    out$Scale <- list(
+      name = 'The Center for Epidemiologic Studies Depression Scale',
+      n_items = 20,
+      range = c( 0, 60 ),
+      abbreviation = 'CES-D',
+      cut_off = 15,
+      reference = c(
+        paste0(
+          "Radloff, L. S. (1977) The CES-D scale: A self-report ",
+          "depression scale for research in the general ",
+          "population. Applied Psychological Measurement, 1 (3) 385-401. ",
+          "https://doi.org/10.1177/014662167700100306"
+        )
+      ),
+      interpretation = paste0(
+        "Higher scores indicate a greater degree of depression"
+      )
+    )
+
+    # 0 = Rarely or none of the time (less than 1 day )
+    # 1 = Some or a little of the time (1-2 days)
+    # 2 = Occasionally or a moderate amount of time (3-4 days)
+    # 3 = Most or all of the time (5-7 days)
+
+    # Close 'CES-D'
+  }
+
+  #### 1.1.16) CWS ####
+  if ( abbreviation %in% c( 'CWS' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Cannabis Withdrawal Scale',
+      n_items = 38,
+      range = c( NA, NA ),
+      abbreviation = 'CWS',
+      cut_off = NA,
+      reference = paste0(
+        'Allsop, D. J., Norberg, M. M., Copeland, J., Fu, S., & ',
+        'Budney, A. J. (2011). The Cannabis Withdrawal Scale development: ',
+        'Patterns and predictors of cannabis withdrawal and distress. ',
+        'Drug Alcohol Dependence, 119, 123-129. ',
+        'https://doi.org/10.1016/j.drugalcdep.2011.06.003'
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Intensity
+      if ( subscale %in% c( 'Intensity' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the CWS intensity subscale - measure of ',
+          'intensity of cannabis withdrawal symptoms'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Anxiety',
+          n_items = 19,
+          range = c( 0, 190 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate more intense ",
+            "cannabis withdrawal symptoms"
+          )
+        )
+
+        # Close 'Intensity'
+      }
+
+      ### Negative impact
+      if ( subscale == 'Negative impact' ) {
+
+
+        out$Description <- paste0(
+          'Scores for the CWS negative impact subscale - ',
+          'measure of distress or impairment in functioning ',
+          'due to withdrawal'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Negative impact',
+          n_items = 19,
+          range = c( 0, 190 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater degree of ",
+            "negative impact due to cannabis withdrawal"
+          )
+        )
+
+        # Close 'Negative impact'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # 0	0 (Not at All)
+    # 1	1
+    # 2	2
+    # 3	3
+    # 4	4
+    # 5	5 (Moderately)
+    # 6	6
+    # 7	7
+    # 8	8
+    # 9	9
+    # 10	10 (Strongly Agree)
+
+    # Close 'CWS'
   }
 
   if ( is.null( out$Scale ) ) {
