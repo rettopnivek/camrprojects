@@ -116,13 +116,24 @@ known_scales <- function( abbreviation = NULL,
       'Cannabis Use Disorder Identification Test - Revised\n',
       '  abbreviation = "CUDIT"\n\n',
 
+      'Cannabis Withdrawal Scale\n',
+      '  abbreviation = "CWS"\n',
+      '    subscale = Intensity\n',
+      '    subscale = Negative impact\n\n',
+
       'Clinical Global Impression scale\n',
       '  abbreviation = "CGI"\n',
       '    subscale = "Anxiety"\n',
       '    subscale = "Depression"\n\n',
 
       'Concise Health Risk Tracking scale\n',
-      '  abbreviation = "CHRT"\n\n',
+      '  abbreviation = "CHRT"\n',
+      '    subscale = "Despair"\n', # 3
+      '    subscale = "Helplessness"\n', # 2
+      '    subscale = "Lack of social support"\n', # 2
+      '    subscale = "Pessimism"\n\n', # 2
+      '    subscale = "Suicidal thoughts"\n', # 3
+      '    subscale = "Propensity"\n\n',
 
       'Hospital Anxiety Depression Scale\n',
       '  abbrevation = "HADS"\n',
@@ -161,6 +172,9 @@ known_scales <- function( abbreviation = NULL,
       '  abbreviation = "SF-12"\n',
       '    subscale = "Physical"\n',
       '    subscale = "Mental"\n\n',
+
+      'The Center for Epidemiologic Studies Depression Scale\n',
+      '  abbreviation = "CES-D"\n\n',
 
       'Urgency, Premeditation (lack of), Perseverance \n',
       '(lack of), Sensation Seeking, Positive Urgency, \n',
@@ -804,6 +818,164 @@ known_scales <- function( abbreviation = NULL,
         "Higher scores indicate greater risk of suicide"
       )
     )
+
+    #### Subscales
+    if ( subscale != '' ) {
+
+      ### Despair
+      if (subscale == 'Despair') {
+
+
+        out$Description <- paste0(
+          'Scores for the CHRT despair items - measure of ',
+          'degree of despair a person feels'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Despair',
+          n_items = 3,
+          range = c( Min = 0, Max = 12 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater ",
+            "feelings of despair"
+          )
+        )
+
+        # Close 'Despair'
+      }
+
+      ### Helplessness
+      if (subscale == 'Helplessness') {
+
+
+        out$Description <- paste0(
+          'Scores for the CHRT helplessness items - measure of ',
+          'how helpless a person feels'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Helplessness',
+          n_items = 2,
+          range = c( Min = 0, Max = 4 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater ",
+            "feelings of helplessness"
+          )
+        )
+
+        # Close 'Helplessness'
+      }
+
+      ###  Lack of social support
+      if (subscale == 'Lack of social support') {
+
+
+        out$Description <- paste0(
+          'Scores for the CHRT lack of social support items',
+          ' - measure of ',
+          'the degree a person feels a lack of social support'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Lack of social support',
+          n_items = 2,
+          range = c( Min = 0, Max = 4 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater ",
+            "sense of a lack of social support"
+          )
+        )
+
+        # Close 'Lack of social support'
+      }
+
+      ###  Pessimism
+      if (subscale == 'Pessimism') {
+
+        out$Description <- paste0(
+          'Scores for the CHRT pessimism items',
+          ' - measure of ',
+          'how pessimistic a person feels'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Pessimism',
+          n_items = 2,
+          range = c( Min = 0, Max = 8 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate greater ",
+            "feelings of pessimism"
+          )
+        )
+
+        # Close 'Pessimism'
+      }
+
+      ###  Suicidal thoughts
+      if (subscale == 'Suicidal thoughts') {
+
+        out$Description <- paste0(
+          'Scores for the CHRT suicidal thought items',
+          ' - measure of ',
+          'how often someone has suicidal thoughts'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Suicidal thoughts',
+          n_items = 3,
+          range = c( Min = 0, Max = 12 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate more frequent ",
+            "occurences of suicidal thoughts"
+          )
+        )
+
+        # Close 'Suicidal thoughts'
+      }
+
+      ###  Propensity
+      if (subscale == 'Propensity') {
+
+
+        out$Description <- paste0(
+          'Scores for the CHRT propensity items',
+          ' - measure of ',
+          'the propensity a person might have for suicide'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Propensity',
+          n_items = 9,
+          range = c( Min = 0, Max = 36 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater ",
+            "propensity towards suicide"
+          )
+        )
+
+        # Close 'Propensity'
+      }
+
+      # Close 'Subscales'
+    }
 
     # Close 'CHRT'
   }
