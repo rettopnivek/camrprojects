@@ -1,5 +1,5 @@
-library(fs)
-library(stringr)
+# library(fs)
+# library(stringr)
 
 #' Create a global cache object.
 #'
@@ -161,15 +161,15 @@ camr_popd <- function () {
 #' the project `config.yml` and sensible defaults given the project structure.
 #'
 #' @param service The path to save. Defaults to the working directory.
-#' 
+#'
 #' @param username Optional. The username of the account to lookup. If NULL
 #' (default), the name of the current project will be used as defined in the
 #' `config.yml`. If empty string, [keyring::key_get()] returns the first key
 #' in the keyring matching the service.
-#' 
+#'
 #' @param keyring Optional. The name of the keyring on which the key is stored.
 #' If NULL (default), the keyrind specified in `config.yml` will be used.
-#' 
+#'
 #' @author Michael Pascale
 #'
 #' @export
