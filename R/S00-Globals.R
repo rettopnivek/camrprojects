@@ -1,6 +1,3 @@
-# library(fs)
-# library(stringr)
-
 #' Create a global cache object.
 #'
 #' Creates a global object `camr` for storing information such as file paths in
@@ -12,10 +9,12 @@
 #' @export
 #' @md
 camr_cache <- function () {
+  .Deprecated()
+
   if (exists('camr', envir=.GlobalEnv))
     warning('Global cache object `camr` already initialized.')
 
-  if (file_exists('.cache'))
+  if (fs::file_exists('.cache'))
     camr <<- readRDS('.cache')
   else
     camr <<- list(origin=getwd())
@@ -28,8 +27,9 @@ camr_cache <- function () {
 #' @export
 #' @md
 camr_reset <- function () {
-  if (file_exists('.cache'))
-    file_delete('.cache')
+  .Deprecated()
+  if (fs::file_exists('.cache'))
+    fs::file_delete('.cache')
   rm(camr, pos=1)
   camr_cache()
 }
@@ -43,6 +43,7 @@ camr_reset <- function () {
 #' @export
 #' @md
 camr_save <- function () {
+  .Deprecated()
   saveRDS(camr, file=path(camr$origin, '.cache'))
 }
 
@@ -56,14 +57,14 @@ camr_paths <- function () {
   if (is.null(camr[['prefix']]))
     stop('Prefix not initialized.')
 
-  folders = c('Documents', 'Figures', 'Reports')
-  expanded = c()
+  folders <- c('Documents', 'Figures', 'Reports')
+  expanded <- c()
 
   for (folder in folders) {
     fullpath <- path(camr$prefix, folder)
 
-    if(!dir_exists(fullpath) && askYesNo(str_glue('Directory "{fullpath}" does not exist. Create?')))
-      dir_create(fullpath)
+    if(!fs::dir_exists(fullpath) && askYesNo(stringr::str_glue('Directory "{fullpath}" does not exist. Create?')))
+      fs::dir_create(fullpath)
 
     expanded <- append(expanded, fullpath)
   }
@@ -86,7 +87,7 @@ camr_prefix <- function (prefix=getwd()) {
   if (!is_absolute_path(prefix) && getwd() != camr$origin)
     warning('Relative prefix set outside of the camr origin.')
 
-  prefix <- path_real(prefix)
+  prefix <- fs::path_real(prefix)
 
   if (prefix == getwd() && prefix != camr$origin)
     warning('Prefix set implicitly outside of the camr origin.')
@@ -132,8 +133,8 @@ camr_get <- function (name) {
 #' @export
 #' @md
 camr_pushd <- function (path = getwd()) {
-  path = path_real(path)
-  if (dir_exists(path)) {
+  path = fs::real(path)
+  if (fs::dir_exists(path)) {
     camr$stack <<- c(path, camr$stack)
     camr_save()
   } else {
