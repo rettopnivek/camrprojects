@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-03
+# Last updated 2021-11-04
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -3066,16 +3066,16 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 #### 4.7) summary.dictionary_meta_data ####
 #' Extract Statistical Summaries From Dictionary Meta-Data
 #'
-#' Function to extract the
+#' Function to extract the numeric summaries (e.g.,
+#' mean/standard deviation for continuous variables,
+#' frequencies/percentages for categorical variables,
+#' etc.) from the dictionary meta-data.
 #'
-#' @param x ...
+#' @param x A list of class \code{dictionary_meta_data}.
 #'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
+#' @return A list with numeric summaries for
+#'   continuous or categorical variables (not
+#'   all variables will have summaries).
 #'
 #' @export
 
@@ -3091,16 +3091,28 @@ summary.dictionary_meta_data <- function( x ) {
 #### 4.8) subset.dictionary_meta_data ####
 #' Extract Components From Dictionary Meta-Data
 #'
-#' Description.
+#' Function to extract a specific element from
+#' a list of class \code{dictionary_meta_data}.
 #'
-#' @param x ...
+#' @param x A list of class \code{dictionary_meta_data}.
+#' @param type The type of element to extract. Options
+#'   include:
+#'   \itemize{
+#'     \item \code{'category'}
+#'     \item \code{'type'}
+#'     \item \code{'sub-category'}
+#'     \item \code{'description'}
+#'     \item \code{'redcap'}
+#'     \item \code{'values and labels'}
+#'     \item \code{'scale'}
+#'     \item \code{'subscale'}
+#'     \item \code{'summary'}
+#'     \item \code{'codes for missing'}
+#'     \item \code{'units'}
+#'   }
 #'
-#' @details
-#'
-#' @return Output.
-#'
-#' @examples
-#' # Examples
+#' @return A sub-list, the specified component from the
+#' list of class \code{dictionary_meta_data}.
 #'
 #' @export
 
@@ -3142,7 +3154,7 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
     }
 
     if ( type %in% c( 'Values and labels',
-                      'values and lables',
+                      'values and labels',
                       'Values', 'values',
                       'Labels', 'labels' ) ) {
       return( x$Values_and_labels )
@@ -3174,6 +3186,17 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
                       'Codes', 'codes',
                       'Code', 'code' ) ) {
       return( x$Codes_for_missing )
+    }
+
+    if ( type %in% c( 'units of measurement',
+                      'Units of measurement',
+                      'Measurement units',
+                      'measurement units',
+                      'Units',
+                      'units',
+                      'Unit',
+                      'unit' ) ) {
+      return( x$Units )
     }
 
     stop( 'Incorrect subset type specified' )
@@ -3436,21 +3459,21 @@ data_frame_from_dictionary_meta_data <- function( dtf ) {
 
       if ( content_types[ct] %in% 'Scale' ) {
 
-        if ( is.list( x$Scale ) ) {
+        if ( is.list( lst$Scale ) ) {
 
           out$Content[i] <- paste0(
-            x$Scale$name,
+            lst$Scale$name,
             ' - ',
-            x$Scale$abbreviation
+            lst$Scale$abbreviation
           )
 
-          if ( !is.list( x$Subscale ) ) {
+          if ( !is.list( lst$Subscale ) ) {
 
             out$Additional_content[i] <- paste0(
-              x$Scale$n_items, ' items (',
-              x$Scale$range[1],
+              lst$Scale$n_items, ' items (',
+              lst$Scale$range[1],
               ' to ',
-              x$Scale$range[2], ')'
+              lst$Scale$range[2], ')'
             )
 
           }
@@ -3461,15 +3484,15 @@ data_frame_from_dictionary_meta_data <- function( dtf ) {
 
       if ( content_types[ct] %in% 'Subscale' ) {
 
-        if ( is.list( x$Subscale ) ) {
+        if ( is.list( lst$Subscale ) ) {
 
-          out$Content[i] <- x$Subscale$name
+          out$Content[i] <- lst$Subscale$name
 
           out$Additional_content[i] <- paste0(
-            x$Subscale$n_items, ' items (',
-            x$Subscale$range[1],
+            lst$Subscale$n_items, ' items (',
+            lst$Subscale$range[1],
             ' to ',
-            x$Subscale$range[2], ')'
+            lst$Subscale$range[2], ')'
           )
 
         }

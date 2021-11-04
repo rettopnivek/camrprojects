@@ -7,18 +7,29 @@
 \method{subset}{dictionary_meta_data}(x, type = "category")
 }
 \arguments{
-\item{x}{...}
+\item{x}{A list of class \code{dictionary_meta_data}.}
+
+\item{type}{The type of element to extract. Options
+include:
+\itemize{
+  \item \code{'category'}
+  \item \code{'type'}
+  \item \code{'sub-category'}
+  \item \code{'description'}
+  \item \code{'redcap'}
+  \item \code{'values and labels'}
+  \item \code{'scale'}
+  \item \code{'subscale'}
+  \item \code{'summary'}
+  \item \code{'codes for missing'}
+  \item \code{'units'}
+}}
 }
 \value{
-Output.
+A sub-list, the specified component from the
+list of class \code{dictionary_meta_data}.
 }
 \description{
-Description.
-}
-\details{
-
-}
-\examples{
-# Examples
-
+Function to extract a specific element from
+a list of class \code{dictionary_meta_data}.
 }
