@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{validate_dictionary_meta_data}
 \alias{validate_dictionary_meta_data}
-\title{Validate Contents for Dictionary Meta-data Class Variables}
+\title{Validate Contents for Dictionary Meta-Data Class Variables}
 \usage{
 validate_dictionary_meta_data(x)
 }

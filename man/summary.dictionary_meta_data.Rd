@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{summary.dictionary_meta_data}
 \alias{summary.dictionary_meta_data}
-\title{Extract Statistical Summaries From Dictionary Meta-data}
+\title{Extract Statistical Summaries From Dictionary Meta-Data}
 \usage{
 \method{summary}{dictionary_meta_data}(x)
 }

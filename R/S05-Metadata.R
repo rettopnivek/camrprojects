@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-10-11
+# Last updated 2021-11-03
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -43,6 +43,7 @@
 #   4.7) summary.dictionary_meta_data
 #   4.8) subset.dictionary_meta_data
 #   4.9) update_meta_data
+#   4.10) data_frame_from_dictionary_meta_data
 
 ### TO DO ###
 # - Finish function documentation
@@ -1246,7 +1247,7 @@ known_scales <- function( abbreviation = NULL,
           "impulsivity. Personality and Individual Differences, ",
           "30 (4), 669-689. ",
           "https://doi.org/10.1016/S0191-8869(00)00064-7"
-          ),
+        ),
         paste0(
           "Cyders, M. A., Smith, G. T., Spillane, N. S., Fischer, ",
           "S., Annus, A. M., & Peterson, C. (2007). Integration of ",
@@ -1471,7 +1472,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Mean score"
 
         out$Subscale <- list(
-          name = '',
+          name = 'Coping',
           n_items = 5,
           range = c( Min = 1, Max = 5 ),
           cut_off = NA,
@@ -1500,7 +1501,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Mean score"
 
         out$Subscale <- list(
-          name = '',
+          name = 'Conformity',
           n_items = 5,
           range = c( Min = 1, Max = 5 ),
           cut_off = NA,
@@ -1529,7 +1530,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Mean score"
 
         out$Subscale <- list(
-          name = '',
+          name = 'Social',
           n_items = 5,
           range = c( Min = 1, Max = 5 ),
           cut_off = NA,
@@ -1557,7 +1558,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Mean score"
 
         out$Subscale <- list(
-          name = '',
+          name = 'Enhancement',
           n_items = 5,
           range = c( Min = 1, Max = 5 ),
           cut_off = NA,
@@ -1585,7 +1586,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Mean score"
 
         out$Subscale <- list(
-          name = '',
+          name = 'Expansion',
           n_items = 5,
           range = c( Min = 1, Max = 5 ),
           cut_off = NA,
@@ -1680,7 +1681,7 @@ known_scales <- function( abbreviation = NULL,
         out$Units <- "Summed score"
 
         out$Subscale <- list(
-          name = 'Anxiety',
+          name = 'Intensity',
           n_items = 19,
           range = c( 0, 190 ),
           cut_off = NA,
@@ -2215,7 +2216,8 @@ create_summary_for_x <- function( x_no_missing,
       Q_75 = round( quantile( x_no_missing, .75 ), digits ),
       Q_84 = round( quantile( x_no_missing, .84 ), digits ),
       Max = round( max( x_no_missing ), digits ),
-      Missing = sum( missing_values )
+      Missing = sum( missing_values ),
+      digits = digits
     )
 
   }
@@ -2228,6 +2230,7 @@ create_summary_for_x <- function( x_no_missing,
       Category = c( names(freq), 'Missing' ),
       Frequency = c( freq, sum( missing_values ) ),
       Percentage = c( freq, sum( missing_values ) )/n_obs,
+      Digits = digits,
       stringsAsFactors = F
     )
 
@@ -2250,7 +2253,7 @@ create_summary_for_x <- function( x_no_missing,
 #### 4) Functions for class 'dictionary_meta_data' ####
 
 #### 4.1) new_dictionary_meta_data ####
-#' Constructor Function for Dictionary Meta-data Class
+#' Constructor Function for Dictionary Meta-Data Class
 #'
 #' A function to create a list with the proper
 #' slots for the class \code{dictionary_meta_data}.
@@ -2288,16 +2291,23 @@ create_summary_for_x <- function( x_no_missing,
 #'   the units of measurement for the column.
 #' @param Codes_for_missing A list of the codes (e.g.,
 #'   \code{NA}, \code{''}, etc.) for missing values.
-#' @param Groups_collected_over ...
-#' @param Times_collected_over ...
-#' @param Studies_collected_over ...
+#' @param Groups_collected_over A vector of values
+#'   describing the study groups for which the
+#'   current variable was collected.
+#' @param Times_collected_over A vector of values
+#'   describing the study time points during which the
+#'   current variable was collected.
+#' @param Studies_collected_over A vector of values
+#'   describing the studies (e.g., a pilot study,
+#'   the active study), for which the current variable
+#'   was collected.
 #' @param Validated A character string briefly describing
 #'   if and how the values in the column were validated
 #'   and data checked.
 #' @param Notes A character string with any additional
 #'   notes.
 #'
-#' @author  Kevin Potter
+#' @author Kevin Potter
 #'
 #' @return A named list of class \code{dictionary_meta_data}.
 #'
@@ -2349,14 +2359,14 @@ new_dictionary_meta_data <- function( Column_name = '',
 }
 
 #### 4.2) is.dictionary_meta_data ####
-#' Check if a Variable is of Class Dictionary Meta-data
+#' Check if a Variable is of Class Dictionary Meta-Data
 #'
 #' Method to check if an R object is of class
 #' \code{dictionary_meta_data}.
 #'
 #' @param x An R object to be checked.
 #'
-#' @author  Kevin Potter
+#' @author Kevin Potter
 #'
 #' @return A logical value, \code{TRUE} if \code{x}
 #' is of class \code{dictionary_meta_data}.
@@ -2368,7 +2378,7 @@ is.dictionary_meta_data <- function(x) {
 }
 
 #### 4.3) validate_dictionary_meta_data ####
-#' Validate Contents for Dictionary Meta-data Class Variables
+#' Validate Contents for Dictionary Meta-Data Class Variables
 #'
 #' A function to check whether the content for
 #' R objects of class \code{dictionary_meta_data}
@@ -2504,7 +2514,7 @@ validate_dictionary_meta_data <- function(x) {
 }
 
 #### 4.4) add_dictionary_meta_data ####
-#' Add Dictionary Meta-data to Column Attributes
+#' Add Dictionary Meta-Data to Column Attributes
 #'
 #' Updates the attributes for a column in a data frame
 #' with a standardized list of details on the variable
@@ -2793,7 +2803,7 @@ add_dictionary_meta_data <- function(dtf,
 }
 
 #### 4.5) meta ####
-#' Extract Dictionary Meta-data From Attributes
+#' Extract Dictionary Meta-Data From Attributes
 #'
 #' A function to extract meta-data intended for
 #' data dictionary purposes for a specified column
@@ -2848,7 +2858,7 @@ meta <- function( x = NULL, column = '' ) {
 }
 
 #### 4.6) print.dictionary_meta_data ####
-#' Display Dictionary Meta-data Information
+#' Display Dictionary Meta-Data Information
 #'
 #' A print method for the \code{dictionary_meta_data}
 #' class, printing to the console key information
@@ -2861,24 +2871,34 @@ meta <- function( x = NULL, column = '' ) {
 #' @return The method prints to console, at a minimum, the
 #' the variable's overarching group, data type, and
 #' associated description. Additional information may include
-#' the original REDCap variable used to create the current
-#' variable, the unit of measurement, a brief statistical
-#' summary when appropriate, and details for scales,
-#' inventory, or questionnaire measures.
+#' the variable's sub-category, the original REDCap variable
+#' used to create the current variable, the unit of
+#' measurement, a brief statistical summary when
+#' appropriate, and details for scales, inventory, or
+#' questionnaire measures.
 #'
 #' @export
 
 print.dictionary_meta_data <- function(x, digits = 2 ) {
 
-  message( x$Column_name )
-  message( '  Category:' )
-  message( paste0( '     ', x$Variable_category ) )
-  message('  Data type:' )
-  message( paste0( '     ', x$Data_type ) )
-  message( '  Description: ' )
+  #### 4.6.1) lines_of_text ####
+  # Display Lines of Text in the Console
+  #
+  # Function to display lines of text via
+  # the base function 'message', breaking
+  # up longer sentences to be within
+  # 50 characters per line.
+  #
+  # @param 'string' A character string.
+  # @param 'spacing' A character string,
+  #   the initial start of each line
+  #   (typically 5 spaces).
+  #
+  # @return A vector of character strings.
 
-
-  lines_of_text <- function( string ) {
+  lines_of_text <- function( string,
+                             spacing = '     ',
+                             max_char = 50 ) {
 
     each_word <- strsplit( string, split = ' ', fixed = TRUE )[[1]]
 
@@ -2888,10 +2908,10 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
     cur_ln <- each_word
     for ( i in 1:n_w ) {
 
-      sel_w <- cumsum( nchar( cur_ln ) ) < 50
+      sel_w <- cumsum( nchar( cur_ln ) ) < max_char
 
       lns[i] <- paste0(
-        '     ',
+        spacing,
         paste( cur_ln[ sel_w ], collapse = ' ' )
       )
       if ( any( !sel_w ) ) {
@@ -2908,11 +2928,28 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 
   }
 
+  #### 4.6.2) Dictionary meta-data to display ####
+
+  message( x$Column_name )
+
+  message( '  Category:' )
+  lines_of_text( x$Variable_category )
+
+  message('  Data type:' )
+  lines_of_text( x$Data_type )
+
+  message( '  Description: ' )
   lines_of_text( x$Description )
 
+  if ( x$Sub_category != "" ) {
+    message( '  Sub-category:' )
+    lines_of_text( x$Sub_category )
+  }
+
   if ( x$REDCap_variables != '' ) {
-    message( '  Original REDCap variable:' )
-    message( paste0( '     ', x$REDCap_variables ) )
+    msg <- paste( x$REDCap_variables, collapse = ', ' )
+    message( '  Original REDCap variable(s):' )
+    lines_of_text( msg )
   }
 
   if ( is.list( x$Summary ) ) {
@@ -3021,13 +3058,13 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 
   if ( x$Units != '' ) {
     message( '  Unit of measurement:' )
-    message( paste0( '     ', x$Units ) )
+    lines_of_text( x$Units )
   }
 
 }
 
 #### 4.7) summary.dictionary_meta_data ####
-#' Extract Statistical Summaries From Dictionary Meta-data
+#' Extract Statistical Summaries From Dictionary Meta-Data
 #'
 #' Function to extract the
 #'
@@ -3052,7 +3089,7 @@ summary.dictionary_meta_data <- function( x ) {
 }
 
 #### 4.8) subset.dictionary_meta_data ####
-#' Extract Components From Dictionary Meta-data
+#' Extract Components From Dictionary Meta-Data
 #'
 #' Description.
 #'
@@ -3146,8 +3183,310 @@ subset.dictionary_meta_data <- function( x, type = 'category' ) {
 }
 
 #### 4.9) update_meta_data ####
+#' Update Dictionary Meta-Data
+#'
+#' Function that updates a variable's
+#' dictionary meta-data (specifically
+#' the numeric summary and codes for
+#' missing data). Useful when only
+#' a subset of the data will be used.
+#'
+#' @param dtf A data frame.
+#'
+#' @return A data frame whose
+#' column attributes with dictionary
+#' meta-data have been updated.
+#'
+#' @export
 
-# update_meta_data <- function() {}
+update_dictionary_meta_data <- function( dtf ) {
+
+  # Logical vector of which columns
+  # have meta-data
+  has_dd_metadata <- meta( dtf )
+
+  # Loop over columns
+  K <- ncol( dtf )
+  for ( k in 1:K ) {
+
+    if ( has_dd_metadata[k] ) {
+
+      cur_dd_metadata <- meta( dtf[[k]] )
+
+      # Extract values
+      x <- dtf[[k]]
+
+      codes_for_missing <- cur_dd_metadata$Codes_for_missing
+
+      # Determine appropriate codes for missing data and
+      # remove missing data in x
+
+      lst <- camrprojects::check_for_missing( x, codes_for_missing )
+
+      x_no_missing <- lst$x_no_missing
+      missing_values <- lst$missing_values
+
+      # Update codes for missing data
+      if ( !is.null( lst$codes_for_missing ) ) {
+        codes_for_missing <- lst$codes_for_missing
+      } else {
+        codes_for_missing <- ''
+      }
+
+      cur_dd_metadata$Codes_for_missing <- codes_for_missing
+
+      # If relevant, update summary measures of data
+      if ( is.list( cur_dd_metadata$Summary ) ) {
+
+        # If summary of continuous data, will have
+        # variable for standard deviation (SD)
+        if ( !is.null( cur_dd_metadata$Summary$SD ) ) {
+
+          # Use internal function to update
+          # summaries with new values
+          sox <- create_summary_for_x(
+            x_no_missing,
+            missing_values,
+            'continuous',
+            2
+          )
+          # Save results
+          cur_dd_metadata$Summary <- sox
+
+        }
+
+        # If summary of categorical data, will have
+        # variable for frequency
+        if ( !is.null( cur_dd_metadata$Summary$Frequency ) ) {
+
+          # Use internal function to update
+          # summaries with new values
+          sox <- dd_metadata.create_summary_for_x(
+            x_no_missing,
+            missing_values,
+            'categorical',
+            2
+          )
+          # Save results
+          cur_dd_metadata$Summary <- sox
+
+        }
+
+        # If summary of dates
+        if ( cur_dd_metadata$Data_type ==
+             'R Date-class variable for calendar dates' ) {
 
 
+          sox <- dd_metadata.create_summary_for_x(
+            x_no_missing,
+            missing_values,
+            'range',
+            2
+          )
 
+          cur_dd_metadata$Summary <- sox
+
+        }
+
+      }
+
+      # Update attributes with new summaries
+      # and codes for missing data
+      lst <- attributes( dtf[[k]] )
+      lst$dictionary_meta_data <- cur_dd_metadata
+      attributes( dtf[[k]] ) <- lst
+    }
+  }
+
+  return( dtf )
+}
+
+#### 4.10) data_frame_from_dictionary_meta_data ####
+#' Create Data Frame From Dictionary Meta-Data
+#'
+#' Function to create a data frame with details
+#' from the dictionary meta-data - can then
+#' be converted into, for example, a .csv
+#' file to easily share a data dictionary
+#' with collaborators.
+#'
+#' @param dtf A data frame with columns whose
+#'   attributes include \code{dictionary_meta_data}.
+#'
+#' @return A long-form data frame with details
+#' (e.g., a variable's category, data type,
+#' sub-category, description, units of measurement,
+#' codes for missing data, and scale/subscale
+#' information) for each column with
+#' dictionary meta-data.
+#'
+#' @export
+
+data_frame_from_dictionary_meta_data <- function( dtf ) {
+
+  column_names <- colnames( dtf )
+  NC <- length( column_names )
+
+  vl <- sapply( 1:NC, function(i) {
+    lst <- meta( dtf[[i]] );
+    length( lst$Values_and_labels[[1]] )
+  } )
+
+  content_types <- c(
+    "Variable_category",
+    "Data_type",
+    "Sub_category",
+    "Description",
+    "Units",
+    "Codes_for_missing",
+    "Scale",
+    "Subscale",
+    rep( "Values_and_labels", max( vl ) )
+  )
+  CT <- length( content_types )
+
+  out <- data.frame(
+    Column_name = rep(
+      column_names,
+      each = CT
+    ),
+    Index = rep( 1:CT, NC ),
+    Content_type = rep(
+      content_types,
+      NC
+    ),
+    Content = '',
+    Additional_content = '',
+    stringsAsFactors = F
+  )
+  out$Index_VL <- NA
+  out$Index_VL[ out$Content_type == 'Values_and_labels' ] <-
+    rep( 1:max( vl ), NC )
+
+  for ( nc in 1:NC ) {
+
+    lst <- meta( dtf[[ nc ]] )
+
+    for ( ct in 1:CT ) {
+
+      if ( ct %in% 1:5 ) {
+
+        i <-
+          out$Column_name == column_names[nc] &
+          out$Index == ct
+
+        out$Content[i] <-
+          lst[[ content_types[ct] ]]
+
+      }
+
+      if ( content_types[ct] %in% 'Codes_for_missing' ) {
+
+        if ( is.list( lst$Codes_for_missing ) ) {
+
+          missing_val <- lst$Codes_for_missing
+
+          any_NA <- sapply(
+            1:length( missing_val ),
+            function(i) is.na( missing_val[[i]] )
+          )
+
+          if ( any( any_NA ) ) {
+            output <- 'NA'
+          } else {
+            output <- c()
+          }
+
+          if ( any( !any_NA ) ) {
+            output <- c(
+              output,
+              unlist( missing_val[ !any_NA ] )
+            )
+          }
+
+          i <-
+            out$Column_name == column_names[nc] &
+            out$Content_type == 'Codes_for_missing'
+
+          out$Content[i] <-
+            paste( paste0( '"', output, '"' ), collapse = ' or ' )
+
+        }
+
+      }
+
+      if ( content_types[ct] %in% 'Values_and_labels' ) {
+
+        if ( is.list( lst$Values_and_labels ) ) {
+
+          val <- lst$Values_and_labels$Values
+          lab <- lst$Values_and_labels$Labels
+
+          i <-
+            out$Column_name == column_names[nc] &
+            out$Content_type == 'Values_and_labels' &
+            out$Index_VL %in% 1:length( val )
+
+          out$Content[i] <- val
+          out$Additional_content[i] <- lab
+
+        }
+
+      }
+
+      if ( content_types[ct] %in% 'Scale' ) {
+
+        if ( is.list( x$Scale ) ) {
+
+          out$Content[i] <- paste0(
+            x$Scale$name,
+            ' - ',
+            x$Scale$abbreviation
+          )
+
+          if ( !is.list( x$Subscale ) ) {
+
+            out$Additional_content[i] <- paste0(
+              x$Scale$n_items, ' items (',
+              x$Scale$range[1],
+              ' to ',
+              x$Scale$range[2], ')'
+            )
+
+          }
+
+        }
+
+      }
+
+      if ( content_types[ct] %in% 'Subscale' ) {
+
+        if ( is.list( x$Subscale ) ) {
+
+          out$Content[i] <- x$Subscale$name
+
+          out$Additional_content[i] <- paste0(
+            x$Subscale$n_items, ' items (',
+            x$Subscale$range[1],
+            ' to ',
+            x$Subscale$range[2], ')'
+          )
+
+        }
+
+      }
+
+    }
+
+  }
+
+  no_data <- apply(
+    out[,c('Content','Additional_content')],
+    1, function(x) all(x=="")
+  )
+  out <- out %>%
+    filter( !no_data ) %>%
+    select( -Index, -Index_VL )
+
+  return( out )
+}

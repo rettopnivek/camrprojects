@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{meta}
 \alias{meta}
-\title{Extract Dictionary Meta-data From Attributes}
+\title{Extract Dictionary Meta-Data From Attributes}
 \usage{
 meta(x = NULL, column = "")
 }

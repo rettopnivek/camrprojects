@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{print.dictionary_meta_data}
 \alias{print.dictionary_meta_data}
-\title{Display Dictionary Meta-data Information}
+\title{Display Dictionary Meta-Data Information}
 \usage{
 \method{print}{dictionary_meta_data}(x, digits = 2)
 }
@@ -13,10 +13,11 @@
 The method prints to console, at a minimum, the
 the variable's overarching group, data type, and
 associated description. Additional information may include
-the original REDCap variable used to create the current
-variable, the unit of measurement, a brief statistical
-summary when appropriate, and details for scales,
-inventory, or questionnaire measures.
+the variable's sub-category, the original REDCap variable
+used to create the current variable, the unit of
+measurement, a brief statistical summary when
+appropriate, and details for scales, inventory, or
+questionnaire measures.
 }
 \description{
 A print method for the \code{dictionary_meta_data}

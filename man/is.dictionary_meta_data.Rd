@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{is.dictionary_meta_data}
 \alias{is.dictionary_meta_data}
-\title{Check if a Variable is of Class Dictionary Meta-data}
+\title{Check if a Variable is of Class Dictionary Meta-Data}
 \usage{
 is.dictionary_meta_data(x)
 }
