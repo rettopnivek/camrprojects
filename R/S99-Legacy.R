@@ -9,6 +9,8 @@
 
 # Note: Legacy functions retained to ensure compatibility with
 #       old CAM projects
+
+#### 1) save_data_files ####
 #' Save Data Files
 #'
 #' A convenience function that will save a
@@ -182,7 +184,7 @@ save_data_files = function( data_frames_to_save,
 
 }
 
-
+#### 2) match_and_assign ####
 #' Assign New Values Based on Partial or Exact Matching
 #'
 #' Assigns new values based on partial or exact matches with
@@ -282,6 +284,7 @@ match_and_assign <- function( x, matches, new_values, type = 'partial',
   return( output )
 }
 
+#### 3) create_standardized_filename ####
 #' Create Standardized Filename
 #'
 #' Generates a standardized file name following the format
@@ -439,6 +442,7 @@ create_standardized_filename <- function( description,
   return( filename )
 }
 
+#### 4) source_scripts ####
 #' Source in Multiple R Scripts in a Folder
 #'
 #' A convenience function that loops through
@@ -535,6 +539,7 @@ source_scripts = function( files_to_include = NULL,
 
 }
 
+#### 5) pull_git_version ####
 #' Determine Git Version for Project
 #'
 #' A function to extract the git version for an R project
@@ -588,6 +593,7 @@ pull_git_version <- function() {
   return( out )
 }
 
+#### 6) process_comm ####
 #' Process data from the COMM questionnaire
 #'
 #' This function scores the COMM questionnaire by summing the individual item
@@ -629,6 +635,7 @@ process_comm = function( comm_dtf ) {
   return(comm_dtf)
 }
 
+#### 7) path_by_os ####
 #' Navigate to Folder based on OS
 #'
 #' A function to navigate to different folders/paths
@@ -688,6 +695,7 @@ path_by_os <- function( paths ) {
   return( accessed_path )
 }
 
+#### 8) upload_to_folder ####
 #' Upload File to Folder
 #'
 #' A convenience function that attempts to a) upload a file
@@ -849,6 +857,7 @@ upload_to_folder <- function( filename,
   return( upload_worked )
 }
 
+#### 9) elements ####
 #' Extract Unique Elements of a Vector
 #'
 #' A convenience function that extracts the unique elements
@@ -933,6 +942,7 @@ elements = function( x, counts = T,
   return( out )
 }
 
+#### 10) run_processing_scripts ####
 #' Run Data Processing Scripts
 #'
 #' A convenience function that navigates to the folder
@@ -1129,6 +1139,7 @@ run_processing_scripts = function( processing_files,
 
 }
 
+#### 11) add_meta_data_for_dictionary ####
 #' Add Meta-Data for Data Dictionaries
 #'
 #' A function that adds meta-data (see \code{\link[base]{attributes}})
@@ -1586,6 +1597,7 @@ add_meta_data_for_dictionary = function( Column_name = ' ',
   return( cur_attributes )
 }
 
+#### 12) notes_for_custom_function ####
 #' Display Documention for Custom R Function
 #'
 #' Extracts and displays documention for a custom R function,
@@ -1642,6 +1654,7 @@ notes_for_custom_function = function( f ) {
 
 }
 
+#### 13) go_to ####
 #' Navigate to Folder in Project Directory
 #'
 #' A convenience function that allows a user to quickly navigate
@@ -1700,6 +1713,7 @@ go_to <- function( path ) {
 
 }
 
+#### 14) create_folder_pathways ####
 #' Create or Update List with Paths for Project Directory Hierarchy
 #'
 #' Creates/update a list that contains paths for the folder hierarchy
@@ -1995,6 +2009,7 @@ create_folder_pathways <- function( folder_pathways = NULL,
   return( folder_pathways )
 }
 
+#### 15) update_filename ####
 #' Create Standardized Filename and Remove Previous File
 #'
 #' Generates a standardized file name following the format
@@ -2058,6 +2073,7 @@ update_filename = function( description,
   return( new_file )
 }
 
+#### 16) file_present ####
 #' Checks if a File is Present in a Folder
 #'
 #' Checks if a file is present in the current working directory.
