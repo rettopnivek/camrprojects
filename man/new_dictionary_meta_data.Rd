@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{new_dictionary_meta_data}
 \alias{new_dictionary_meta_data}
-\title{Constructor Function for Dictionary Meta-data Class}
+\title{Constructor Function for Dictionary Meta-Data Class}
 \usage{
 new_dictionary_meta_data(
   Column_name = "",
@@ -70,11 +70,18 @@ the units of measurement for the column.}
 \item{Codes_for_missing}{A list of the codes (e.g.,
 \code{NA}, \code{''}, etc.) for missing values.}
 
-\item{Groups_collected_over}{...}
+\item{Groups_collected_over}{A vector of values
+describing the study groups for which the
+current variable was collected.}
 
-\item{Times_collected_over}{...}
+\item{Times_collected_over}{A vector of values
+describing the study time points during which the
+current variable was collected.}
 
-\item{Studies_collected_over}{...}
+\item{Studies_collected_over}{A vector of values
+describing the studies (e.g., a pilot study,
+the active study), for which the current variable
+was collected.}
 
 \item{Validated}{A character string briefly describing
 if and how the values in the column were validated

@@ -140,10 +140,19 @@ file_paths <- function( file_name = NULL,
 
   if ( !is.null( file_name ) ) {
 
-    x <- arfpam::find_file_name(
-      file_name, output = 'name',
-      path = path
-    )
+    # All files and folders present
+    # in working directory
+    all_files <- dir( path = path )
+
+    # Determine if file name is present
+    # in list of files/folders
+    check <- grepl(file_name, all_files, fixed = T)
+
+    if ( any(check) ) {
+      x <- all_files[check]
+    } else {
+      x <- NULL
+    }
 
     if ( length( x ) == 0 ) {
       stop( 'File not found' )

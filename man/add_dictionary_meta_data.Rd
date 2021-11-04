@@ -2,7 +2,7 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{add_dictionary_meta_data}
 \alias{add_dictionary_meta_data}
-\title{Add Dictionary Meta-data to Column Attributes}
+\title{Add Dictionary Meta-Data to Column Attributes}
 \usage{
 add_dictionary_meta_data(
   dtf,

@@ -2,23 +2,21 @@
 % Please edit documentation in R/S05-Metadata.R
 \name{summary.dictionary_meta_data}
 \alias{summary.dictionary_meta_data}
-\title{Extract Statistical Summaries From Dictionary Meta-data}
+\title{Extract Statistical Summaries From Dictionary Meta-Data}
 \usage{
 \method{summary}{dictionary_meta_data}(x)
 }
 \arguments{
-\item{x}{...}
+\item{x}{A list of class \code{dictionary_meta_data}.}
 }
 \value{
-Output.
+A list with numeric summaries for
+  continuous or categorical variables (not
+  all variables will have summaries).
 }
 \description{
-Function to extract the
-}
-\details{
-
-}
-\examples{
-# Examples
-
+Function to extract the numeric summaries (e.g.,
+mean/standard deviation for continuous variables,
+frequencies/percentages for categorical variables,
+etc.) from the dictionary meta-data.
 }
