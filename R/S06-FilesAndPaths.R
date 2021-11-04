@@ -5,7 +5,7 @@
 #' @param extension String. The file extension(s) with no leading `.`.
 #'
 #' @param project Optional string. Name of the project. Defaults to that stored
-#' in the global cache object.
+#' in config.yml if present.
 #'
 #' @param date Optional string. Date in YYYYMMDD format. Defaults to the current
 #' date.
@@ -23,8 +23,8 @@
 #' @md
 camr_filename <- function(
   description=stop('Must provide file description.'),
-  extension=stop('Must provide file extension.'),
-  project=camr_get('project'),
+  extension=NULL,
+  project=tryCatch(config::get('project'), error = function(cond){NULL}),
   date=format(Sys.time(), '%Y%m%d', tz="UTC"),
   time=format(Sys.time(), '%H%M%S', tz="UTC"),
   git=TRUE
@@ -32,16 +32,18 @@ camr_filename <- function(
   commit <- NULL
 
   if (!stringr::str_detect(date, '\\d{8}') || !stringr::str_detect(date, '\\d{6}')) {
-    stop('Invalid date/time provided.')
+    warning('Invalid date/time provided.')
   }
 
-  if (git) {
+  if (isTRUE(git) && git2r::in_repository()) {
     commit <- substr(git2r::last_commit()$sha, 0, 7)
     status <- git2r::status(untracked=FALSE)
     if (length(c(status$unstaged, status$staged)) != 0) {
       commit <- paste0(commit, 'm')
       warning('Uncommited changes are present. Output files will have a version ending in "m".')
     }
+  } else if (is.character(git) && nchar(git) > 0) {
+    commit <- git
   }
 
   filename <- stringr::str_c(
@@ -49,7 +51,9 @@ camr_filename <- function(
     collapse='-'
   )
 
-  filename <- stringr::str_glue('{filename}.{extension}')
+  extension <- ifelse(is.null(extension), '', stringr::str_c('.', extension))
+
+  filename <- paste0(filename, extension)
 
   fs::path_sanitize(filename)
 }

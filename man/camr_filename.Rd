@@ -6,8 +6,8 @@
 \usage{
 camr_filename(
   description = stop("Must provide file description."),
-  extension = stop("Must provide file extension."),
-  project = camr_get("project"),
+  extension = NULL,
+  project = tryCatch(config::get("project"), error = function(cond) {     NULL }),
   date = format(Sys.time(), "\%Y\%m\%d", tz = "UTC"),
   time = format(Sys.time(), "\%H\%M\%S", tz = "UTC"),
   git = TRUE
@@ -19,7 +19,7 @@ camr_filename(
 \item{extension}{String. The file extension(s) with no leading \code{.}.}
 
 \item{project}{Optional string. Name of the project. Defaults to that stored
-in the global cache object.}
+in config.yml if present.}
 
 \item{date}{Optional string. Date in YYYYMMDD format. Defaults to the current
 date.}
