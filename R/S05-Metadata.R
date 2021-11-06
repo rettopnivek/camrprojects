@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-04
+# Last updated 2021-11-06
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -29,6 +29,8 @@
 #     1.1.14) MMM
 #     1.1.15) CES-D
 #     1.1.16) CWS
+#     1.1.17) PDI
+#     1.1.18) WHODAS
 #   1.2) scale_format
 # 2) column_abbreviations
 # 3) Internal functions
@@ -169,6 +171,13 @@ known_scales <- function( abbreviation = NULL,
       'Perceived Stress Scale\n',
       '  abbreviation = "PSS"\n\n',
 
+      'Peters et al. Delusions Inventory\n',
+      '  abbreviation = "PDI"\n',
+      '    subscale = "Distress"\n',
+      '    subscale = "Preoccupation"\n',
+      '    subscale = "Conviction"\n',
+      '    subscale = "PDI yes/no"\n\n',
+
       'Short Form Health Survey\n',
       '  abbreviation = "SF-12"\n',
       '    subscale = "Physical"\n',
@@ -185,7 +194,12 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Lack of premeditation"\n',
       '    subscale = "Lack of perseverance"\n',
       '    subscale = "Sensation seeking"\n',
-      '    subscale = "Positive urgency"\n\n'
+      '    subscale = "Positive urgency"\n\n',
+
+      'World Health Organization Disability Assement Scale 2.0\n',
+      '  abbrevation = "WHODAS 2.0"\n',
+      '    subscale = "IRT-based scores"\n',
+      '    subscale = "Percentile rank"\n\n'
 
     )
     message( inputs )
@@ -1736,6 +1750,230 @@ known_scales <- function( abbreviation = NULL,
     # 10	10 (Strongly Agree)
 
     # Close 'CWS'
+  }
+
+  #### 1.1.17) PDI ####
+  if ( abbreviation %in% c( 'PDI' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Peters et al. Delusions Inventory',
+      n_items = 63,
+      range = c( 0, 336 ),
+      abbreviation = 'PDI',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          'Peters, E. R., Joseph, S. A., & Garety, P. A. ',
+          '(1999). Measurement of delusional ideation in the ',
+          'normal population: introducing the PDI ',
+          '(Peters et al. Delusions Inventory). Schizophrenia ',
+          'Bulletin, 25(3), 553-576. ',
+          'https://doi.org/10.1093/oxfordjournals.schbul.a033401'
+        ),
+        paste0(
+          'Peters, E., Joseph, S., Day, S., Garety, P. (2004). ',
+          'Measuring delusional ideation: The 21-Item Peters et al. ',
+          'Delusions Inventory (PDI). Schizophrenia Bulletin, 30 ',
+          '(4), 1005-1022. ',
+          'https://doi.org/10.1093/oxfordjournals.schbul.a007116'
+        )
+      ),
+      interpretation = paste0(
+        "Higher scores indicate greater proneness to delusional ",
+        "ideation"
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Distress
+      if ( subscale %in% c( 'Distress' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PDI distress subscale - measure of',
+          'how upsetting are the delusional ideations'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Distress',
+          n_items = 21,
+          range = c( 0, 105 ),
+          cut_off = c( NA ),
+          interpretation = paste0(
+            "Higher scores indicate greater distress"
+          )
+        )
+
+        # Close 'Distress'
+      }
+
+      ### Preoccupation
+      if ( subscale %in% c( 'Preoccupation' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PDI preoccupation subscale - measure of',
+          'how preoccupied an individual is with the delusional ',
+          'ideations'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Preoccupation',
+          n_items = 21,
+          range = c( 0, 105 ),
+          cut_off = c( NA ),
+          interpretation = paste0(
+            "Higher scores indicate greater preoccu"
+          )
+        )
+
+        # Close 'Preoccupation'
+      }
+
+      ### Conviction
+      if ( subscale %in% c( 'Conviction' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PDI conviction subscale - measure of',
+          'how much an individual believes in the delusional ',
+          'ideations'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'Conviction',
+          n_items = 21,
+          range = c( 0, 105 ),
+          cut_off = c( NA ),
+          interpretation = paste0(
+            "Higher scores indicate greater belief in delusions"
+          )
+        )
+
+        # Close 'Conviction'
+      }
+
+      ### PDI yes/no
+      if ( subscale %in% c( 'PDI yes/no' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PDI yes/no subscale - measure of',
+          'number of delusional ideations a person experiences'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'PDI yes/no',
+          n_items = 21,
+          range = c( 0, 21 ),
+          cut_off = c( NA ),
+          interpretation = paste0(
+            "Higher scores indicate a greater degree of delusional ",
+            "ideation"
+          )
+        )
+
+        # Close 'PDI yes/no'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # Close 'PDI'
+  }
+
+  #### 1.1.18) WHODAS 2.0 ####
+  if ( abbreviation %in% c( 'WHODAS', 'WHODAS 2.0' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'World Health Organization Disability Assement Scale 2.0',
+      n_items = 36,
+      range = c( NA, NA ),
+      abbreviation = 'WHODAS 2.0',
+      cut_off = NA,
+      reference = c(
+        paste0(
+          'Ustun, T. B., & World Health Organization. (2010). ',
+          'Measuring health and disability: Manual for WHO ',
+          'Disability Assessment Schedule WHODAS 2.0. Geneva: ',
+          'World Health Organization.'
+        )
+      ),
+      interpretation = paste0(
+        ""
+      )
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### IRT-based scores
+      if ( subscale %in% c( 'IRT-based scores',
+                            'Item response theory',
+                            'IRT',
+                            'Item response theory scores',
+                            'IRT scores' ) ) {
+
+        out$Description <- paste0(
+          'Item respone theory based scores for the ',
+          'WHODAS 2.0 - measure of degree of disability ',
+          'which negatively impacts daily life'
+        )
+
+        out$Units <- "Scaled score"
+
+        out$Subscale <- list(
+          name = 'IRT-based scores',
+          n_items = 36,
+          range = c( 0, 100 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater degree of disability"
+          )
+        )
+
+        # Close 'IRT-based scores'
+      }
+
+      ### Percentile rank
+      if ( subscale %in% c( 'Percentile rank',
+                            'percentile rank' ) ) {
+
+        out$Description <- paste0(
+          'Percentile rank based on norms for the ',
+          'WHODAS 2.0 - measure of ',
+          'percentage of individuals who report a lesser ',
+          'degree of disability'
+        )
+
+        out$Units <- "Percentile rank"
+
+        out$Subscale <- list(
+          name = 'Percentile rank',
+          n_items = 36,
+          range = c( 0, 100 ),
+          cut_off = NA,
+          interpretation = paste0(
+            "Higher scores indicate a greater percentage of ",
+            "individuals with a lesser degree of disability"
+          )
+        )
+
+        # Close 'Percentile rank'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # Close 'WHODAS 2.0'
   }
 
   if ( is.null( out$Scale ) ) {
