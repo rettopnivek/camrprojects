@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-06
+# Last updated 2021-11-08
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -3522,7 +3522,7 @@ update_dictionary_meta_data <- function( dtf ) {
 
           # Use internal function to update
           # summaries with new values
-          sox <- dd_metadata.create_summary_for_x(
+          sox <- create_summary_for_x(
             x_no_missing,
             missing_values,
             'categorical',
@@ -3538,7 +3538,7 @@ update_dictionary_meta_data <- function( dtf ) {
              'R Date-class variable for calendar dates' ) {
 
 
-          sox <- dd_metadata.create_summary_for_x(
+          sox <- create_summary_for_x(
             x_no_missing,
             missing_values,
             'range',
