@@ -9,7 +9,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-04
+# Last updated 2021-11-08
 
 #### 1) camr_filename ####
 #' Generates a standard filename.
@@ -128,7 +128,7 @@ camr_processed_data_to_csv <- function( dtf,
 
   fname <- paste0(
     # Project name
-    project, '-',
+    proj, '-',
     # File description
     desc, '-',
     # Date and time
@@ -164,7 +164,7 @@ camr_processed_data_to_csv <- function( dtf,
 
   fname <- paste0(
     # Project name
-    project, '-',
+    proj, '-',
     # File description
     stringr::str_to_sentence(
       paste0( 'Data_dictionary_for_', desc )
