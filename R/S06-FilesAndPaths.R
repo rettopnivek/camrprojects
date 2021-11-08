@@ -11,6 +11,10 @@
 # have any questions or comments
 # Last updated 2021-11-08
 
+# Table of contents
+# 1) camr_filename
+# 2) camr_processed_data_to_csv
+
 #### 1) camr_filename ####
 #' Generates a standard filename.
 #'
