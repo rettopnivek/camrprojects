@@ -3681,7 +3681,11 @@ data_frame_from_dictionary_meta_data <- function( dtf ) {
         if ( is.list( lst$Values_and_labels ) ) {
 
           val <- lst$Values_and_labels$Values
-          lab <- lst$Values_and_labels$Labels
+          if ( !is.null( lst$Values_and_labels$Labels ) ) {
+            lab <- lst$Values_and_labels$Labels
+          } else {
+            lab <- rep( "", length( val ) )
+          }
 
           i <-
             out$Column_name == column_names[nc] &
