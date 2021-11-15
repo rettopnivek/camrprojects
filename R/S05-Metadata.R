@@ -3573,6 +3573,9 @@ update_dictionary_meta_data <- function( dtf ) {
 #'
 #' @param dtf A data frame with columns whose
 #'   attributes include \code{dictionary_meta_data}.
+#' @param progress Logical; if \code{TRUE}
+#'   tracks progress of extracting meta-data from
+#'   columns - useful for debugging purposes.
 #'
 #' @return A long-form data frame with details
 #' (e.g., a variable's category, data type,
@@ -3583,7 +3586,8 @@ update_dictionary_meta_data <- function( dtf ) {
 #'
 #' @export
 
-data_frame_from_dictionary_meta_data <- function( dtf ) {
+data_frame_from_dictionary_meta_data <- function( dtf,
+                                                  progress = FALSE ) {
 
   column_names <- colnames( dtf )
   NC <- length( column_names )
@@ -3625,6 +3629,10 @@ data_frame_from_dictionary_meta_data <- function( dtf ) {
     rep( 1:max( vl ), NC )
 
   for ( nc in 1:NC ) {
+
+    if ( progress ) {
+      message( paste0( '- ', column_names[nc] ) )
+    }
 
     lst <- meta( dtf[[ nc ]] )
 
