@@ -4,11 +4,15 @@
 \alias{data_frame_from_dictionary_meta_data}
 \title{Create Data Frame From Dictionary Meta-Data}
 \usage{
-data_frame_from_dictionary_meta_data(dtf)
+data_frame_from_dictionary_meta_data(dtf, progress = FALSE)
 }
 \arguments{
 \item{dtf}{A data frame with columns whose
 attributes include \code{dictionary_meta_data}.}
+
+\item{progress}{Logical; if \code{TRUE}
+tracks progress of extracting meta-data from
+columns - useful for debugging purposes.}
 }
 \value{
 A long-form data frame with details

@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-08
+# Last updated 2021-11-15
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -168,6 +168,7 @@ known_scales <- function( abbreviation = NULL,
       'Pain Catastrophizing Scale\n',
       '  abbreviation = "PCS"\n\n',
 
+
       'Perceived Stress Scale\n',
       '  abbreviation = "PSS"\n\n',
 
@@ -176,7 +177,8 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Distress"\n',
       '    subscale = "Preoccupation"\n',
       '    subscale = "Conviction"\n',
-      '    subscale = "PDI yes/no"\n\n',
+      '    subscale = "PDI yes/no"\n',
+      '    subscale = "PDI total"\n\n',
 
       'Short Form Health Survey\n',
       '  abbreviation = "SF-12"\n',
@@ -264,7 +266,6 @@ known_scales <- function( abbreviation = NULL,
 
       ### Depression
       if ( subscale == 'Depression' ) {
-
 
         out$Description <- paste0(
           'Scores for the HADS anxiety subscale - measure ',
@@ -501,7 +502,7 @@ known_scales <- function( abbreviation = NULL,
   }
 
   ### Percentages
-  if ( abbreviation == 'PCS (%)' ) {
+  if ( abbreviation %in% 'PCS (%)' ) {
 
     out$Description <- paste0(
       "Percentages for the PCS - measure of the degree to ",
@@ -510,7 +511,7 @@ known_scales <- function( abbreviation = NULL,
 
     out$Units <- "Percentages"
 
-    out <- list(
+    out$Scale <- list(
       name = 'Pain Catastrophizing Scale',
       n_items = 13,
       range = c( Min = 0, Max = 100 ),
@@ -626,7 +627,6 @@ known_scales <- function( abbreviation = NULL,
       ### Physical
       if ( subscale == 'Physical' ) {
 
-
         out$Description <- paste0(
           "Normed scores for the SF-12 physical subscale - ",
           "measure of the degree of general physical health of ",
@@ -692,13 +692,10 @@ known_scales <- function( abbreviation = NULL,
       ### Compulsivity
       if (subscale == 'Compulsivity') {
 
-
         out$Description <- paste0(
           'Scores for the MCQ compulsivity subscale - measure ',
           'of the inability to control marijuana use'
         )
-
-
 
         out$Units <- "Summed score"
 
@@ -779,7 +776,6 @@ known_scales <- function( abbreviation = NULL,
           'of the degree of intention and planning to use ',
           'marijuana for positive outcomes'
         )
-
 
         out$Units <- "Summed score"
 
@@ -889,7 +885,6 @@ known_scales <- function( abbreviation = NULL,
 
       ###  Lack of social support
       if (subscale == 'Lack of social support') {
-
 
         out$Description <- paste0(
           'Scores for the CHRT lack of social support items',
@@ -1873,6 +1868,30 @@ known_scales <- function( abbreviation = NULL,
           name = 'PDI yes/no',
           n_items = 21,
           range = c( 0, 21 ),
+          cut_off = c( NA ),
+          interpretation = paste0(
+            "Higher scores indicate a greater degree of delusional ",
+            "ideation"
+          )
+        )
+
+        # Close 'PDI yes/no'
+      }
+
+      ### PDI total
+      if ( subscale %in% c( 'PDI total' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PDI - measure of',
+          'general delusional ideation summing over all subscales'
+        )
+
+        out$Units <- "Summed score"
+
+        out$Subscale <- list(
+          name = 'PDI total',
+          n_items = 63,
+          range = c( 0, 336 ),
           cut_off = c( NA ),
           interpretation = paste0(
             "Higher scores indicate a greater degree of delusional ",
@@ -3573,6 +3592,9 @@ update_dictionary_meta_data <- function( dtf ) {
 #'
 #' @param dtf A data frame with columns whose
 #'   attributes include \code{dictionary_meta_data}.
+#' @param progress Logical; if \code{TRUE}
+#'   tracks progress of extracting meta-data from
+#'   columns - useful for debugging purposes.
 #'
 #' @return A long-form data frame with details
 #' (e.g., a variable's category, data type,
@@ -3583,7 +3605,8 @@ update_dictionary_meta_data <- function( dtf ) {
 #'
 #' @export
 
-data_frame_from_dictionary_meta_data <- function( dtf ) {
+data_frame_from_dictionary_meta_data <- function( dtf,
+                                                  progress = FALSE ) {
 
   column_names <- colnames( dtf )
   NC <- length( column_names )
@@ -3625,6 +3648,10 @@ data_frame_from_dictionary_meta_data <- function( dtf ) {
     rep( 1:max( vl ), NC )
 
   for ( nc in 1:NC ) {
+
+    if ( progress ) {
+      message( paste0( '- ', column_names[nc] ) )
+    }
 
     lst <- meta( dtf[[ nc ]] )
 
