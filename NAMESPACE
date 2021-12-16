@@ -3,6 +3,7 @@
 S3method(print,dictionary_meta_data)
 S3method(subset,dictionary_meta_data)
 S3method(summary,dictionary_meta_data)
+export("%??%")
 export(add_dictionary_meta_data)
 export(add_meta_data_for_dictionary)
 export(build_demo_table)

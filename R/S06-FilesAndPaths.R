@@ -20,7 +20,7 @@
 #'
 #' @param description String. Preferably UpperCamelCase with no spaces.
 #'
-#' @param extension String. The file extension(s) with no leading `.`.
+#' @param extension Optional string. The file extension(s) with no leading `.`.
 #'
 #' @param project Optional string. Name of the project. Defaults to that stored
 #' in config.yml if present.
@@ -41,18 +41,20 @@
 #' @md
 
 camr_filename <- function(
-  description=stop('Must provide file description.'),
+  description,
   extension=NULL,
-  project=tryCatch(config::get('project'), error = function(cond){NULL}),
-  date=format(Sys.time(), '%Y%m%d', tz="UTC"),
-  time=format(Sys.time(), '%H%M%S', tz="UTC"),
+  project=config::get('project') %??% NULL,
+  date=format(Sys.time(), '%Y_%m_%d', tz="UTC"),
+  time=format(Sys.time(), '%H_%M_%S', tz="UTC"),
   git=TRUE
 ) {
   commit <- NULL
 
-  if (!stringr::str_detect(date, '\\d{8}') || !stringr::str_detect(date, '\\d{6}')) {
-    warning('Invalid date/time provided.')
-  }
+  checkmate::assert_character(description, pattern='^\\w+$')
+  checkmate::assert_character(extension, pattern='^\\w+$', null.ok=TRUE)
+  checkmate::assert_character(project, pattern='^\\w+$', null.ok=TRUE)
+  checkmate::assert_character(date, pattern='^\\d{4}_\\d{2}_\\d{2}$')
+  checkmate::assert_character(time, pattern='^\\d{2}_\\d{2}_\\d{2}$')
 
   if (isTRUE(git) && git2r::in_repository()) {
     commit <- substr(git2r::last_commit()$sha, 0, 7)
@@ -80,7 +82,50 @@ camr_filename <- function(
   fs::path_sanitize(filename)
 }
 
-#### 2) camr_processed_data_to_csv ####
+#### 2) camr_pushd ####
+#' Push a path to the directory stack.
+#'
+#' @param path Optional. The path to save. Defaults to the working directory.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_pushd <- function (path = getwd()) {
+
+  if (!exists('.camr_stack')) {
+    .camr_stack=NULL
+  }
+
+  path = fs::path_real(path)
+  if (fs::dir_exists(path)) {
+    .camr_stack <<- c(path, .camr_stack)
+  } else {
+    warning('Path does not exist and has not been added to the directory stack.')
+  }
+}
+
+#### 3) camr_popd ####
+#' Pop the last path from the directory stack and switch into it.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_popd <- function () {
+
+  if (!exists('.camr_stack')) {
+    stop('The directory stack has not been initialized.')
+  }
+
+  if (length(.camr_stack)) {
+    setwd(.camr_stack[1])
+    .camr_stack <<- .camr_stack[-1]
+  } else {
+    warning('The directory stack is empty.')
+  }
+}
+#### 4) camr_processed_data_to_csv ####
 #' Convert Processed Data to .csv Files
 #'
 #' Convenience function that takes a data frame with

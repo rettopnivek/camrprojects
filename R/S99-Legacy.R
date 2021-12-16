@@ -2210,3 +2210,128 @@ load_package <- function( package_name,
   library( package_name, character.only = T )
 
 }
+#' Create a global cache object.
+#'
+#' Creates a global object `camr` for storing information such as file paths in
+#' an encapsulated manner. If a `.cache` Rds file can be found in the working
+#' directory, its contents will be loaded.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_cache <- function () {
+  .Deprecated()
+
+  if (exists('camr', envir=.GlobalEnv))
+    warning('Global cache object `camr` already initialized.')
+
+  if (fs::file_exists('.cache'))
+    camr <<- readRDS('.cache')
+  else
+    camr <<- list(origin=getwd())
+}
+
+#' Reset the global cache object. Delete the `.cache` file.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_reset <- function () {
+  .Deprecated()
+  if (fs::file_exists('.cache'))
+    fs::file_delete('.cache')
+  rm(camr, pos=1)
+  camr_cache()
+}
+
+#' Save the global cache object to disk.
+#'
+#' The global cache is stored to a `.cache` Rds in the working directory.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_save <- function () {
+  .Deprecated()
+  saveRDS(camr, file=path(camr$origin, '.cache'))
+}
+#' Construct and check the existence of paths given the prefix directory.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_paths <- function () {
+  .Deprecated()
+  if (is.null(camr[['prefix']]))
+    stop('Prefix not initialized.')
+
+  folders <- c('Documents', 'Figures', 'Reports')
+  expanded <- c()
+
+  for (folder in folders) {
+    fullpath <- path(camr$prefix, folder)
+
+    if(!fs::dir_exists(fullpath) && askYesNo(stringr::str_glue('Directory "{fullpath}" does not exist. Create?')))
+      fs::dir_create(fullpath)
+
+    expanded <- append(expanded, fullpath)
+  }
+
+  camr$paths <<- setNames(as.list(expanded), folders)
+  camr_save()
+}
+#' Set a directory prefix for data files.
+#'
+#' @param prefix Optional. A path to the desired data directory. Defaults to the
+#' working directory.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_prefix <- function (prefix=getwd()) {
+  .Deprecated()
+  if (!is_absolute_path(prefix) && getwd() != camr$origin)
+    warning('Relative prefix set outside of the camr origin.')
+
+  prefix <- fs::path_real(prefix)
+
+  if (prefix == getwd() && prefix != camr$origin)
+    warning('Prefix set implicitly outside of the camr origin.')
+
+
+  camr$prefix <<- prefix
+  camr_save()
+}
+#' Set a miscellaneous item within the global `camr` object and save to disk.
+#'
+#' @param name The property to set.
+#'
+#' @param value The value to set.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_set <- function (name, value) {
+  .Deprecated()
+  camr[name] <<- value
+  camr_save()
+}
+
+#' Get an item fromm the global `camr` object.
+#'
+#' @param name The property to get.
+#'
+#' @author Michael Pascale
+#'
+#' @export
+#' @md
+camr_get <- function (name) {
+  .Deprecated()
+  camr[name]
+}

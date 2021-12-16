@@ -5,18 +5,18 @@
 \title{Generates a standard filename.}
 \usage{
 camr_filename(
-  description = stop("Must provide file description."),
+  description,
   extension = NULL,
-  project = tryCatch(config::get("project"), error = function(cond) {     NULL }),
-  date = format(Sys.time(), "\%Y\%m\%d", tz = "UTC"),
-  time = format(Sys.time(), "\%H\%M\%S", tz = "UTC"),
+  project = config::get("project") \%??\% NULL,
+  date = format(Sys.time(), "\%Y_\%m_\%d", tz = "UTC"),
+  time = format(Sys.time(), "\%H_\%M_\%S", tz = "UTC"),
   git = TRUE
 )
 }
 \arguments{
 \item{description}{String. Preferably UpperCamelCase with no spaces.}
 
-\item{extension}{String. The file extension(s) with no leading \code{.}.}
+\item{extension}{Optional string. The file extension(s) with no leading \code{.}.}
 
 \item{project}{Optional string. Name of the project. Defaults to that stored
 in config.yml if present.}
