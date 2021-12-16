@@ -118,9 +118,7 @@ camr_processed_data_to_csv <- function( dtf,
                                         file_path = '' ) {
 
   if ( is.null( commit_num ) ) {
-    commit_num <- paste0(
-      '-', substr(git2r::last_commit()$sha, 0, 7)
-    )
+    commit_num <- system("git rev-parse --short HEAD", intern = TRUE)
   }
 
   if ( cur_time == '' ) {
@@ -136,8 +134,7 @@ camr_processed_data_to_csv <- function( dtf,
     # File description
     desc, '-',
     # Date and time
-    cur_time,
-    '-',
+    cur_time, '-',
     # Gitlab commit reference
     commit_num,
     # Extension
@@ -163,7 +160,7 @@ camr_processed_data_to_csv <- function( dtf,
   )
 
   dd <- data_frame_from_dictionary_meta_data(
-    dtf
+    dtf[ , meta( dtf ) ]
   )
 
   fname <- paste0(
@@ -172,9 +169,9 @@ camr_processed_data_to_csv <- function( dtf,
     # File description
     stringr::str_to_sentence(
       paste0( 'Data_dictionary_for_', desc )
-    ), '-',
+    )[1], '-',
     # Date and time
-    cur_time,
+    cur_time, '-',
     # Gitlab commit reference
     commit_num,
     # Extension
