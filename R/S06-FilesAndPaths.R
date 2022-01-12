@@ -13,7 +13,10 @@
 
 # Table of contents
 # 1) camr_filename
-# 2) camr_processed_data_to_csv
+# 2) camr_pushd
+# 3) camr_popd
+# 4) camr_processed_data_to_csv
+# 5) camr_path
 
 #### 1) camr_filename ####
 #' Generates a standard filename.
@@ -241,4 +244,68 @@ camr_processed_data_to_csv <- function( dtf,
   )
 
   return( out )
+}
+
+#### 5) camr_path ####
+#' Construct a Path Given Base Paths in Project Configuration File
+#'
+#' `r lifecycle::badge("experimental")`
+#'
+#' Expects the project `config.yml` to contain a named list of base paths,
+#' `(?<prefix>\w+)-root`, and a default base path name,
+#' `(?<prefix>\w+)-root-default`.
+#'
+#' @param prefix 'input' or 'output' corresponding to the prefix of the
+#' corresponding parameter in `config.yml`.
+#'
+#' @param root Optional. Name of the base path to lookup.
+#'
+#' @param path Optional. Path tail to concatenate at the end of the base path.
+#'
+#' @param real Optional. Whether to check if the generated path exists. Defaults
+#' to TRUE.
+#'
+#' @param real Optional. Whether to create a directory at the generated path.
+#' Cannot be used with `real`. Defaults to FALSE.
+#'
+#' @author Michael Pascale
+#' @keywords internal
+#'
+#' @export
+#' @md
+camr_path <- function (prefix, root=NULL, path=NULL, real=TRUE, create=FALSE) {
+  checkmate::assert_choice(prefix, c('input', 'output'))
+  checkmate::assert_string(root, null.ok=TRUE)
+  checkmate::assert_string(path, null.ok=TRUE)
+  checkmate::assert_logical(real, len=1)
+  checkmate::assert_logical(create, len=1)
+  checkmate::assert_false(real && create)
+
+  config_root_default <- paste(prefix, 'root', 'default', sep='-')
+  config_root_list <- paste(prefix, 'root', sep='-')
+
+  if (is.null(root)) {
+    root <- config::get(config_root_default) %??%
+      stop('A default root was not detected in the project configuration.')
+  }
+
+  base <- config::get(config_root_list)[[root]] %??%
+    stop('The specified root was not detected in the project configuration.')
+
+  fullpath <- fs::path_join(c(base, path))
+
+  if (!real) {
+    if (create)
+      fs::dir_create(fullpath)
+
+    return(fullpath)
+  }
+
+  fs::path_real(fullpath)
+}
+
+# FIXME: Add function to determine the latest version of a file given a directory
+# of files following the camr_filename format.
+camr_latest <- function (path) {
+  stop('This is a stub.')
 }
