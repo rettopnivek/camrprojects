@@ -18,8 +18,8 @@ columns - useful for debugging purposes.}
 A long-form data frame with details
 (e.g., a variable's category, data type,
 sub-category, description, units of measurement,
-codes for missing data, and scale/subscale
-information) for each column with
+codes for missing data, scale/subscale information,
+and specific notes) for each column with
 dictionary meta-data.
 }
 \description{

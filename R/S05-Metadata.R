@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-11-15
+# Last updated 2021-12-13
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -3599,8 +3599,8 @@ update_dictionary_meta_data <- function( dtf ) {
 #' @return A long-form data frame with details
 #' (e.g., a variable's category, data type,
 #' sub-category, description, units of measurement,
-#' codes for missing data, and scale/subscale
-#' information) for each column with
+#' codes for missing data, scale/subscale information,
+#' and specific notes) for each column with
 #' dictionary meta-data.
 #'
 #' @export
@@ -3625,6 +3625,7 @@ data_frame_from_dictionary_meta_data <- function( dtf,
     "Codes_for_missing",
     "Scale",
     "Subscale",
+    "Notes",
     rep( "Values_and_labels", max( vl ) )
   )
   CT <- length( content_types )
@@ -3728,6 +3729,10 @@ data_frame_from_dictionary_meta_data <- function( dtf,
 
       if ( content_types[ct] %in% 'Scale' ) {
 
+        i <-
+          out$Column_name == column_names[nc] &
+          out$Content_type == 'Scale'
+
         if ( is.list( lst$Scale ) ) {
 
           out$Content[i] <- paste0(
@@ -3753,6 +3758,10 @@ data_frame_from_dictionary_meta_data <- function( dtf,
 
       if ( content_types[ct] %in% 'Subscale' ) {
 
+        i <-
+          out$Column_name == column_names[nc] &
+          out$Content_type == 'Subscale'
+
         if ( is.list( lst$Subscale ) ) {
 
           out$Content[i] <- lst$Subscale$name
@@ -3765,6 +3774,16 @@ data_frame_from_dictionary_meta_data <- function( dtf,
           )
 
         }
+
+      }
+
+      if ( content_types[ct] %in% 'Notes' ) {
+
+        i <-
+          out$Column_name == column_names[nc] &
+          out$Content_type == 'Notes'
+
+        out$Content[i] <- lst$Notes
 
       }
 
