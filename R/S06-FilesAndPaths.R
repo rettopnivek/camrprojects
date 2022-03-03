@@ -340,8 +340,8 @@ camr_latest <- function (prefix, description, extension, root=NULL, path=NULL, p
     recurse=recurse,
     regexp=paste0('[/\\]', chr_project, '-', description, '-[^/\\]*\\.', extension, '$'),
     ignore.case=TRUE
-  ) |> unclass() |> unname() -> vchr_paths_matching
+  ) %>% unclass() %>% unname() -> vchr_paths_matching
 
-  vint_idx <- order(vchr_paths_matching |> str_remove("^.*/"), decreasing = TRUE)
+  vint_idx <- order(vchr_paths_matching %>% str_remove("^.*/"), decreasing = TRUE)
   vchr_paths_matching[vint_idx][1]
 }
