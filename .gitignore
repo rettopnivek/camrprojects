@@ -3,3 +3,4 @@
 docs
 .cache
 .DS_Store
+inst/doc

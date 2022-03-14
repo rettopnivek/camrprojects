@@ -1,0 +1,72 @@
+---
+title: "Project Configuration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CAM R Project Conventions - Configuration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+At the top of each project tree, a file called `config.yml` will define
+configuration options for the project. This file is read with the R package
+`config`. Several `camrprojects` functions make use of these options.
+
+```yaml
+# See packages `camrprojects` and `config` for how this file should be structured.
+# Default configuration, everything inherits from this.
+default:
+  # Project name. This will prefix files generated with camr_filename.
+  project: 'fNIRS'
+
+  # Locations for input files.
+  input-root:
+    dropbox: /Users/default/Dropbox (Partners HealthCare)/CAM Data and Analyses/fNIRS/Data/Source
+    addnmed: /Volumes/ADDNMED$/fMRI Studies/Jodi/fNIRS Marijuana
+    local: /Users/default/Documents/fNIRS-Data/Backup
+
+  # Default location (of the above) for input files.
+  input-root-default: dropbox
+  
+  # Locations to place output files.
+  output-root:
+    dropbox: /Users/default/Dropbox (Partners HealthCare)/CAM Data and Analyses/fNIRS/Data/Output
+    local: !expr file.path(getwd(), 'data', 'output')
+
+  # Default location (of the above) to place output files.
+  output-root-default: local
+
+  # Enable any "debugging" options.
+  debug: true
+  
+  # Use `future` with `targets` to process pipeline targets in parallel.
+  parallel: false
+
+# Production mode for generation of official datasets.
+# This section overrides the options specified in `default`.
+production:
+  # In production mode, output processed data directly to Dropbox.
+  output-root-default: dropbox
+  
+  debug: false
+  parallel: true
+
+```
+
+The function **`camr_path`** will construct paths based on the `input-root` and
+`output-root` options listed in the configuration file.
+
+For example, `camr_path('input', 'addnmed')` will return the input root called
+`addnmed`, `/Volumes/ADDNMED$/fMRI Studies/Jodi/fNIRS Marijuana`.
+`camr_path('output')` will return the default output root,
+`/Users/default/Dropbox (Partners HealthCare)/CAM Data and Analyses/fNIRS/Data/Output`.
+
+The function **`camr_latest`** will search one of the input/output roots (using `camr_path`) for the most recent version of a file.
+
+Given there are more than one file in the input root `dropbox` with the description field `REDCapData`, `camr_latest('input', 'REDCapData')` will return `/Users/default/Dropbox .../fNIRS/Data/Source/MMJ-REDCapData-2021_12_09-15_52_33-e7bba8d.Rdata`.

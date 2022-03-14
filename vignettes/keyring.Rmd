@@ -1,0 +1,31 @@
+---
+title: "Keys, Tokens, and Passwords"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CAM R Project Conventions - Key/Secret Management}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `keyring` package is used to manage secrets in a secure manner using the
+system keyring manager provided by Windows, MacOS or certain Linux
+distributions. Alternatively, if no system keyring manager is available, the
+package can create an encrypted file to store secrets. Use a keyring to securely
+store your REDCap API key.
+
+`keyring` into keyrings, servies, and users. For example, a keyring called
+`camr` may have a service called `redcap` for the user `jsmith` with the user's
+REDCap API key.
+
+By convention, we create a keyring with the same name as the project. This
+must match the name of the project defined in the `config.yml`. The function
+`camr_key` retrieves keys from the keyring using this convention and will read
+the `config.yml` file to determine the keyring to use. The project name is also
+used as the default username if no other username is specified.
