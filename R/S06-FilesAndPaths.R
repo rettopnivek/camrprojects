@@ -46,12 +46,14 @@
 camr_filename <- function(
   description,
   extension=NULL,
-  project=config::get('project') %??% NULL,
+  project=config::get('project'),
   date=format(Sys.time(), '%Y_%m_%d', tz="UTC"),
   time=format(Sys.time(), '%H_%M_%S', tz="UTC"),
   git=TRUE
 ) {
   commit <- NULL
+
+  project %??% stop('Project not specified nor present in project config.')
 
   checkmate::assert_character(description, pattern='^\\w+$')
   checkmate::assert_character(extension, pattern='^\\w+$', null.ok=TRUE)
@@ -283,11 +285,11 @@ camr_path <- function (prefix, root=NULL, path=NULL, real=TRUE, create=FALSE) {
 
   if (is.null(root)) {
     root <- config::get(config_root_default) %??%
-      stop('A default root was not detected in the project configuration.')
+      stop('Problem reading project config. More specifically, did not find a default directory root.')
   }
 
   base <- config::get(config_root_list)[[root]] %??%
-    stop('The specified root was not detected in the project configuration.')
+    stop('Problem reading project config. More specifically, did not find the specified directory root.')
 
   fullpath <- fs::path_join(c(base, path))
 
@@ -333,7 +335,11 @@ camr_latest <- function (prefix, description, extension, root=NULL, path=NULL, p
 
   chr_path_directory <- camr_path(prefix, root, path)
 
-  chr_project = ifelse(project, config::get('project'), '.*?')
+  chr_project = ifelse(
+    project,
+    config::get('project') %??% stop('Problem reading project config. More specifically, did not find the project name.'),
+    '.*?'
+  )
 
   fs::dir_ls(
     chr_path_directory,

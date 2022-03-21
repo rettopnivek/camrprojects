@@ -7,7 +7,7 @@
 camr_filename(
   description,
   extension = NULL,
-  project = config::get("project") \%??\% NULL,
+  project = config::get("project"),
   date = format(Sys.time(), "\%Y_\%m_\%d", tz = "UTC"),
   time = format(Sys.time(), "\%H_\%M_\%S", tz = "UTC"),
   git = TRUE
