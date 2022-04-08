@@ -48,6 +48,10 @@
 #     1.1.33) GLTEQ
 #     1.1.34) MCQ
 #     1.1.35) MEEQ
+#     1.1.36) MISS
+#     1.1.37) MPS
+#     1.1.38) PQB
+#     1.1.39) PSQI
 #   1.2) scale_format
 # 2) column_abbreviations
 # 3) Internal functions
@@ -250,6 +254,9 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Enhancement"\n',
       '    subscale = "Expansion"\n\n',
 
+      'Marijuana Problem Scale\n',
+      '  abbrevation = "MPS"\n\n',
+
       'Monetary Choice Questionnaire\n',
       '  abbrevation = "MCQ"\n\n',
 
@@ -259,6 +266,17 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Anxious arousal"\n',
       '    subscale = "General distress depressive symptoms"\n',
       '    subscale = "Anhedonic depression"\n\n',
+
+      'Multidimensional Iowa Suggestibility Scale\n',
+      '  abbreviation = "MISS"\n',
+      '    subscale = "Consumer Suggestibility"\n',
+      '    subscale = "Persuadability"\n',
+      '    subscale = "Physiological Suggestibility"\n',
+      '    subscale = "Physiological Reactivity"\n',
+      '    subscale = "Peer Conformity"\n',
+      '    subscale = "Short Suggestibility Scale"\n',
+      '    subscale = "Mental Control"\n',
+      '    subscale = "Unpersuadability"\n\n',
 
       'Pain Catastrophizing Scale\n',
       '  abbreviation = "PCS"\n\n',
@@ -273,6 +291,21 @@ known_scales <- function( abbreviation = NULL,
       '    subscale = "Conviction"\n',
       '    subscale = "PDI yes/no"\n',
       '    subscale = "PDI total"\n\n',
+
+      'Pittsburgh Sleep Quality Index\n',
+      '  abbreviation = "PSQI"\n',
+      '    subscale = "Component 1"\n',
+      '    subscale = "Component 2"\n',
+      '    subscale = "Component 3"\n',
+      '    subscale = "Component 4"\n',
+      '    subscale = "Component 5"\n',
+      '    subscale = "Component 6"\n',
+      '    subscale = "Component 7"\n\n',
+
+      'Prodromal Questionnaire-Brief\n',
+      '  abbreviation = "PQB"\n',
+      '    subscale = "Total Score"\n',
+      '    subscale = "Distress"\n\n',
 
       'Provider Expectations for Recovery Scale\n',
       '  abbreviation = "PERS"\n\n',
@@ -3254,7 +3287,7 @@ known_scales <- function( abbreviation = NULL,
     # Close 'GLTEQ'
   }
 
-  #### 1.1.33) MCQ ####
+  #### 1.1.34) MCQ ####
 if ( abbreviation == 'MCQ' ) {
 
     out$Description <- paste0(
@@ -3277,7 +3310,7 @@ if ( abbreviation == 'MCQ' ) {
 
     # Close 'MCQ'
 }
-  #### 1.1.34) MEEQ ####
+  #### 1.1.35) MEEQ ####
   if ( abbreviation %in% c( 'MEEQ' ) ) {
 
     ### Overall
@@ -3428,6 +3461,471 @@ if ( abbreviation == 'MCQ' ) {
     }
 
     # Close 'MEEQ'
+  }
+
+  #### 1.1.36) MISS ####
+  if ( abbreviation %in% c( 'MISS' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Multidimensional Iowa Suggestibility Scale',
+      n_items = 64,
+      range = c( 64, 320 ),
+      abbreviation = 'MISS',
+      cut_off = NA,
+      reference = NA
+
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Consumer Suggestibility
+      if ( subscale %in% c( 'Consumer Suggestibility' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Consumer Suggestibility subscale – measure of the level of consumer suggestibility of the subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Consumer Suggestibility',
+          n_items = 11,
+          range = c( 11, 55 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher consumer suggestibility'
+          )
+        )
+
+        # Close 'Consumer Suggestibility'
+      }
+
+      ### Persuadability
+      if ( subscale %in% c( 'Persuadability' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Persuadability subscale – measure of the persuadability of the subject '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Persuadability',
+          n_items = 14,
+          range = c( 14, 70 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher persuadability'
+          )
+        )
+
+        # Close 'Persuadability'
+      }
+
+      ### Physiological Suggestibility
+      if ( subscale %in% c( 'Physiological Suggestibility' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Consumer Physiological Suggestibility subscale – measure of the physiological suggestibility of the subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Physiological Suggestibility',
+          n_items = 12,
+          range = c( 12, 60 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'higher scores indicate higher physiological suggestibility'
+          )
+        )
+
+        # Close 'Physiological Suggestibility'
+      }
+      ### Physiological Reactivity
+      if ( subscale %in% c( 'Physiological Reactivity' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Physiological Reactivity subscale – measure of the physiological reactivity of subject '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Physiological Reactivity',
+          n_items = 13,
+          range = c( 13, 65 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate greater physiological reactivity '
+          )
+        )
+
+        # Close 'Physiological Reactivity'
+      }
+
+      ### Peer Conformity
+      if ( subscale %in% c( 'Peer Conformity' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Peer Conformity subscale – measure of the peer conformity of subject '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Peer Conformity',
+          n_items = 14,
+          range = c( 14, 70 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate greater peer conformity'
+          )
+        )
+
+        # Close 'Peer Conformity'
+      }
+
+      ### Short Suggestibility Scale
+      if ( subscale %in% c( 'Short Suggestibility Scale' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Short Suggestibility Scale subscale – measure of the subject’s general suggestibility trait '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Short Suggestibility Scale',
+          n_items = 21,
+          range = c( 21, 105 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate greater suggestibility'
+          )
+        )
+
+        # Close 'Short Suggestibility Scale'
+      }
+      ### Mental Control
+      if ( subscale %in% c( 'Mental Control' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Mental Control subscale – measure of the subject’s ability for mental control '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Mental Control',
+          n_items = 15,
+          range = c( 15, 75 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate greater mental control ability'
+          )
+        )
+
+        # Close 'Mental Control'
+      }
+      ### Unpersuadability
+      if ( subscale %in% c( 'Unpersuadability' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the MISS Unpersuadability subscale – measure of the subject’s resistance to persuasion '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Unpersuadability',
+          n_items = 16,
+          range = c( 16, 80 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate greater resistance to persuasion'
+          )
+        )
+
+        # Close 'Unpersuadability'
+      }
+      # Close 'Subscales'
+    }
+
+    # Close 'MISS'
+  }
+  #### 1.1.37) MPS ####
+  if ( abbreviation == 'MPS' ) {
+
+    out$Description <- paste0(
+      'Scores for the MPS – measure of potential negative effects of marijuana on subject’s wellbeing'
+    )
+
+    out$Units <- 'Summed score'
+
+    out$Scale <- list(
+      name = 'Marijuana Problem Scale',
+      n_items = 19,
+      range = c( Min = 0, Max = 19 ),
+      abbreviation = 'MPS',
+      cut_off = NA,
+      reference = NA,
+      interpretation = paste0(
+        'Higher scores indicate more serious problems associated with marijuana use'
+      )
+    )
+
+    # Close 'MPS'
+  }
+  #### 1.1.38) PQB ####
+  if ( abbreviation %in% c( 'PQB' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Prodromal Questionnaire-Brief',
+      n_items = 21,
+      range = NA,
+      abbreviation = 'PQB',
+      cut_off = NA,
+      reference = paste0(
+        'Loewy, R. L., Pearson, R., Vinogradov, S., Bearden, C. E., ',
+        '& Cannon, T. D. (2011). Psychosis risk screening with the ',
+        'Prodromal Questionnaire—brief version (PQ-B). Schizophrenia',
+        ' research, 129(1), 42–46.',
+        ' https://doi.org/10.1016/j.schres.2011.03.029'
+      )
+
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Total Score
+      if ( subscale %in% c( 'Total Score' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PBQ Total Score subscale - measure of a patient’s reported prodromal symptoms '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Total Score',
+          n_items = 21,
+          range = c( 0, 21 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate experiencing more prodromal symptoms'
+          )
+        )
+
+        # Close 'Total Score'
+      }
+
+      ### Distress
+      if ( subscale %in% c( 'Distress' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PQ-B Distress subscale – measure of the level of distress or impairment associated with the endorsed positive symptoms'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Distress',
+          n_items = 21,
+          range = c( 21, 105 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher distress caused by endorsed positive symptoms'
+          )
+        )
+
+        # Close 'Distress'
+      }
+      # Close 'Subscales'
+    }
+
+    # Close 'PQB'
+  }
+  #### 1.1.39) PSQI ####
+  if ( abbreviation %in% c( 'PSQI' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Multidimensional Iowa Suggestibility Scale',
+      n_items = 19,
+      range = c( NA, NA ),
+      abbreviation = 'PSQI',
+      cut_off = NA,
+      reference = paste0('Buysse,D.J., Reynolds,C.F., Monk,T.H., ',
+        'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
+        ' Quality Index (PSQI): A new instrument for psychiatric',
+        ' research and practice. Psychiatry Research, 28(2), 193-213.','http://www.opapc.com/uploads/documents/PSQI.pdf')
+
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Component 1
+      if ( subscale %in% c( 'Component 1' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 1 subscale– measure of the subjective sleep quality of subject'
+        )
+
+        out$Units <- NA
+
+        out$Subscale <- list(
+          name = 'Component 1',
+          n_items = 1,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates subjectively very high sleep quality, a score of 3 indicates subjectively very poor sleep quality'
+          )
+        )
+
+        # Close 'Component 1'
+      }
+
+      ### Component 2
+      if ( subscale %in% c( 'Component 2' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 2 subscale– measure of the sleep latency of subject '
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Component 2',
+          n_items = 2,
+          range = c( 0, 3),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates very low sleep latency, a score of 3 indicates very high sleep latency'
+          )
+        )
+
+        # Close 'Component 2'
+      }
+
+      ### Component 3
+      if ( subscale %in% c( 'Component 3' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 3 subscale– measure of the sleep duration of subject'
+        )
+
+        out$Units <- NA
+
+        out$Subscale <- list(
+          name = 'Component 3',
+          n_items = 1,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates sufficient sleep duration (>7 hours), a score of 3 indicates insufficient sleep duration (<5 hours)'
+          )
+        )
+
+        # Close 'Component 3'
+      }
+      ### Component 4
+      if ( subscale %in% c( 'Component 4' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 4 subscale– measure of the habitual sleep efficiency of subject'
+        )
+
+        out$Units <- NA
+
+        out$Subscale <- list(
+          name = 'Component 4',
+          n_items = 3,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates high habitual sleep efficiency (most time in bed is spent sleeping), a score of 3 indicates low habitual sleep efficiency (less than 65% of time in bed is spent sleeping).'
+          )
+        )
+
+        # Close 'Component 4'
+      }
+
+      ### Component 5
+      if ( subscale %in% c( 'Component 5' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 5 subscale– measure of the sleep disturbances experienced by subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Component 5',
+          n_items = 9,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates no sleep disturbances, a score of 3 indicates very significant sleep disturbances'
+          )
+        )
+
+        # Close 'Component 5'
+      }
+
+      ### Component 6
+      if ( subscale %in% c( 'Component 6' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 6 subscale– measure of the subject’s use of sleeping medication'
+        )
+
+        out$Units <- NA
+
+        out$Subscale <- list(
+          name = 'Component 6',
+          n_items = 1,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates no use of any sleep medications in the past month, a score of 3 indicates use of sleep medication 3 or more times per week'
+          )
+        )
+
+        # Close 'Component 6'
+      }
+      ### Component 7
+      if ( subscale %in% c( 'Component 7' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the PSQI component 7 subscale– measure of the daytime dysfunction experienced by subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Component 7',
+          n_items = 2,
+          range = c( 0, 3 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'A score of 0 indicates no daytime dysfunction, a score of 3 indicates severe daytime dysfunction'
+          )
+        )
+
+        # Close 'Component 7'
+      }
+      # Close 'Subscales'
+    }
+
+    # Close 'PSQI'
   }
 
   if ( is.null( out$Scale ) ) {
