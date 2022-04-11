@@ -52,6 +52,8 @@
 #     1.1.37) MPS
 #     1.1.38) PQB
 #     1.1.39) PSQI
+#     1.1.40) SCARED
+#     1.1.41) TIPI
 #   1.2) scale_format
 # 2) column_abbreviations
 # 3) Internal functions
@@ -217,10 +219,10 @@ known_scales <- function( abbreviation = NULL,
       '  abbreviation = "ERS"\n',
       '    subscale = "Sensitivity"\n',
       '    subscale = "Intensity/arousal"\n',
-      '    subscale = "Persistence"\n',
+      '    subscale = "Persistence"\n\n',
 
-      'Godin Leisure-Time Exercise Questionnaire',
-      '  abbrevation = "GLTEQ"\n\n',
+      'Godin Leisure-Time Exercise Questionnaire\n',
+      '  abbreviation = "GLTEQ"\n\n',
 
       'Hospital Anxiety Depression Scale\n',
       '  abbrevation = "HADS"\n',
@@ -313,10 +315,29 @@ known_scales <- function( abbreviation = NULL,
       'PTSD Checklist\n',
       '  abbreviation = "PCL"\n\n',
 
+      'Screen for Child Anxiety Related Emotional Disorders\n',
+      '  abbreviation = "SCARED"\n',
+      '    subscale = "Panic Disorder"\n',
+      '    subscale = "Separation Anxiety Disorder"\n',
+      '    subscale = "Generalized Anxiety Disorder"\n',
+      '    subscale = "Social Phobia"\n',
+      '    subscale = "Specific Phobias"\n',
+      '    subscale = "Obsessive Compulsive Disorder"\n',
+      '    subscale = "Traumatic Stress Disorder"\n\n',
+
+
       'Short Form Health Survey\n',
       '  abbreviation = "SF-12"\n',
       '    subscale = "Physical"\n',
       '    subscale = "Mental"\n\n',
+
+      'Ten Item Personality Inventory\n',
+      '  abbreviation = "TIPI"\n',
+      '    subscale = "Extraversion"\n',
+      '    subscale = "Agreeableness"\n',
+      '    subscale = "Conscientiousness"\n',
+      '    subscale = "Emotional Stability"\n',
+      '    subscale = "Openness"\n\n',
 
       'The Center for Epidemiologic Studies Depression Scale\n',
       '  abbreviation = "CES-D"\n\n',
@@ -3928,6 +3949,321 @@ if ( abbreviation == 'MCQ' ) {
     # Close 'PSQI'
   }
 
+  #### 1.1.40) SCARED ####
+  if ( abbreviation %in% c( 'SCARED' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Screen for Child Anxiety Related Emotional Disorders',
+      n_items = 66,
+      range = c( NA, NA ),
+      abbreviation = 'SCARED',
+      cut_off = NA,
+      reference = paste0(
+        'Muris, P., & Steerneman, P. (2001). The revised ',
+        'version of the Screen for Child Anxiety Related Emotional ',
+        'Disorders (SCARED--R): first evidence for its reliability ',
+        'and validity in a clinical sample. The British journal ',
+        'of clinical psychology, 40(1), 35–44. ',
+        'https://doi.org/10.1348/014466501163463')
+
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Panic Disorder
+      if ( subscale %in% c( 'Panic Disorder' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Panic Disorder subscale– measure of the presence of panic disorder symptoms in subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Panic Disorder',
+          n_items = 13,
+          range = c( 0, 26 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of panic disorder'
+          )
+        )
+
+        # Close 'Panic Disorder'
+      }
+
+      ### Separation Anxiety Disorder
+      if ( subscale %in% c( 'Separation Anxiety Disorder' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the Separation Anxiety Disorder (including school phobia) subscale– measure of the presence of separation anxiety disorder symptoms in subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Separation Anxiety Disorder',
+          n_items = 12,
+          range = c( 0, 24),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of separation anxiety disorder'
+          )
+        )
+
+        # Close 'Separation Anxiety Disorder'
+      }
+
+      ### Generalized Anxiety Disorder
+      if ( subscale %in% c( 'Generalized Anxiety Disorder' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Generalized Anxiety Disorder subscale– measure of the presence of GAD symptoms in subject'
+        )
+
+        out$Units <- 'Summed Score'
+
+        out$Subscale <- list(
+          name = 'Generalized Anxiety Disorder',
+          n_items = 9,
+          range = c( 0, 18 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of generalized anxiety disorder'
+          )
+        )
+
+        # Close 'Generalized Anxiety Disorder'
+      }
+      ### Social Phobia
+      if ( subscale %in% c( 'Social Phobia' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Social Phobia subscale – measure of the presence of social phobia symptoms in subject'
+        )
+
+        out$Units <- 'Summed Score'
+
+        out$Subscale <- list(
+          name = 'Social Phobia',
+          n_items = 4,
+          range = c( 0, 8 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of social phobia'
+          )
+        )
+
+        # Close 'Social Phobia'
+      }
+
+      ### Specific Phobias
+      if ( subscale %in% c( 'Specific Phobias' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Specific Phobias subscale– measure of the presence of specific phobias in subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Specific Phobias',
+          n_items = 15,
+          range = c( 0, 30 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of specific phobia'
+          )
+        )
+
+        # Close 'Specific Phobias'
+      }
+
+      ### Obsessive Compulsive Disorder
+      if ( subscale %in% c( 'Obsessive Compulsive Disorder' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Obsessive Compulsive Disorder subscale– measure of the presence of OCD symptoms in subject'
+        )
+
+        out$Units <- NA
+
+        out$Subscale <- list(
+          name = 'Obsessive Compulsive Disorder',
+          n_items = 9,
+          range = c( 0, 18 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of obsessive compulsive disorder'
+          )
+        )
+
+        # Close 'Obsessive Compulsive Disorder'
+      }
+      ### Traumatic Stress Disorder
+      if ( subscale %in% c( 'Traumatic Stress Disorder' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the SCARED Traumatic Stress Disorder subscale– measure of the presence of traumatic stress disorder symptoms in subject'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Traumatic Stress Disorder',
+          n_items = 4,
+          range = c( 0, 8 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate more severe symptoms of traumatic stress disorder'
+          )
+        )
+
+        # Close 'Traumatic Stress Disorder'
+      }
+      # Close 'Subscales'
+    }
+
+    # Close 'SCARED'
+  }
+  #### 1.1.41) TIPI ####
+  if ( abbreviation %in% c( 'TIPI' ) ) {
+
+    ### Overall
+    out$Scale <- list(
+      name = 'Ten Item Personality Inventory',
+      n_items = 10,
+      range = c( NA, NA ),
+      abbreviation = 'TIPI',
+      cut_off = NA,
+      reference = paste0(
+        'Gosling, S. D., Rentfrow, P. J., & Swann, W. B., Jr. ',
+        '(2003). A very brief measure of the Big-Five personality ',
+        'domains. Journal of Research in Personality, 37(6),  ',
+        '504–528. https://doi.org/10.1016/S0092-6566(03)00046-1')
+
+    )
+
+    ### Subscales
+    if ( subscale != '' ) {
+
+      ### Extraversion
+      if ( subscale %in% c( 'Extraversion' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the TIPI extraversion subscale– measure of the subject’s level of extraversion'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Extraversion',
+          n_items = 2,
+          range = c( 2, 14 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher level of extraversion; lower scores indicate higher level of introversion'
+          )
+        )
+
+        # Close 'Extraversion'
+      }
+
+      ### Agreeableness
+      if ( subscale %in% c( 'Agreeableness' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the TIPI agreeableness subscale– measure of the subject’s level of agreeableness'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Agreeableness',
+          n_items = 2,
+          range = c( 2, 14),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher level of agreeableness'
+          )
+        )
+
+        # Close 'Agreeableness'
+      }
+
+      ### Conscientiousness
+      if ( subscale %in% c( 'Conscientiousness' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the TIPI conscientiousness subscale– measure of the subject’s level of conscientiousness'
+        )
+
+        out$Units <- 'Summed Score'
+
+        out$Subscale <- list(
+          name = 'Conscientiousness',
+          n_items = 2,
+          range = c( 2, 14 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher level of conscientiousness'
+          )
+        )
+
+        # Close 'Conscientiousness'
+      }
+      ### Emotional Stability
+      if ( subscale %in% c( 'Emotional Stability' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the TIPI emotional stability subscale– measure of the subject’s level of emotional stability'
+        )
+
+        out$Units <- 'Summed Score'
+
+        out$Subscale <- list(
+          name = 'Emotional Stability',
+          n_items = 2,
+          range = c( 2, 14 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher level of emotional stability'
+          )
+        )
+
+        # Close 'Emotional Stability'
+      }
+
+      ### Openness
+      if ( subscale %in% c( 'Openness' ) ) {
+
+        out$Description <- paste0(
+          'Scores for the TIPI openness subscale– measure of the subject’s level of openness to experiences'
+        )
+
+        out$Units <- 'Summed score'
+
+        out$Subscale <- list(
+          name = 'Openness',
+          n_items = 2,
+          range = c( 2, 14 ),
+          cut_off = NA,
+          interpretation = paste0(
+            'Higher scores indicate higher level of openness to experiences'
+          )
+        )
+
+        # Close 'Openness'
+      }
+
+      # Close 'Subscales'
+    }
+
+    # Close 'TIPI'
+  }
+
   if ( is.null( out$Scale ) ) {
     stop( 'Scale or subscale not found' )
   } else {
@@ -5590,6 +5926,8 @@ data_frame_from_dictionary_meta_data <- function( dtf,
     }
 
     lst <- meta( dtf[[ nc ]] )
+
+    print(names(dtf)[nc])
 
     for ( ct in 1:CT ) {
 
