@@ -2973,9 +2973,9 @@ known_scales <- function( abbreviation = NULL,
       abbreviation = 'BPAQ',
       cut_off = NA,
       reference = paste0(
-        'Hamilton, et al. (2011) The PhenX Toolkit: ',
-        'Get the Most From Your Measures. American Journal of ',
-        'Epidemiology, 174(3), 253-60.'
+        'Buss, A. H., & Perry, M. (1992). The Aggression ',
+        'Questionnaire. Journal of Personality and Social ',
+        'Psychology, 63(3), 452-459.'
       )
 
       )
