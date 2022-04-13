@@ -2467,7 +2467,8 @@ known_scales <- function( abbreviation = NULL,
       }
 
       ### Ethical Risk Perception
-      if ( subscale %in% c( 'Ethical Risk Perception', 'Ethical risk perception' ) ) {
+      if ( subscale %in% c( 'Ethical Risk Perception',
+                            'Ethical risk perception' ) ) {
 
         out$Description <- paste0(
           'Scores for the DOSPERT (EP) - measure of ',
@@ -2491,7 +2492,8 @@ known_scales <- function( abbreviation = NULL,
       }
 
       ### Financial Risk Perception
-      if ( subscale %in% c( 'Financial Risk Perception', 'Financial risk perception' ) ) {
+      if ( subscale %in% c( 'Financial Risk Perception',
+                            'Financial risk perception' ) ) {
 
         out$Description <- paste0(
           'Scores for the DOSPERT (FP) - measure of ',
@@ -2775,13 +2777,14 @@ known_scales <- function( abbreviation = NULL,
       abbreviation = 'KSADS',
       cut_off = NA,
       reference = paste0(
-       'Salyers, M. P., Brennan, M., & Kean, J. (2013). Provider ',
-       'Expectations for Recovery Scale: Refining a measure of ',
-       'provider attitudes. Psychiatric Rehabilitation Journal, 36(3), 153. ',
-       'https://doi.org/10.1037/prj0000010'
+        'Salyers, M. P., Brennan, M., & Kean, J. (2013). Provider ',
+        'Expectations for Recovery Scale: Refining a measure of ',
+        'provider attitudes. Psychiatric Rehabilitation Journal, 36(3), 153. ',
+        'https://doi.org/10.1037/prj0000010'
       ),
       interpretation = paste0(
-        'Higher scores indicate greater clinican optimism about patient recovery'
+        'Higher scores indicate greater clinican optimism about ',
+        'patient recovery'
       )
     )
 
@@ -2907,7 +2910,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'URGE', 'Urge', 'urge' ) ) {
 
         out$Description <- paste0(
-          'Scores for the AUQ Urge subscale - measure of the urge to consume alcohol'
+          'Scores for the AUQ Urge subscale - measure of the urge ',
+          'to consume alcohol'
         )
 
         out$Units <- 'Averaged score'
@@ -2935,7 +2939,8 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation == 'APSS' ) {
 
     out$Description <- paste0(
-      'Scores for the APSS - measure of the degree of risk for psychotic-like experiences for a subject'
+      'Scores for the APSS - measure of the degree of risk for ',
+      'psychotic-like experiences for a subject'
     )
 
     out$Units <- 'Summed score'
@@ -2978,7 +2983,7 @@ known_scales <- function( abbreviation = NULL,
         'Psychology, 63(3), 452-459.'
       )
 
-      )
+    )
 
     ### Subscales
     if ( subscale != '' ) {
@@ -2987,7 +2992,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Physical Aggression', 'BPAQ-PA' ) ) {
 
         out$Description <- paste0(
-          'Scores for the BPAQ-PA – measure of the level of physical aggression of a subject'
+          'Scores for the BPAQ-PA – measure of the level of physical ',
+          'aggression of a subject'
         )
 
         out$Units <- 'Averaged score'
@@ -3009,7 +3015,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Verbal Aggression', 'BPAQ-VA' ) ) {
 
         out$Description <- paste0(
-          'Scores for the BPAQ-VA – measure of the level of verbal aggression of a subject'
+          'Scores for the BPAQ-VA – measure of the level of verbal ',
+          'aggression of a subject'
         )
 
         out$Units <- 'Averaged score'
@@ -3052,7 +3059,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Hostility', 'BPAQ-H' ) ) {
 
         out$Description <- paste0(
-          'Scores for the BPAQ-H – measure of the level of hostility of a subject'
+          'Scores for the BPAQ-H – measure of the level of hostility of ',
+          'a subject'
         )
 
         out$Units <- 'Averaged score'
@@ -3100,7 +3108,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Social', 'SOC' ) ) {
 
         out$Description <- paste0(
-          'Scores for the DMQ Social (SOC) subscale - measure of a patient’s social motives for alcohol use '
+          'Scores for the DMQ Social (SOC) subscale - measure of a ',
+          'patient’s social motives for alcohol use '
         )
 
         out$Units <- 'Averaged score'
@@ -3122,7 +3131,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Coping', 'COP' ) ) {
 
         out$Description <- paste0(
-          'Scores for the DMQ Coping (COP) subscale – measure of a patient’s coping motives for alcohol use '
+          'Scores for the DMQ Coping (COP) subscale – measure of a ',
+          'patient’s coping motives for alcohol use '
         )
 
         out$Units <- 'Averaged score'
@@ -3144,7 +3154,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Enhancement', 'ENH' ) ) {
 
         out$Description <- paste0(
-          'Scores for the DMQ Enhancement (ENH) subscale – measure of a patient’s enhancement motives for alcohol use '
+          'Scores for the DMQ Enhancement (ENH) subscale – measure of ',
+          'a patient’s enhancement motives for alcohol use '
         )
 
         out$Units <- 'Averaged score'
@@ -3155,7 +3166,8 @@ known_scales <- function( abbreviation = NULL,
           range = c( 1, 5 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater enhancement motives for alcohol use'
+            'Higher scores indicate greater enhancement motives for ',
+            'alcohol use'
           )
         )
 
@@ -3165,7 +3177,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Conformity', 'CON' ) ) {
 
         out$Description <- paste0(
-          'Scores for the DMQ Conformity (CON) subscale – measure of a patient’s conformity motives for alcohol use '
+          'Scores for the DMQ Conformity (CON) subscale – measure of a ',
+          'patient’s conformity motives for alcohol use '
         )
 
         out$Units <- 'Averaged score'
@@ -3215,7 +3228,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Sensitivity' ) ) {
 
         out$Description <- paste0(
-          'Scores for the ERS Sensitivity subscale – measure of a patient’s emotional sensitivity '
+          'Scores for the ERS Sensitivity subscale – measure of a ',
+          'patient’s emotional sensitivity '
         )
 
         out$Units <- 'Summed score'
@@ -3237,7 +3251,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Intensity', 'Arousal', 'Intensity/arousal' ) ) {
 
         out$Description <- paste0(
-          'Scores for the ERS Intensity/arousal Subscale - measure of a patient’s emotion reaction intensity '
+          'Scores for the ERS Intensity/arousal Subscale - measure of ',
+          'a patient’s emotion reaction intensity '
         )
 
         out$Units <- 'Summed score'
@@ -3259,7 +3274,8 @@ known_scales <- function( abbreviation = NULL,
       if ( subscale %in% c( 'Persistence' ) ) {
 
         out$Description <- paste0(
-          'Scores for the ERS persistence subscale – measure of a patient’s persistence (duration) of emotional reactions'
+          'Scores for the ERS persistence subscale – measure of a ',
+          'patient’s persistence (duration) of emotional reactions'
         )
 
         out$Units <- 'Summed score'
@@ -3270,7 +3286,8 @@ known_scales <- function( abbreviation = NULL,
           range = c( 0, 16 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate longer persistence (duration) of emotional reactions'
+            'Higher scores indicate longer persistence (duration) ',
+            'of emotional reactions'
           )
         )
 
@@ -3285,7 +3302,8 @@ known_scales <- function( abbreviation = NULL,
   if ( abbreviation == 'GLTEQ' ) {
 
     out$Description <- paste0(
-      'Scores for the GLTEQ – measure of the level of physical activity of a subject'
+      'Scores for the GLTEQ – measure of the level of physical ',
+      'activity of a subject'
     )
 
     out$Units <- 'Summed score'
@@ -3295,7 +3313,11 @@ known_scales <- function( abbreviation = NULL,
       n_items = 3,
       range = c( Min = 0, Max = NA ),
       abbreviation = 'GLTEQ',
-      cut_off = c( `Active` >= 32, `Moderately Active` = 14-23, `Insufficiently Active/Sedentary` < 14 ),
+      cut_off = c(
+        'Active >= = 32',
+        'Moderately Active = 14-23',
+        'Insufficiently Active/Sedentary` < 14'
+      ),
       reference = paste0(
         'Godin Leisure-Time Exercise Questionnaire. (1997). ',
         'Medicine & Science in Sports & Exercise, 29(6), 36–38.'
@@ -3309,10 +3331,11 @@ known_scales <- function( abbreviation = NULL,
   }
 
   #### 1.1.34) MCQ ####
-if ( abbreviation == 'MCQ' ) {
+  if ( abbreviation == 'MCQ' ) {
 
     out$Description <- paste0(
-      'Scores for the MCQ – measure of whether the participant prefers smaller immediate rewards over delayed larger rewards'
+      'Scores for the MCQ – measure of whether the participant prefers ',
+      'smaller immediate rewards over delayed larger rewards'
     )
 
     out$Units <- 'Rate of Discounting (k)'
@@ -3325,12 +3348,13 @@ if ( abbreviation == 'MCQ' ) {
       cut_off = NA,
       reference = NA,
       interpretation = paste0(
-        'Higher k values (higher discounting rates) indicate higher level of impulsivity (preference for immediate rewards)'
+        'Higher k values (higher discounting rates) indicate higher ',
+        'level of impulsivity (preference for immediate rewards)'
       )
     )
 
     # Close 'MCQ'
-}
+  }
   #### 1.1.35) MEEQ ####
   if ( abbreviation %in% c( 'MEEQ' ) ) {
 
@@ -3352,7 +3376,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Cognitive and Behavioral Impairment' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Cognitive and Behavioral Impairment subscale - measure of the degree of expectancy of cognitive and behavioral impairment resulting from marijuana use'
+          'Scores for the MEEQ Cognitive and Behavioral Impairment ',
+          'subscale - measure of the degree of expectancy of cognitive ',
+          'and behavioral impairment resulting from marijuana use'
         )
 
         out$Units <- 'Summed score'
@@ -3363,7 +3389,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 10, 50 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of cognitive and behavioral impairment due to marijuana use '
+            'Higher scores indicate greater expectancy of cognitive ',
+            'and behavioral impairment due to marijuana use '
           )
         )
 
@@ -3374,7 +3401,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Relaxation and Tension Reduction' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Relaxation and Tension Reduction subscale - measure of the degree of expectancy of relaxation and tension reduction resulting from marijuana use '
+          'Scores for the MEEQ Relaxation and Tension Reduction ',
+          'subscale - measure of the degree of expectancy of ',
+          'relaxation and tension reduction resulting from marijuana use'
         )
 
         out$Units <- 'Summed score'
@@ -3385,7 +3414,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 8, 40 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of relaxation and tension reduction due to marijuana use'
+            'Higher scores indicate greater expectancy of relaxation ',
+            'and tension reduction due to marijuana use'
           )
         )
 
@@ -3396,7 +3426,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Social and Sexual Facilitation' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Social and Sexual Facilitation subscale - measure of the degree of expectancy of social and sexual facilitation resulting from marijuana use '
+          'Scores for the MEEQ Social and Sexual Facilitation ',
+          'subscale - measure of the degree of expectancy of ',
+          'social and sexual facilitation resulting from marijuana use'
         )
 
         out$Units <- 'Summed score'
@@ -3407,7 +3439,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 9, 45 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of social and sexual facilitation due to marijuana use'
+            'Higher scores indicate greater expectancy of social and ',
+            'sexual facilitation due to marijuana use'
           )
         )
 
@@ -3417,7 +3450,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Perceptual and Cognitive Enhancement' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Perceptual and Cognitive Enhancement subscale - measure of the degree of expectancy of perceptual and cognitive enhancement resulting from marijuana use'
+          'Scores for the MEEQ Perceptual and Cognitive Enhancement ',
+          'subscale - measure of the degree of expectancy of perceptual ',
+          'and cognitive enhancement resulting from marijuana use'
         )
 
         out$Units <- 'Summed score'
@@ -3428,7 +3463,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 8, 40 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of perceptual and cognitive enhancement due to marijuana use '
+            'Higher scores indicate greater expectancy of ',
+            'perceptual and cognitive enhancement due to marijuana use'
           )
         )
 
@@ -3439,7 +3475,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Global Negative Effects' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Global Negative Effects subscale - measure of the degree of expectancy of negative effects resulting from marijuana use '
+          'Scores for the MEEQ Global Negative Effects subscale - measure ',
+          'of the degree of expectancy of negative effects resulting ',
+          'from marijuana use '
         )
 
         out$Units <- 'Summed score'
@@ -3450,7 +3488,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 9, 45 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of negative effects due to marijuana use  '
+            'Higher scores indicate greater expectancy of negative ',
+            'effects due to marijuana use  '
           )
         )
 
@@ -3461,7 +3500,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Craving and Physical Effects' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MEEQ Craving and Physical Effects subscale - measure of the degree of expectancy of craving and physical effects resulting from marijuana use '
+          'Scores for the MEEQ Craving and Physical Effects ',
+          'subscale - measure of the degree of expectancy of ',
+          'craving and physical effects resulting from marijuana use'
         )
 
         out$Units <- 'Summed score'
@@ -3472,7 +3513,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 6, 30 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater expectancy of craving and physical effects due to marijuana use '
+            'Higher scores indicate greater expectancy of craving and ',
+            'physical effects due to marijuana use'
           )
         )
 
@@ -3505,7 +3547,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Consumer Suggestibility' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Consumer Suggestibility subscale – measure of the level of consumer suggestibility of the subject'
+          'Scores for the MISS Consumer Suggestibility subscale – measure ',
+          'of the level of consumer suggestibility of the subject'
         )
 
         out$Units <- 'Summed score'
@@ -3527,7 +3570,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Persuadability' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Persuadability subscale – measure of the persuadability of the subject '
+          'Scores for the MISS Persuadability subscale – measure of the ',
+          'persuadability of the subject '
         )
 
         out$Units <- 'Summed score'
@@ -3549,7 +3593,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Physiological Suggestibility' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Consumer Physiological Suggestibility subscale – measure of the physiological suggestibility of the subject'
+          'Scores for the MISS Consumer Physiological Suggestibility ',
+          'subscale – measure of the physiological suggestibility of ',
+          'the subject'
         )
 
         out$Units <- 'Summed score'
@@ -3570,7 +3616,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Physiological Reactivity' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Physiological Reactivity subscale – measure of the physiological reactivity of subject '
+          'Scores for the MISS Physiological Reactivity subscale – measure ',
+          'of the physiological reactivity of subject'
         )
 
         out$Units <- 'Summed score'
@@ -3581,7 +3628,7 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 13, 65 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate greater physiological reactivity '
+            'Higher scores indicate greater physiological reactivity'
           )
         )
 
@@ -3592,7 +3639,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Peer Conformity' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Peer Conformity subscale – measure of the peer conformity of subject '
+          'Scores for the MISS Peer Conformity subscale – measure of the ',
+          'peer conformity of subject'
         )
 
         out$Units <- 'Summed score'
@@ -3614,7 +3662,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Short Suggestibility Scale' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Short Suggestibility Scale subscale – measure of the subject’s general suggestibility trait '
+          'Scores for the MISS Short Suggestibility Scale ',
+          'subscale – measure of the subject’s general suggestibility trait'
         )
 
         out$Units <- 'Summed score'
@@ -3635,7 +3684,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Mental Control' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Mental Control subscale – measure of the subject’s ability for mental control '
+          'Scores for the MISS Mental Control subscale – measure of ',
+          'the subject’s ability for mental control'
         )
 
         out$Units <- 'Summed score'
@@ -3656,7 +3706,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Unpersuadability' ) ) {
 
         out$Description <- paste0(
-          'Scores for the MISS Unpersuadability subscale – measure of the subject’s resistance to persuasion '
+          'Scores for the MISS Unpersuadability subscale – measure ',
+          'of the subject’s resistance to persuasion'
         )
 
         out$Units <- 'Summed score'
@@ -3682,7 +3733,8 @@ if ( abbreviation == 'MCQ' ) {
   if ( abbreviation == 'MPS' ) {
 
     out$Description <- paste0(
-      'Scores for the MPS – measure of potential negative effects of marijuana on subject’s wellbeing'
+      'Scores for the MPS – measure of potential negative effects of ',
+      'marijuana on subject’s wellbeing'
     )
 
     out$Units <- 'Summed score'
@@ -3695,7 +3747,8 @@ if ( abbreviation == 'MCQ' ) {
       cut_off = NA,
       reference = NA,
       interpretation = paste0(
-        'Higher scores indicate more serious problems associated with marijuana use'
+        'Higher scores indicate more serious problems associated with ',
+        'marijuana use'
       )
     )
 
@@ -3728,7 +3781,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Total Score' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PBQ Total Score subscale - measure of a patient’s reported prodromal symptoms '
+          'Scores for the PBQ Total Score subscale - measure of a ',
+          'patient’s reported prodromal symptoms'
         )
 
         out$Units <- 'Summed score'
@@ -3750,7 +3804,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Distress' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PQ-B Distress subscale – measure of the level of distress or impairment associated with the endorsed positive symptoms'
+          'Scores for the PQ-B Distress subscale – measure of the ',
+          'level of distress or impairment associated with the ',
+          'endorsed positive symptoms'
         )
 
         out$Units <- 'Summed score'
@@ -3761,7 +3817,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 21, 105 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate higher distress caused by endorsed positive symptoms'
+            'Higher scores indicate higher distress caused by endorsed ',
+            'positive symptoms'
           )
         )
 
@@ -3783,9 +3840,10 @@ if ( abbreviation == 'MCQ' ) {
       abbreviation = 'PSQI',
       cut_off = NA,
       reference = paste0('Buysse,D.J., Reynolds,C.F., Monk,T.H., ',
-        'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
-        ' Quality Index (PSQI): A new instrument for psychiatric',
-        ' research and practice. Psychiatry Research, 28(2), 193-213.','http://www.opapc.com/uploads/documents/PSQI.pdf')
+                         'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
+                         ' Quality Index (PSQI): A new instrument for psychiatric',
+                         ' research and practice. Psychiatry Research, 28(2), 193-213. ',
+                         'http://www.opapc.com/uploads/documents/PSQI.pdf' )
 
     )
 
@@ -3796,7 +3854,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 1' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 1 subscale– measure of the subjective sleep quality of subject'
+          'Scores for the PSQI component 1 subscale– measure of the ',
+          'subjective sleep quality of subject'
         )
 
         out$Units <- NA
@@ -3807,7 +3866,9 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates subjectively very high sleep quality, a score of 3 indicates subjectively very poor sleep quality'
+            'A score of 0 indicates subjectively very high sleep ',
+            'quality, a score of 3 indicates subjectively very ',
+            'poor sleep quality'
           )
         )
 
@@ -3818,7 +3879,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 2' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 2 subscale– measure of the sleep latency of subject '
+          'Scores for the PSQI component 2 subscale– measure of the ',
+          'sleep latency of subject '
         )
 
         out$Units <- 'Summed score'
@@ -3829,7 +3891,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates very low sleep latency, a score of 3 indicates very high sleep latency'
+            'A score of 0 indicates very low sleep latency, a score ',
+            'of 3 indicates very high sleep latency'
           )
         )
 
@@ -3840,7 +3903,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 3' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 3 subscale– measure of the sleep duration of subject'
+          'Scores for the PSQI component 3 subscale– measure of the ',
+          'sleep duration of subject'
         )
 
         out$Units <- NA
@@ -3851,7 +3915,9 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates sufficient sleep duration (>7 hours), a score of 3 indicates insufficient sleep duration (<5 hours)'
+            'A score of 0 indicates sufficient sleep duration (>7 ',
+            'hours), a score of 3 indicates insufficient sleep ',
+            'duration (<5 hours)'
           )
         )
 
@@ -3861,7 +3927,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 4' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 4 subscale– measure of the habitual sleep efficiency of subject'
+          'Scores for the PSQI component 4 subscale– measure of the ',
+          'habitual sleep efficiency of subject'
         )
 
         out$Units <- NA
@@ -3872,7 +3939,10 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates high habitual sleep efficiency (most time in bed is spent sleeping), a score of 3 indicates low habitual sleep efficiency (less than 65% of time in bed is spent sleeping).'
+            'A score of 0 indicates high habitual sleep efficiency ',
+            '(most time in bed is spent sleeping), a score of 3 ',
+            'indicates low habitual sleep efficiency (less than ',
+            '65% of time in bed is spent sleeping).'
           )
         )
 
@@ -3883,7 +3953,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 5' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 5 subscale– measure of the sleep disturbances experienced by subject'
+          'Scores for the PSQI component 5 subscale– measure of the ',
+          'sleep disturbances experienced by subject'
         )
 
         out$Units <- 'Summed score'
@@ -3894,7 +3965,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates no sleep disturbances, a score of 3 indicates very significant sleep disturbances'
+            'A score of 0 indicates no sleep disturbances, a score ',
+            'of 3 indicates very significant sleep disturbances'
           )
         )
 
@@ -3905,7 +3977,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 6' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 6 subscale– measure of the subject’s use of sleeping medication'
+          'Scores for the PSQI component 6 subscale– measure of the ',
+          'subject’s use of sleeping medication'
         )
 
         out$Units <- NA
@@ -3916,7 +3989,9 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates no use of any sleep medications in the past month, a score of 3 indicates use of sleep medication 3 or more times per week'
+            'A score of 0 indicates no use of any sleep medications in ',
+            'the past month, a score of 3 indicates use of sleep ',
+            'medication 3 or more times per week'
           )
         )
 
@@ -3926,7 +4001,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Component 7' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 7 subscale– measure of the daytime dysfunction experienced by subject'
+          'Scores for the PSQI component 7 subscale– measure of the ',
+          'daytime dysfunction experienced by subject'
         )
 
         out$Units <- 'Summed score'
@@ -3937,7 +4013,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 3 ),
           cut_off = NA,
           interpretation = paste0(
-            'A score of 0 indicates no daytime dysfunction, a score of 3 indicates severe daytime dysfunction'
+            'A score of 0 indicates no daytime dysfunction, a ',
+            'score of 3 indicates severe daytime dysfunction'
           )
         )
 
@@ -3976,7 +4053,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Panic Disorder' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Panic Disorder subscale– measure of the presence of panic disorder symptoms in subject'
+          'Scores for the SCARED Panic Disorder subscale– measure of ',
+          'the presence of panic disorder symptoms in subject'
         )
 
         out$Units <- 'Summed score'
@@ -3998,7 +4076,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Separation Anxiety Disorder' ) ) {
 
         out$Description <- paste0(
-          'Scores for the Separation Anxiety Disorder (including school phobia) subscale– measure of the presence of separation anxiety disorder symptoms in subject'
+          'Scores for the Separation Anxiety Disorder (including ',
+          'school phobia) subscale– measure of the presence of ',
+          'separation anxiety disorder symptoms in subject'
         )
 
         out$Units <- 'Summed score'
@@ -4009,7 +4089,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 24),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate more severe symptoms of separation anxiety disorder'
+            'Higher scores indicate more severe symptoms of ',
+            'separation anxiety disorder'
           )
         )
 
@@ -4020,7 +4101,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Generalized Anxiety Disorder' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Generalized Anxiety Disorder subscale– measure of the presence of GAD symptoms in subject'
+          'Scores for the SCARED Generalized Anxiety Disorder ',
+          'subscale – measure of the presence of GAD symptoms in subject'
         )
 
         out$Units <- 'Summed Score'
@@ -4031,7 +4113,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 18 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate more severe symptoms of generalized anxiety disorder'
+            'Higher scores indicate more severe symptoms of generalized ',
+            'anxiety disorder'
           )
         )
 
@@ -4041,7 +4124,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Social Phobia' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Social Phobia subscale – measure of the presence of social phobia symptoms in subject'
+          'Scores for the SCARED Social Phobia subscale – measure of ',
+          'the presence of social phobia symptoms in subject'
         )
 
         out$Units <- 'Summed Score'
@@ -4063,7 +4147,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Specific Phobias' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Specific Phobias subscale– measure of the presence of specific phobias in subject'
+          'Scores for the SCARED Specific Phobias subscale– measure ',
+          'of the presence of specific phobias in subject'
         )
 
         out$Units <- 'Summed score'
@@ -4085,7 +4170,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Obsessive Compulsive Disorder' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Obsessive Compulsive Disorder subscale– measure of the presence of OCD symptoms in subject'
+          'Scores for the SCARED Obsessive Compulsive Disorder ',
+          'subscale – measure of the presence of OCD symptoms in subject'
         )
 
         out$Units <- NA
@@ -4096,7 +4182,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 18 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate more severe symptoms of obsessive compulsive disorder'
+            'Higher scores indicate more severe symptoms of ',
+            'obsessive compulsive disorder'
           )
         )
 
@@ -4106,7 +4193,9 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Traumatic Stress Disorder' ) ) {
 
         out$Description <- paste0(
-          'Scores for the SCARED Traumatic Stress Disorder subscale– measure of the presence of traumatic stress disorder symptoms in subject'
+          'Scores for the SCARED Traumatic Stress Disorder ',
+          'subscale – measure of the presence of traumatic ',
+          'stress disorder symptoms in subject'
         )
 
         out$Units <- 'Summed score'
@@ -4117,7 +4206,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 0, 8 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate more severe symptoms of traumatic stress disorder'
+            'Higher scores indicate more severe symptoms of ',
+            'traumatic stress disorder'
           )
         )
 
@@ -4153,7 +4243,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Extraversion' ) ) {
 
         out$Description <- paste0(
-          'Scores for the TIPI extraversion subscale– measure of the subject’s level of extraversion'
+          'Scores for the TIPI extraversion subscale– measure of ',
+          'the subject’s level of extraversion'
         )
 
         out$Units <- 'Summed score'
@@ -4164,7 +4255,8 @@ if ( abbreviation == 'MCQ' ) {
           range = c( 2, 14 ),
           cut_off = NA,
           interpretation = paste0(
-            'Higher scores indicate higher level of extraversion; lower scores indicate higher level of introversion'
+            'Higher scores indicate higher level of extraversion; ',
+            'lower scores indicate higher level of introversion'
           )
         )
 
@@ -4175,7 +4267,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Agreeableness' ) ) {
 
         out$Description <- paste0(
-          'Scores for the TIPI agreeableness subscale– measure of the subject’s level of agreeableness'
+          'Scores for the TIPI agreeableness subscale – measure of ',
+          'the subject’s level of agreeableness'
         )
 
         out$Units <- 'Summed score'
@@ -4197,7 +4290,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Conscientiousness' ) ) {
 
         out$Description <- paste0(
-          'Scores for the TIPI conscientiousness subscale– measure of the subject’s level of conscientiousness'
+          'Scores for the TIPI conscientiousness subscale – measure ',
+          'of the subject’s level of conscientiousness'
         )
 
         out$Units <- 'Summed Score'
@@ -4218,7 +4312,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Emotional Stability' ) ) {
 
         out$Description <- paste0(
-          'Scores for the TIPI emotional stability subscale– measure of the subject’s level of emotional stability'
+          'Scores for the TIPI emotional stability subscale – measure ',
+          'of the subject’s level of emotional stability'
         )
 
         out$Units <- 'Summed Score'
@@ -4240,7 +4335,8 @@ if ( abbreviation == 'MCQ' ) {
       if ( subscale %in% c( 'Openness' ) ) {
 
         out$Description <- paste0(
-          'Scores for the TIPI openness subscale– measure of the subject’s level of openness to experiences'
+          'Scores for the TIPI openness subscale – measure of the ',
+          'subject’s level of openness to experiences'
         )
 
         out$Units <- 'Summed score'
@@ -5879,14 +5975,25 @@ update_dictionary_meta_data <- function( dtf ) {
 data_frame_from_dictionary_meta_data <- function( dtf,
                                                   progress = FALSE ) {
 
+  # Extract number of and names for columns
   column_names <- colnames( dtf )
   NC <- length( column_names )
 
+  # Identify which columns have dictionary meta-data
+  has_DMD <- meta( dtf )
+
+  # Determine which columns have matched values and labels
   vl <- sapply( 1:NC, function(i) {
-    lst <- meta( dtf[[i]] );
-    length( lst$Values_and_labels[[1]] )
+
+    if ( has_DMD[i] ) {
+      lst <- meta( dtf[[i]] );
+      return( length( lst$Values_and_labels[[1]] ) )
+    } else {
+      return( 1 )
+    }
   } )
 
+  # Template for data dictionary entry
   content_types <- c(
     "Variable_category",
     "Data_type",
@@ -5897,10 +6004,12 @@ data_frame_from_dictionary_meta_data <- function( dtf,
     "Scale",
     "Subscale",
     "Notes",
-    rep( "Values_and_labels", max( vl ) )
+    rep( "Values_and_labels", max( vl ) ),
+    'Break'
   )
   CT <- length( content_types )
 
+  # Initialize data frame for output
   out <- data.frame(
     Column_name = rep(
       column_names,
@@ -5919,150 +6028,273 @@ data_frame_from_dictionary_meta_data <- function( dtf,
   out$Index_VL[ out$Content_type == 'Values_and_labels' ] <-
     rep( 1:max( vl ), NC )
 
+
+  # Loop over columns
   for ( nc in 1:NC ) {
 
+    # Track progress
     if ( progress ) {
       message( paste0( '- ', column_names[nc] ) )
     }
 
-    lst <- meta( dtf[[ nc ]] )
+    # If possible extract dictionary meta-data
+    if ( has_DMD[nc] ) {
 
-    print(names(dtf)[nc])
+      lst <- meta( dtf[[ nc ]] )
 
+      # Close 'If possible extract dictionary meta-data'
+    } else {
+
+      lst <- NULL
+
+      # Close else for 'If possible extract dictionary meta-data'
+    }
+
+    # Loop over data dictionary entries
     for ( ct in 1:CT ) {
 
+      # Fill first five directly from list
       if ( ct %in% 1:5 ) {
 
+        # Find row to fill in output
         i <-
           out$Column_name == column_names[nc] &
           out$Index == ct
 
-        out$Content[i] <-
-          lst[[ content_types[ct] ]]
-
-      }
-
-      if ( content_types[ct] %in% 'Codes_for_missing' ) {
-
-        if ( is.list( lst$Codes_for_missing ) ) {
-
-          missing_val <- lst$Codes_for_missing
-
-          any_NA <- sapply(
-            1:length( missing_val ),
-            function(i) is.na( missing_val[[i]] )
-          )
-
-          if ( any( any_NA ) ) {
-            output <- 'NA'
-          } else {
-            output <- c()
-          }
-
-          if ( any( !any_NA ) ) {
-            output <- c(
-              output,
-              unlist( missing_val[ !any_NA ] )
-            )
-          }
-
-          i <-
-            out$Column_name == column_names[nc] &
-            out$Content_type == 'Codes_for_missing'
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
 
           out$Content[i] <-
-            paste( paste0( '"', output, '"' ), collapse = ' or ' )
+            lst[[ content_types[ct] ]]
 
+          # Special case: Variable_category
+          if ( ct == 1 ) {
+
+            out$Content[i] <-
+              paste0(
+                substr( column_names[nc], start = 1, stop = 3 ),
+                " = ",
+                out$Content[i]
+              )
+
+            # Close 'Special case: Variable_category'
+          }
+
+          # Special case: Data_type
+          if ( ct == 2 ) {
+
+            out$Content[i] <-
+              paste0(
+                substr( column_names[nc], start = 5, stop = 7 ),
+                " = ",
+                out$Content[i]
+              )
+
+            # Close 'Special case: Data_type'
+          }
+
+          # Close 'If dictionary meta-data exists'
+        } else {
+
+          # Special case: Variable_category
+          if ( ct == 1 ) {
+
+            out$Content[i] <-
+              'No data dictionary information'
+
+            # Close 'Special case: Variable_category'
+          }
+
+          # Close else for 'If dictionary meta-data exists'
         }
 
+        # Close 'Fill first five directly from list'
       }
 
+      # Reformatting for missing data codes
+      if ( content_types[ct] %in% 'Codes_for_missing' ) {
+
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
+
+          # If a list of codes is provided
+          if ( is.list( lst$Codes_for_missing ) ) {
+
+            missing_val <- lst$Codes_for_missing
+
+            any_NA <- sapply(
+              1:length( missing_val ),
+              function(i) is.na( missing_val[[i]] )
+            )
+
+            # Special case: NA
+            if ( any( any_NA ) ) {
+
+              output <- 'NA'
+
+              # Close 'Special case: NA'
+            } else {
+
+              output <- c()
+
+              # Close else for 'Special case: NA'
+            }
+
+            # Special case: Non-NA value
+            if ( any( !any_NA ) ) {
+
+              output <- c(
+                output,
+                unlist( missing_val[ !any_NA ] )
+              )
+
+              # Close 'Special case: Non-NA value'
+            }
+
+            i <-
+              out$Column_name == column_names[nc] &
+              out$Content_type == 'Codes_for_missing'
+
+            out$Content[i] <-
+              paste( paste0( '"', output, '"' ), collapse = ' or ' )
+
+            # Close 'If a list of codes is provided'
+          }
+
+          # Close 'If dictionary meta-data exists'
+        }
+
+        # Close 'Reformatting for missing data codes'
+      }
+
+      # Reformatting for values and labels
       if ( content_types[ct] %in% 'Values_and_labels' ) {
 
-        if ( is.list( lst$Values_and_labels ) ) {
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
 
-          val <- lst$Values_and_labels$Values
-          if ( !is.null( lst$Values_and_labels$Labels ) ) {
-            lab <- lst$Values_and_labels$Labels
-          } else {
-            lab <- rep( "", length( val ) )
+          # If a list of values/labels is provided
+          if ( is.list( lst$Values_and_labels ) ) {
+
+            val <- lst$Values_and_labels$Values
+            if ( !is.null( lst$Values_and_labels$Labels ) ) {
+              lab <- lst$Values_and_labels$Labels
+            } else {
+              lab <- rep( "", length( val ) )
+            }
+
+            i <-
+              out$Column_name == column_names[nc] &
+              out$Content_type == 'Values_and_labels' &
+              out$Index_VL %in% 1:length( val )
+
+            out$Content[i] <- val
+            out$Additional_content[i] <- lab
+
+            # Close 'If a list of values/labels is provided'
           }
+
+          # Close 'If dictionary meta-data exists'
+        }
+
+        # Close 'Reformatting for values and labels'
+      }
+
+      # Reformatting for scales
+      if ( content_types[ct] %in% 'Scale' ) {
+
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
 
           i <-
             out$Column_name == column_names[nc] &
-            out$Content_type == 'Values_and_labels' &
-            out$Index_VL %in% 1:length( val )
+            out$Content_type == 'Scale'
 
-          out$Content[i] <- val
-          out$Additional_content[i] <- lab
+          if ( is.list( lst$Scale ) ) {
 
-        }
-
-      }
-
-      if ( content_types[ct] %in% 'Scale' ) {
-
-        i <-
-          out$Column_name == column_names[nc] &
-          out$Content_type == 'Scale'
-
-        if ( is.list( lst$Scale ) ) {
-
-          out$Content[i] <- paste0(
-            lst$Scale$name,
-            ' - ',
-            lst$Scale$abbreviation
-          )
-
-          if ( !is.list( lst$Subscale ) ) {
-
-            out$Additional_content[i] <- paste0(
-              lst$Scale$n_items, ' items (',
-              lst$Scale$range[1],
-              ' to ',
-              lst$Scale$range[2], ')'
+            out$Content[i] <- paste0(
+              lst$Scale$name,
+              ' - ',
+              lst$Scale$abbreviation
             )
+
+            if ( !is.list( lst$Subscale ) ) {
+
+              out$Additional_content[i] <- paste0(
+                lst$Scale$n_items, ' items (',
+                lst$Scale$range[1],
+                ' to ',
+                lst$Scale$range[2], ')'
+              )
+
+            }
 
           }
 
+          # Close 'If dictionary meta-data exists'
         }
 
+        # Close 'Reformatting for scales'
       }
 
+      # Reformatting for subscales
       if ( content_types[ct] %in% 'Subscale' ) {
 
         i <-
           out$Column_name == column_names[nc] &
           out$Content_type == 'Subscale'
 
-        if ( is.list( lst$Subscale ) ) {
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
 
-          out$Content[i] <- lst$Subscale$name
+          if ( is.list( lst$Subscale ) ) {
 
-          out$Additional_content[i] <- paste0(
-            lst$Subscale$n_items, ' items (',
-            lst$Subscale$range[1],
-            ' to ',
-            lst$Subscale$range[2], ')'
-          )
+            out$Content[i] <- lst$Subscale$name
 
+            out$Additional_content[i] <- paste0(
+              lst$Subscale$n_items, ' items (',
+              lst$Subscale$range[1],
+              ' to ',
+              lst$Subscale$range[2], ')'
+            )
+
+          }
+
+          # Close 'If dictionary meta-data exists'
         }
 
+        # Close 'Reformatting for subscales'
       }
 
+      # ...
       if ( content_types[ct] %in% 'Notes' ) {
 
         i <-
           out$Column_name == column_names[nc] &
           out$Content_type == 'Notes'
 
-        out$Content[i] <- lst$Notes
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
 
+          out$Content[i] <- lst$Notes
+
+          # Close 'If dictionary meta-data exists'
+        }
+
+        # Close '...'
       }
 
+      # Close 'Loop over data dictionary entries'
     }
 
+    # Close 'Loop over columns'
   }
+
+  var_breaks <- out$Content_type == 'Break'
+
+  out$Column_name[ var_breaks ] <- '---'
+  out$Content_type[ var_breaks ] <- '---'
+  out$Content[ var_breaks ] <- '---'
 
   no_data <- apply(
     out[,c('Content','Additional_content')],

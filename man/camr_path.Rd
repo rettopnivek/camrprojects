@@ -28,3 +28,4 @@ Expects the project \code{config.yml} to contain a named list of base paths,
 \author{
 Michael Pascale
 }
+\keyword{internal}
