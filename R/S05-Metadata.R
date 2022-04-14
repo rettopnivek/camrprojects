@@ -1,6 +1,8 @@
 # Dictionary meta-data functions
 # Written by...
+#   Megan Cooke
 #   Kevin Potter
+#   Jakob Weiss
 # Maintained by...
 #   Michael Pascale
 #   Kevin Potter
@@ -8,7 +10,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-02-04
+# Last updated 2022-04-13
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -3839,12 +3841,14 @@ known_scales <- function( abbreviation = NULL,
       range = c( NA, NA ),
       abbreviation = 'PSQI',
       cut_off = NA,
-      reference = paste0('Buysse,D.J., Reynolds,C.F., Monk,T.H., ',
-                         'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
-                         ' Quality Index (PSQI): A new instrument for psychiatric',
-                         ' research and practice. Psychiatry Research, 28(2), 193-213. ',
-                         'http://www.opapc.com/uploads/documents/PSQI.pdf' )
-
+      reference =
+        paste0(
+          'Buysse,D.J., Reynolds,C.F., Monk,T.H., ',
+          'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
+          ' Quality Index (PSQI): A new instrument for psychiatric',
+          ' research and practice. Psychiatry Research, 28(2), 193-213. ',
+          'http://www.opapc.com/uploads/documents/PSQI.pdf'
+        )
     )
 
     ### Subscales
@@ -5982,12 +5986,25 @@ data_frame_from_dictionary_meta_data <- function( dtf,
   # Identify which columns have dictionary meta-data
   has_DMD <- meta( dtf )
 
-  # Determine which columns have matched values and labels
+  # Determine maximum number of rows needed for
+  # matching values and labels
   vl <- sapply( 1:NC, function(i) {
 
     if ( has_DMD[i] ) {
       lst <- meta( dtf[[i]] );
       return( length( lst$Values_and_labels[[1]] ) )
+    } else {
+      return( 1 )
+    }
+  } )
+
+  # Determine maximum number of rows needed for
+  # reporting number of time points
+  tp <- sapply( 1:NC, function(i) {
+
+    if ( has_DMD[i] ) {
+      lst <- meta( dtf[[i]] );
+      return( length( lst$Times_collected_over ) )
     } else {
       return( 1 )
     }
@@ -6005,6 +6022,7 @@ data_frame_from_dictionary_meta_data <- function( dtf,
     "Subscale",
     "Notes",
     rep( "Values_and_labels", max( vl ) ),
+    rep( "Times_collected_over", max( tp ) ),
     'Break'
   )
   CT <- length( content_types )
@@ -6027,7 +6045,9 @@ data_frame_from_dictionary_meta_data <- function( dtf,
   out$Index_VL <- NA
   out$Index_VL[ out$Content_type == 'Values_and_labels' ] <-
     rep( 1:max( vl ), NC )
-
+  out$Index_TP <- NA
+  out$Index_TP[ out$Content_type == 'Times_collected_over' ] <-
+    rep( 1:max( tp ), NC )
 
   # Loop over columns
   for ( nc in 1:NC ) {
@@ -6200,6 +6220,34 @@ data_frame_from_dictionary_meta_data <- function( dtf,
         # Close 'Reformatting for values and labels'
       }
 
+
+      # Reformatting for time points
+      if ( content_types[ct] %in% 'Times_collected_over' ) {
+
+        # If dictionary meta-data exists
+        if ( !is.null( lst ) ) {
+
+          # If a vector of time points is provided
+          if ( !is.null( lst$Times_collected_over ) ) {
+
+            val <- lst$Times_collected_over
+
+            i <-
+              out$Column_name == column_names[nc] &
+              out$Content_type == 'Times_collected_over' &
+              out$Index_TP %in% 1:length( val )
+
+            out$Content[i] <- val
+
+            # Close 'If a vector of time points is provided'
+          }
+
+          # Close 'If dictionary meta-data exists'
+        }
+
+        # Close 'Reformatting for time points'
+      }
+
       # Reformatting for scales
       if ( content_types[ct] %in% 'Scale' ) {
 
@@ -6266,7 +6314,7 @@ data_frame_from_dictionary_meta_data <- function( dtf,
         # Close 'Reformatting for subscales'
       }
 
-      # ...
+      # Reformatting for Free-form notes
       if ( content_types[ct] %in% 'Notes' ) {
 
         i <-
@@ -6281,7 +6329,7 @@ data_frame_from_dictionary_meta_data <- function( dtf,
           # Close 'If dictionary meta-data exists'
         }
 
-        # Close '...'
+        # Close 'Reformatting for Free-form notes'
       }
 
       # Close 'Loop over data dictionary entries'
@@ -6302,7 +6350,7 @@ data_frame_from_dictionary_meta_data <- function( dtf,
   )
   out <- out %>%
     filter( !no_data ) %>%
-    select( -Index, -Index_VL )
+    select( -Index, -Index_VL, -Index_TP )
 
   return( out )
 }
