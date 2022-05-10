@@ -7,6 +7,25 @@
 # have any questions or comments
 # Last updated 2021-09-16
 
+# Table of contents
+# 1) save_data_files
+# 2) match_and_assign
+# 3) create_standardized_filename
+# 4) source_scripts
+# 5) pull_git_version
+# 6) process_comm
+# 7) path_by_os
+# 8) upload_to_folder
+# 9) elements
+# 10) run_processing_scripts
+# 11) add_meta_data_for_dictionary
+# 12) notes_for_custom_function
+# 13) go_to
+# 14) create_folder_pathways
+# 15) update_filename
+# 16) file_present
+# 1) load_package
+
 # Note: Legacy functions retained to ensure compatibility with
 #       old CAM projects
 
