@@ -9,24 +9,21 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-08-23
+# Last updated 2022-05-10
 
 # Table of contents
-# 1) load_package
-# 2) Functions for files
+# 2) Functions for file names
 #   2.1) match_to_files
-#   2.2) create_standardized_filename
-#   2.3) source_scripts
 #   2.4) file_paths
 # 3) extract_unique_value
 # 4) clmn
 # 5) values_labels
 # 6) check_for_missing
+# 7) camr_shuffle_groups
 
+#### 1) Functions for file names ####
 
-#### 2) Functions for file names ####
-
-#### 2.1) match_to_files ####
+#### 1.1) match_to_files ####
 #' Checks for Partial Matches Between a String and a Set of Files
 #'
 #' Checks if a file is present in the specified directory.
@@ -99,7 +96,7 @@ match_to_files <- function( string,
   }
 
 }
-#### 2.4) file_paths ####
+#### 1.2) file_paths ####
 #' Returns File/Folder Paths
 #'
 #' Returns an absolute file or folder path.
@@ -170,7 +167,7 @@ file_paths <- function( file_name = NULL,
 
 }
 
-#### 3) extract_unique_value ####
+#### 2) extract_unique_value ####
 #' Extract Unique Values From Data Frames or Lists
 #'
 #' A function that will search over a subset of rows in a data frame
@@ -331,7 +328,7 @@ extract_unique_value <- function( x,
   return( output )
 }
 
-#### 4) clmn ####
+#### 3) clmn ####
 #' Extract Column Names Meeting Inclusion/Exclusion Criteria
 #'
 #' A function that matches or excludes column names in a
@@ -437,7 +434,7 @@ clmn <- function( dtf, ... ) {
 }
 
 
-#### 5) values_labels ####
+#### 4) values_labels ####
 #' Display Values and Associated Labels
 #'
 #' A function that takes two columns in a data frame
@@ -482,7 +479,7 @@ values_labels <- function( dtf, values, labels ) {
   return( out )
 }
 
-#### 6) check_for_missing ####
+#### 5) check_for_missing ####
 #' Checks for Missing Data
 #'
 #' Given a list of different codes for missing
@@ -613,6 +610,7 @@ check_for_missing <- function( x,
   return( out )
 }
 
+#### 6) match_and_assign ####
 #' Assign New Values Based on Partial or Exact Matching
 #'
 #' Assigns new values based on partial or exact matches with
@@ -711,6 +709,226 @@ match_and_assign <- function( x, matches, new_values, type = 'partial',
   return( output )
 }
 
+#### 7) camr_shuffle_groups ####
+#' Shuffle Grouping Variable Levels
+#'
+#' Function that shuffles the levels of a grouping variable
+#' (e.g., treatment or intervention assignments) over
+#' participants (and optionally a within-participant
+#' variable like study visit or time point). This is
+#' useful, for example, to create a data set for an
+#' analyst-blind design.
+#'
+#' @param dtf A data frame.
+#' @param id A character string, the column with participant
+#'   identifiers.
+#' @param group A character string, the column for the
+#'   grouping variable.
+#' @param within An optional character string, the column with
+#'   the levels for a within-participant variable (e.g.,
+#'   time points or visits).
+#' @param include An optional logical vector matching in length
+#'   to the number of rows in \code{dtf}, indicating the subset
+#'   of cases to shuffle. If \code{NULL} all rows are used.
+#' @param group_levels An optional character vector, the subset
+#'   of levels of \code{group} to consider.
+#' @param original_freq Logical; if \code{TRUE} shuffles
+#'   data in a way that preserves the original frequencies
+#'   for group levels - otherwise, assigns new levels in
+#'   equal frequencies.
+#' @param save_unshuffled Logical; if \code{TRUE} adds a
+#'   new column with the original unshuffled group levels.
+#' @param rng_seed An integer, the RNG seed to use to ensure
+#'   reproducibility.
+#'
+#' @return A data frame with shuffled group levels for the
+#'   \code{group} variable.
+#'
+#' @author Kevin Potter
+#'
+#' @export
 
+camr_shuffle_groups <- function( dtf, id, group,
+                                 within = NULL,
+                                 include = NULL,
+                                 group_levels = NULL,
+                                 original_freq = FALSE,
+                                 save_unshuffled = TRUE,
+                                 rng_seed = NULL ) {
 
+  # Specify RNG seed
+  if ( is.null( rng_seed ) ) {
+
+    rng_seed <- round( runif(1)*100000 )
+
+    # Close 'Specify RNG seed'
+  }
+  set.seed( rng_seed )
+
+  # Extract participant identifiers
+  IDS <- dtf[[ id ]]
+
+  # Extract grouping variable
+  GRP <- dtf[[ group ]]
+
+  # Determine levels for grouping variable
+  if ( is.null( group_levels ) ) {
+
+    group_levels <- unique( GRP )
+
+    # Close 'Determine levels for grouping variable'
+  }
+
+  # Determine rows to include
+  if ( is.null( include ) ) {
+
+    include <- rep( TRUE, nrow( dtf ) )
+
+    # Close 'Determine rows to include'
+  }
+  include <- include & GRP %in% group_levels
+
+  # If group assignment is not within participant
+  if ( is.null( within ) ) {
+
+    # Determine group level assigned to each particiant
+    grp <- aggregate(
+      GRP[ include ],
+      list( IDS[ include ] ),
+      function( x ) unique( x )[1]
+    )
+    colnames( grp ) <- c( 'ID', 'Group' )
+
+    # Shuffle group assignments
+
+    # Preserve original frequencies for levels
+    if ( original_freq ) {
+
+      grp$Group <- sample( grp$Group )
+
+      # Close 'Preserve original frequencies for levels'
+    } else {
+
+      grp$Group <- sample(
+        group_levels, size = nrow( grp ),
+        replace = TRUE
+      )
+
+      # Close else for 'Preserve original frequencies for levels'
+    }
+
+    # Save original unshuffled assignments
+    if ( save_unshuffled ) {
+
+      dtf <- cbind( dtf, GRP )
+      colnames( dtf )[ ncol( dtf ) ] <-
+        paste0( group, '.Unshuffled' )
+
+      # Close 'Save original unshuffled assignments'
+    }
+
+    # Logical indicator for rows that were shuffled
+    dtf <- cbind( dtf, include )
+    colnames( dtf )[ ncol( dtf ) ] <-
+      'INC.LGC.Shuffled_terms'
+
+    # Rewrite grouping variable with new shuffled levels
+    dtf[[ group ]][ include ] <- unlist(
+      sapply(
+        dtf[[ id ]][ include ],
+        function( s ) {
+          j <- grp$ID == s
+          return( grp$Group[j] )
+        }
+      )
+    )
+
+    # Close 'If group assignment is not within participant'
+  } else {
+
+    # Extract variable separating
+    # within-participant assignments
+    WTH <- dtf[[ within ]]
+
+    # Determine group level assigned to each particiant
+    # by each level of the within-participant variable
+    grp <- aggregate(
+      GRP[ include ],
+      list( IDS[ include ], WTH[ include ] ),
+      function( x ) unique( x )[1]
+    )
+    colnames( grp ) <- c( 'ID', 'Within', 'Group' )
+
+    # Extract participant IDs
+    ids <- unique( grp$ID )
+    n_ids <- length( ids )
+
+    # Shuffle group assignments
+
+    # Preserve original frequencies for levels
+    if ( original_freq ) {
+
+      # Loop over particpants
+      for ( s in 1:n_ids ) {
+
+        j <- grp$ID == ids[s]
+        # Reorder existing group levels
+        grp$Group[j] <- sample( grp$Group[j] )
+
+        # Close 'Loop over particpants'
+      }
+
+      # Close 'Preserve original frequencies for levels'
+    } else {
+
+      # Loop over particpants
+      for ( s in 1:n_ids ) {
+
+        # Isolate data for current participant
+        j <- grp$ID == ids[s]
+        # Assign new group levels
+        grp$Group[j] <- sample( group_levels, size = sum(j) )
+
+        # Close 'Loop over particpants'
+      }
+
+      # Close else for 'Preserve original frequencies for levels'
+    }
+
+    # Save original unshuffled assignments
+    if ( save_unshuffled ) {
+
+      dtf <- cbind( dtf, GRP )
+      colnames( dtf )[ ncol( dtf ) ] <-
+        paste0( group, '.Unshuffled' )
+
+      # Close 'Save original unshuffled assignments'
+    }
+
+    # Logical indicator for rows that were shuffled
+    dtf <- cbind( dtf, include )
+    colnames( dtf )[ ncol( dtf ) ] <-
+      'INC.LGC.Shuffled_terms'
+
+    # Rewrite grouping variable with new shuffled levels
+
+    # Loop over new assignments
+    for ( s in 1:nrow( grp ) ) {
+
+      # Isolate data for current participant
+      j <-
+        dtf[[ id ]] == grp$ID[s] &
+        dtf[[ within ]] == grp$Within[s]
+
+      # Rewrite grouping variable with new shuffled levels
+      dtf[[ group ]][j] <- grp$Group[s]
+
+      # Close 'Loop over particpants'
+    }
+
+    # Close else for 'If group assignment is not within participant'
+  }
+
+  return( dtf )
+}
 
