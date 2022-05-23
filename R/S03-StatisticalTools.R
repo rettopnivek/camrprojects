@@ -378,10 +378,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #'   )
 #' )
 #' @export
-#' @importFrom magrittr %>%
-#' @import dplyr
-#' @import stringr
-#' @import tidyr
+#' @md
 
 
 build_demo_table <- function(df, grp, funcs) {

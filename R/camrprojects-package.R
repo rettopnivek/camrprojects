@@ -33,5 +33,12 @@
 #' obtained via the command
 #' \code{ls(pos = "package:camrprojects")} after
 #' loading in the package via a call to \code{library}.
+#'
+#' @importFrom magrittr %>%
+#' @import dplyr
+#' @import stringr
+#' @import tidyr
+#' @import checkmate
+#' @import fs
 
 NULL

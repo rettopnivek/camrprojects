@@ -2284,29 +2284,8 @@ camr_paths <- function () {
   camr$paths <<- setNames(as.list(expanded), folders)
   camr_save()
 }
-#' Set a directory prefix for data files.
-#'
-#' @param prefix Optional. A path to the desired data directory. Defaults to the
-#' working directory.
-#'
-#' @author Michael Pascale
-#'
-#' @export
-#' @md
-camr_prefix <- function (prefix=getwd()) {
-  .Deprecated()
-  if (!is_absolute_path(prefix) && getwd() != camr$origin)
-    warning('Relative prefix set outside of the camr origin.')
-
-  prefix <- fs::path_real(prefix)
-
-  if (prefix == getwd() && prefix != camr$origin)
-    warning('Prefix set implicitly outside of the camr origin.')
 
 
-  camr$prefix <<- prefix
-  camr_save()
-}
 #' Set a miscellaneous item within the global `camr` object and save to disk.
 #'
 #' @param name The property to set.

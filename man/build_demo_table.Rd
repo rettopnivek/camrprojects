@@ -23,13 +23,13 @@ Further, the value \code{n} is available for use within these
 functions. All functions must return a CHR type.
 \itemize{
 \item{FFF}{which applies the function to all variables (with
-  the exception of IDS.CHR...) with that format identifier.}
+the exception of IDS.CHR...) with that format identifier.}
 \item{XXX.FFF}{which applies the function to all variables (with
-  the exception of IDS.CHR...) with that subset code and
-  format identifier.}
+the exception of IDS.CHR...) with that subset code and
+format identifier.}
 \item{XXX.FFF.Var_name}{which applies the function to that
-  variable}
-  }}
+variable}
+}}
 }
 \value{
 
