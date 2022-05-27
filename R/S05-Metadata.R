@@ -10,7 +10,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-04-13
+# Last updated 2022-05-27
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -5365,6 +5365,11 @@ add_dictionary_meta_data <- function(dtf,
   if ( !is.null( group_var ) ) {
     groups_collected_over =
       unique( dtf[[ group_var ]][ !missing_values ] )
+
+    if ( length( groups_collected_over ) == 0 ) {
+      groups_collected_over = ''
+    }
+
   } else {
     groups_collected_over = ''
   }
@@ -5373,14 +5378,25 @@ add_dictionary_meta_data <- function(dtf,
   if ( !is.null( time_var ) ) {
     times_collected_over =
       unique( dtf[[ time_var ]][ !missing_values ] )
+
+    if ( length( times_collected_over ) == 0 ) {
+      times_collected_over = ''
+    }
+
   } else {
     times_collected_over = ''
   }
 
   # Studies
   if ( !is.null( study_var ) ) {
+
     studies_collected_over =
       unique( dtf[[ study_var ]][ !missing_values ] )
+
+    if ( length( studies_collected_over ) == 0 ) {
+      studies_collected_over = ''
+    }
+
   } else {
     studies_collected_over = ''
   }
