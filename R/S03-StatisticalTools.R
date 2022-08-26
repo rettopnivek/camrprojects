@@ -26,15 +26,15 @@
 #'
 #' @param value The x or y-axis value to interpolate.
 #' @param x A vector of numeric values for the x-axis
-#'   (must match \code{y} in length).
+#'   (must match `y` in length).
 #' @param y A vector of numeric values for the y-axis
-#'   (must match \code{x} in length).
-#' @param interp_y Logical; if \code{TRUE}, the value to
+#'   (must match `x` in length).
+#' @param interp_y Logical; if `TRUE`, the value to
 #'   interpolate is assumed to be a y coordinate.
-#' @param use_first_last Logical; if \code{TRUE} when values
+#' @param use_first_last Logical; if `TRUE` when values
 #'   fall outside the provided vectors the function uses the
 #'   first or last set of x and y values as an approximation.
-#' @param warn_if_first_last Logical; if \code{TRUE} warns
+#' @param warn_if_first_last Logical; if `TRUE` warns
 #'   the user when an approximation is used for cases that
 #'   fall outside the range of the provided vectors.
 #'
@@ -43,7 +43,7 @@
 #' @return A vector of 5 values, the lower x and y-axis values
 #'   followed by the upper x and y-axis values that bracket the
 #'   point to interpolate. If there are no coordinates bracketting
-#'   the specified coordinate, a vector of \code{NA} values is returned.
+#'   the specified coordinate, a vector of `NA` values is returned.
 #'
 #' @examples
 #' # Example curve
@@ -203,13 +203,13 @@ limits_for_interp = function( value, x, y,
 #' }
 #'   A named vector can be provided, otherwise the order is assumed to
 #'   follow the list given above.
-#' @param interp_y Logical; if \code{TRUE}, the value to
+#' @param interp_y Logical; if `TRUE`, the value to
 #'   interpolate is assumed to be a y coordinate.
 #'
 #' @author Kevin Potter
 #'
 #' @return The interpolated x or y value. If outside the lower or upper
-#'   boundaries, \code{NA} is returned instead.
+#'   boundaries, `NA` is returned instead.
 #'
 #' @examples
 #' # Linear interpolation for y
@@ -324,7 +324,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #'   where the names follow one of 3 conventions (below). Note:
 #'   for all CHR variables, the function operates on the unique
 #'   values within that variable, NOT on the variable itself.
-#'   Further, the value \code{n} is available for use within these
+#'   Further, the value `n` is available for use within these
 #'   functions. All functions must return a CHR type.
 #'   \itemize{
 #'   \item{FFF}{which applies the function to all variables (with
@@ -338,7 +338,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #'
 #' @author William Schmitt
 #'
-#' @return
+#' @returns A data frame.
 #'
 #' @examples
 #' # Example data frame
@@ -552,23 +552,23 @@ build_demo_table <- function(df, grp, funcs) {
 #'
 #' A function for flexible and robust computation of univariate
 #' statistics over a vector of observations. Can be combined
-#' with the \code{\link[dplyr]{group_by}} and
-#' \code{\link[dplyr]{summarise}} functions from
+#' with the [dplyr::group_by()] and
+#' [dplyr::summarise()] functions from
 #' the package 'dplyr'.
 #'
 #' @param x A vector.
 #' @param f A function that computes a univariate statistc
-#'   (e.g., \code{mean}, \code{length}).
+#'   (e.g., `mean`, `length`).
 #' @param include Optional logical vector of matching length
-#'   to \code{x} indicating obserations to include when computing
+#'   to `x` indicating obserations to include when computing
 #'   the statistic.
 #' @param exclude Optional vector of types of observations in
-#'   \code{x} to exclude (exact matches).
-#' @param na.rm Logical; if \code{TRUE}, removes \code{NA} values.
+#'   `x` to exclude (exact matches).
+#' @param na.rm Logical; if `TRUE`, removes `NA` values.
 #' @param default The default value to return in the case of
 #'   missing data (i.e., no observation over which to compute a
 #'   statistic).
-#' @param ... Additional parameters for the function \code{f}.
+#' @param ... Additional parameters for the function `f`.
 #'
 #' @author Kevin Potter
 #'

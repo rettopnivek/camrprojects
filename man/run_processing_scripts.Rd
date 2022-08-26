@@ -9,12 +9,12 @@ run_processing_scripts(processing_files, required_scripts, reload, debug_code)
 \arguments{
 \item{processing_files}{A vector of either...
 \itemize{
-  \item Numeric indices denoting which processing
-    files to include;
-  \item A character vector in the form of 'DPXX'
-    indicating which files to include;
-  \item A character vector with the full file names
-    for the files to include.
+\item Numeric indices denoting which processing
+files to include;
+\item A character vector in the form of 'DPXX'
+indicating which files to include;
+\item A character vector with the full file names
+for the files to include.
 }}
 
 \item{required_scripts}{A vector of (complete) file names

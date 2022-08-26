@@ -9,21 +9,21 @@ linear_interp(vec, interp_y = T)
 \arguments{
 \item{vec}{A vector of 5 values, consisting of...
 \describe{
-  \item{x0}{The x coordinate for the lower boundary;}
-  \item{y0}{The y coordinate for the lower boundary;}
-  \item{x1}{The x coordinate for the upper boundary;}
-  \item{y1}{The y coordinate for the upper boundary;}
-  \item{x or y}{The coordinate at which interpolation should occur.}
+\item{x0}{The x coordinate for the lower boundary;}
+\item{y0}{The y coordinate for the lower boundary;}
+\item{x1}{The x coordinate for the upper boundary;}
+\item{y1}{The y coordinate for the upper boundary;}
+\item{x or y}{The coordinate at which interpolation should occur.}
 }
-  A named vector can be provided, otherwise the order is assumed to
-  follow the list given above.}
+A named vector can be provided, otherwise the order is assumed to
+follow the list given above.}
 
 \item{interp_y}{Logical; if \code{TRUE}, the value to
 interpolate is assumed to be a y coordinate.}
 }
 \value{
 The interpolated x or y value. If outside the lower or upper
-  boundaries, \code{NA} is returned instead.
+boundaries, \code{NA} is returned instead.
 }
 \description{
 Given a pair of x and y values, uses linear

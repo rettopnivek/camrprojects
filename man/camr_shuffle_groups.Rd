@@ -49,7 +49,7 @@ reproducibility.}
 }
 \value{
 A data frame with shuffled group levels for the
-  \code{group} variable.
+\code{group} variable.
 }
 \description{
 Function that shuffles the levels of a grouping variable

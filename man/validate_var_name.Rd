@@ -20,55 +20,55 @@ passed validation.
 Validate a string conforms to the Center for Addiction Medicine (CAM) R
 data-frame column naming standard. The CAM name standard is
 GGG.TTT.Optional.Var_name. This function maintains the ability to check if
-`TTT` conforms to the standard for R types or for REDCap field types and is
+\code{TTT} conforms to the standard for R types or for REDCap field types and is
 vectorized over the input.
 }
 \details{
 The CAM Name Standard: GGG.TTT.Optional.Var_name.
 \itemize{
-  \item `GGG` is the variable's group, which roughly corresponds to data
-    of a similar nature or type. Examples include: IDS for identification
-   variables, SBJ for subject demographic variables, SSS for important
-   study details, INV for inventory measures, etc.
-  \item`TTT` is the variable's type, which corresponds to either a
-    specific R type or a specific REDCap field type. Find permissible
-    types below:
-    \itemize{
-      \item Possible R Types:
-        \itemize{
-          \item `INT`: An integer value.
-          \item `DBL`: A double or non-integer numeric value.
-          \item `CHR`: A character string.
-          \item `DAT`: A date-time value. TODO: Decide on exact date-time
-          object.
-          \item `LGC`: A boolean value.
-        }
-      \item Possible REDCap Types:
-        \itemize{
-          \item `DAT`: Date-time fields.
-          \item `INT`: Integer fields.
-          \item `DBL`: Decimal/non-integer numeric fields.
-          \item `CHR`: All other text or notes box fields.
-          \item `MCQ`: Multiple choice drop-down lists and radio buttons.
-          \item `CKB`: Checkbox fields.
-          \item `YNQ`: Yes/No Questions.
-          \item `FLE`: Signature and file-upload fields.
-          \item `VAS`: Slider or visual analog scale (VAS) fields.
-          \item `DSC`: Descriptive text fields.
-        }
-    }
-  \item `Optional`: An optional, short, additional grouping identifier. This
-  is most often indicated for inventories, to allow for additional grouping
-  by the questionnaire/inventory itself. Multiple additional group identifier
-  are allowed, so long as they maintain a period separator and contain only
-  an alphanumeric sequence (i.e. no `_`). Case should be sensible; this
-  section should either be all caps (e.g. abbreviations) or only the first
-  letter should be capitalized.
-  \item `Var_name`: A short, descriptive name for the field that would be
-  appropriate for figure/table labeling. If the name consists of multiple
-  words, the first word should be capitalized and subsequent words should be
-  separated by `_` and appear in all lower-case. The one exception is
-  if the entire word (e.g. an abbreviation) is capitalized.
+\item \code{GGG} is the variable's group, which roughly corresponds to data
+of a similar nature or type. Examples include: IDS for identification
+variables, SBJ for subject demographic variables, SSS for important
+study details, INV for inventory measures, etc.
+\item\code{TTT} is the variable's type, which corresponds to either a
+specific R type or a specific REDCap field type. Find permissible
+types below:
+\itemize{
+\item Possible R Types:
+\itemize{
+\item \code{INT}: An integer value.
+\item \code{DBL}: A double or non-integer numeric value.
+\item \code{CHR}: A character string.
+\item \code{DAT}: A date-time value. TODO: Decide on exact date-time
+object.
+\item \code{LGC}: A boolean value.
+}
+\item Possible REDCap Types:
+\itemize{
+\item \code{DAT}: Date-time fields.
+\item \code{INT}: Integer fields.
+\item \code{DBL}: Decimal/non-integer numeric fields.
+\item \code{CHR}: All other text or notes box fields.
+\item \code{MCQ}: Multiple choice drop-down lists and radio buttons.
+\item \code{CKB}: Checkbox fields.
+\item \code{YNQ}: Yes/No Questions.
+\item \code{FLE}: Signature and file-upload fields.
+\item \code{VAS}: Slider or visual analog scale (VAS) fields.
+\item \code{DSC}: Descriptive text fields.
+}
+}
+\item \code{Optional}: An optional, short, additional grouping identifier. This
+is most often indicated for inventories, to allow for additional grouping
+by the questionnaire/inventory itself. Multiple additional group identifier
+are allowed, so long as they maintain a period separator and contain only
+an alphanumeric sequence (i.e. no \verb{_}). Case should be sensible; this
+section should either be all caps (e.g. abbreviations) or only the first
+letter should be capitalized.
+\item \code{Var_name}: A short, descriptive name for the field that would be
+appropriate for figure/table labeling. If the name consists of multiple
+words, the first word should be capitalized and subsequent words should be
+separated by \verb{_} and appear in all lower-case. The one exception is
+if the entire word (e.g. an abbreviation) is capitalized.
 }
 }
 \examples{

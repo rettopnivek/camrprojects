@@ -41,8 +41,8 @@ A univariate statistic, or the default value.
 \description{
 A function for flexible and robust computation of univariate
 statistics over a vector of observations. Can be combined
-with the \code{\link[dplyr]{group_by}} and
-\code{\link[dplyr]{summarise}} functions from
+with the \code{\link[dplyr:group_by]{dplyr::group_by()}} and
+\code{\link[dplyr:summarise]{dplyr::summarise()}} functions from
 the package 'dplyr'.
 }
 \examples{

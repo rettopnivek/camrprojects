@@ -32,7 +32,7 @@ matches to elements from \code{matches} (vector must be
 of equivalent length to \code{matches}).}
 
 \item{type}{The type of matching, either 'partial' or 'exact'
-(uses \code{grepl} or \code{\%in\%}, respectively).}
+(uses \code{grepl} or \verb{\\\%in\\\%}, respectively).}
 
 \item{default}{Either a single value to assign in the absence of
 a match, or a vector equivalent in length to \code{x}.}
@@ -42,10 +42,10 @@ default values when it is appropriate to assign new values.}
 }
 \value{
 A new vector of equivalent length to \code{x}, with
-  values assigned based on successful matches.
+values assigned based on successful matches.
 
 A new vector of equivalent length to \code{x}, with
-  values assigned based on successful matches.
+values assigned based on successful matches.
 }
 \description{
 Assigns new values based on partial or exact matches with
@@ -87,7 +87,5 @@ match_and_assign( x2, list( 'E', 'F' ), c('1','2'),
 
 }
 \author{
-Kevin Potter
-
 Kevin Potter
 }

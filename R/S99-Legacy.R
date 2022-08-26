@@ -24,7 +24,7 @@
 # 14) create_folder_pathways
 # 15) update_filename
 # 16) file_present
-# 1) load_package
+# 17) load_package
 
 # Note: Legacy functions retained to ensure compatibility with
 #       old CAM projects
@@ -44,15 +44,15 @@
 #'   to output. Currently supports 'RData' and 'csv'.
 #' @param filenames The filename(s) for the output, either a
 #'   single character string or a vector matching in length
-#'   to \code{extension}.
+#'   to `extension`.
 #' @param filename_modifiers A character vector of modifiers to the
 #'   filenames When saving multiple data frames as .csv files.
-#' @param tag An optional argument for the \code{create_standardized_filename}
+#' @param tag An optional argument for the `create_standardized_filename`
 #'   controlling the beginning tag at the start of the filename.
-#' @param number An optional argument for the \code{create_standardized_filename}
+#' @param number An optional argument for the `create_standardized_filename`
 #'   specifying the file number.
-#' @param use_standard_names Logical; if \code{TRUE} uses
-#'   the \code{create_standardized_filename} to generate filenames in
+#' @param use_standard_names Logical; if `TRUE` uses
+#'   the `create_standardized_filename` to generate filenames in
 #'   a standardized format.
 #'
 #' @author Kevin Potter
@@ -210,18 +210,18 @@ save_data_files = function( data_frames_to_save,
 #' values from an input vector.
 #'
 #' @param x A vector of values to match over.
-#' @param matches A list of values in \code{x} to match over
+#' @param matches A list of values in `x` to match over
 #' @param new_values A vector of new values to assign based on
-#'   matches to elements from \code{matches} (vector must be
-#'   of equivalent length to \code{matches}).
+#'   matches to elements from `matches` (vector must be
+#'   of equivalent length to `matches`).
 #' @param type The type of matching, either 'partial' or 'exact'
-#'   (uses \code{grepl} or \code{\%in\%}, respectively).
+#'   (uses `grepl` or `\%in\%`, respectively).
 #' @param default Either a single value to assign in the absence of
-#'   a match, or a vector equivalent in length to \code{x}.
+#'   a match, or a vector equivalent in length to `x`.
 #' @param replace_if An optional vector specifying the subset of
 #'   default values when it is appropriate to assign new values.
 #'
-#' @return A new vector of equivalent length to \code{x}, with
+#' @return A new vector of equivalent length to `x`, with
 #'   values assigned based on successful matches.
 #'
 #' @author Kevin Potter
@@ -668,7 +668,7 @@ process_comm = function( comm_dtf ) {
 #' }
 #' @author Kevin Potter and William Schmitt
 #'
-#' @return A logical value, \code{TRUE} if the path
+#' @return A logical value, `TRUE` if the path
 #' was successfully accessed.
 #'
 #' @examples
@@ -728,18 +728,18 @@ path_by_os <- function( paths ) {
 #'   uploaded, either...
 #' \itemize{
 #'   \item An absolute path to the primary folder;
-#'   \item A label that can be passed to the \code{go_to} function.
+#'   \item A label that can be passed to the `go_to` function.
 #' }
 #' @param sub_path An optional path to a sub-folder in the primary folder.
 #' @param folder_for_previous An optional folder name where previous
 #'   versions of the file should be copied.
-#' @param filename_is_standardized Logical; if \code{TRUE} the filename
+#' @param filename_is_standardized Logical; if `TRUE` the filename
 #'   is assumed to follow a standardized format, see
-#'   \code{\link{create_standardized_filename}}.
+#'   [create_standardized_filename()].
 #'
 #' @author Kevin Potter
 #'
-#' @return A logical value, \code{TRUE} if file was successfully uploaded.
+#' @return A logical value, `TRUE` if file was successfully uploaded.
 #'
 #' @export
 
@@ -885,13 +885,13 @@ upload_to_folder <- function( filename,
 #' unique values, or return the unique values as a vector.
 #'
 #' @param x A vector.
-#' @param counts Logical; if \code{TRUE} returns a count of the number
+#' @param counts Logical; if `TRUE` returns a count of the number
 #'   of unique values, otherwise returns a vector with the unique values.
-#' @param include Optional logical vector of matching length to \code{x}
+#' @param include Optional logical vector of matching length to `x`
 #'   indicating obserations to keep.
 #' @param exclude Optional vector of types of observations to exclude
 #'   (exact matches).
-#' @param na.rm Logical; if \code{TRUE}, removes \code{NA} values.
+#' @param na.rm Logical; if `TRUE`, removes `NA` values.
 #'
 #' @author Kevin Potter
 #'
@@ -967,7 +967,7 @@ elements = function( x, counts = T,
 #' A convenience function that navigates to the folder
 #' with the set of data processing R scripts and
 #' sources the specified subset of files. The portable
-#' component of a \code{create_cleaned_data} function
+#' component of a `create_cleaned_data` function
 #' typical for CAM R projects.
 #'
 #' @param processing_files A vector of either...
@@ -981,9 +981,9 @@ elements = function( x, counts = T,
 #'   }
 #' @param required_scripts A vector of (complete) file names
 #'   giving the processing scripts that must be included.
-#' @param reload Logical; if \code{TRUE}, re-downloads data
+#' @param reload Logical; if `TRUE`, re-downloads data
 #'   from REDCap.
-#' @param debug_code Logical; if \code{TRUE}, displays progess at
+#' @param debug_code Logical; if `TRUE`, displays progess at
 #'   specified cut-points for each processing script.
 #'
 #' @author Kevin Potter
@@ -1161,7 +1161,7 @@ run_processing_scripts = function( processing_files,
 #### 11) add_meta_data_for_dictionary ####
 #' Add Meta-Data for Data Dictionaries
 #'
-#' A function that adds meta-data (see \code{\link[base]{attributes}})
+#' A function that adds meta-data (see [base::attributes()])
 #' to variables in a data frame or list that can be used for data
 #' dictionary purposes. For standardized column names, many
 #' fields can be auto-completed.
@@ -1172,25 +1172,25 @@ run_processing_scripts = function( processing_files,
 #'   processing script) for the variable. Can be determined
 #'   from the initial three-letter abbreviation with
 #'   standardized column names (change defaults via the
-#'   argument \code{variable_categories}).
+#'   argument `variable_categories`).
 #' @param Data_type The data type of the values in the column.
 #'   Can be determined from the second three-letter abbreviation
 #'   with standardized column names (change defaults via the
-#'   argument \code{data_types}).
+#'   argument `data_types`).
 #' @param Time_points_assessed For multi-session data, the list
 #'   of all time points at which measure was collected, separated
 #'   by the pipe symbol (e.g., 'Baseline|2nd time point|3rd time point').
-#'   Can also inferred from inputs to the argument \code{time_points}.
+#'   Can also inferred from inputs to the argument `time_points`.
 #' @param Studies_assessed For data collected from multiple
 #'   studies, or over multiple phases for a study (e.g., combination
 #'   of data from pilot and active studies), the list of all
 #'   studies (or phases) during which the measure was collected,
 #'   separated by the pipe symbol (e.g., 'Pilot|Active').
-#'   Can be inferred from inputs to the argument \code{studies}.
+#'   Can be inferred from inputs to the argument `studies`.
 #' @param Groups_assessed For data with multiple randomization
 #'   groups, the list of groups over which the measure was collected,
 #'   separated by the pipe symbol (e.g., 'Group 1|Group 2|Group 3').
-#'   Can be inferred from inputs to the argument \code{groups}.
+#'   Can be inferred from inputs to the argument `groups`.
 #' @param Description Human-readable description of what the variable
 #'   is and what it is for.
 #' @param Values Internally stored values REDcap uses for paired
@@ -1200,7 +1200,7 @@ run_processing_scripts = function( processing_files,
 #'   stored values REDcap uses for paired values and labels (e.g.,
 #'   likert-scale type variables) separated by the pipe symbol
 #'   (e.g., 'Very low|Low|Medium|High|Very high'). Should match in
-#'   length to the input for the argument \code{Values}.
+#'   length to the input for the argument `Values`.
 #' @param Scale If applicable, the full name, abbreviation, and
 #'   total number of items for a scale or inventory measure (e.g.,
 #'   'Hospital Anxiety Depression SCale (HADS) - 14 items').
@@ -1208,11 +1208,11 @@ run_processing_scripts = function( processing_files,
 #'   of items (e.g., 'Anxiety - 7 items').
 #' @param Range For numeric variables, the minimum and maximum
 #'   observed values. Can be inferred based on input to the
-#'   argument \code{x}.
+#'   argument `x`.
 #' @param Missing_data The values and/or labels used for missing data.
 #'   Must be in the format '<Value 1|Value 2|...|Value N>'. For
-#'   example, if missing values are represented by \code{NA},
-#'   \code{NAN}, " ", and "", this would be written as '<NA|NaN| |>'.
+#'   example, if missing values are represented by `NA`,
+#'   `NAN`, " ", and "", this would be written as '<NA|NaN| |>'.
 #' @param x The vector of values for the specified variable.
 #' @param lst A list with the existing attributes/meta-data
 #'   assigned to the variable.
@@ -1245,16 +1245,16 @@ run_processing_scripts = function( processing_files,
 #' auto-completion of several fields for meta-data (and by extension
 #' future data dictionaries) become possible as per the
 #' abbreviations and labels defined via the arguments
-#' \code{variable_categories} and \code{data_types}.
+#' `variable_categories` and `data_types`.
 #'
 #' For cases that require additional meta-data entries not included
-#' in the default arguments provided by \code{add_meta_data_for_dictionary},
-#' a user can define new entries via the \code{custom_attr} argument.
+#' in the default arguments provided by `add_meta_data_for_dictionary`,
+#' a user can define new entries via the `custom_attr` argument.
 #' Furthermore, with careful formatting of the list passed to
-#' the \code{custom_attr} argument, one can create custom meta-data
+#' the `custom_attr` argument, one can create custom meta-data
 #' entries that auto-complete based on abbreviations included in
-#' the column names, just like the \code{Variable_category} and
-#' \code{Data_type} options. The final demonstration in the examples
+#' the column names, just like the `Variable_category` and
+#' `Data_type` options. The final demonstration in the examples
 #' sections details how this can be done.
 #'
 #' @author Kevin Potter
@@ -1678,9 +1678,9 @@ notes_for_custom_function = function( f ) {
 #'
 #' A convenience function that allows a user to quickly navigate
 #' to specified folders in the Project directory via an easily
-#' readable command. Requires a list called \code{folder_pathways}
+#' readable command. Requires a list called `folder_pathways`
 #' with the paths and associated labels to exist in the global environment
-#' (see \code{\link{create_folder_pathways}}).
+#' (see [create_folder_pathways()]).
 #'
 #' @param path The label associated with the desired folder to navigate to
 #'   (e.g., 'Project', 'R', etc.).
@@ -1737,12 +1737,12 @@ go_to <- function( path ) {
 #'
 #' Creates/update a list that contains paths for the folder hierarchy
 #' for a standard CAM RStudio project. This list can then be accessed
-#' by the \code{\link{go_to}} function for fast and readable folder
+#' by the [go_to()] function for fast and readable folder
 #' navigation.
 #'
 #' @param folder_pathways An optional existing list with paths and labels
-#'   that can then be updated with the \code{add_path} argument. If
-#'   \code{NULL} (the default), automatically generates the list AND
+#'   that can then be updated with the `add_path` argument. If
+#'   `NULL` (the default), automatically generates the list AND
 #'   the standard folder hierarchy for a CAM RStudio project, where...
 #'   \describe{
 #'     \item{Project}{The project directory}
@@ -1753,27 +1753,27 @@ go_to <- function( path ) {
 #'       be cleaned and processed}
 #'   }
 #' @param add_path An optional named list to add a new folder path and
-#'   associated labels to an existing \code{folder_pathways} object.
+#'   associated labels to an existing `folder_pathways` object.
 #'   Must contain three elements:
 #'   \describe{
 #'     \item{path}{The absolute path to the folder to add;}
 #'     \item{title}{The internal label for the slot for the folder path;}
-#'     \item{labels}{The set of labels to use in the \code{go_to} call.}
+#'     \item{labels}{The set of labels to use in the `go_to` call.}
 #'   }
-#' @param redcap Logical; if \code{TRUE}, when creating the
-#'   \code{folder_pathways} list, will check for a folder one level
+#' @param redcap Logical; if `TRUE`, when creating the
+#'   `folder_pathways` list, will check for a folder one level
 #'   above the project directory for an installation of the R package
 #'   'REDCapR' version 0.9.8, which is compatible with current CAM
 #'   projects as of 09/04/2020.
-#' @param dropbox Logical; if \code{TRUE}, when creating the
-#'   \code{folder_pathways} list, will check for a text file
+#' @param dropbox Logical; if `TRUE`, when creating the
+#'   `folder_pathways` list, will check for a text file
 #'   in the 'Raw_data_files' folder that contains the path to a
 #'   dropbox folder on the local machine. If the file does not
 #'   exist, a warning will be displayed and a file template
 #'   will be created. The user can then copy the path into the
 #'   file.
-#' @param api Logical; if \code{TRUE}when creating the
-#'   \code{folder_pathways} list, will check for a text file
+#' @param api Logical; if `TRUE`when creating the
+#'   `folder_pathways` list, will check for a text file
 #'   in the 'Raw_data_files' folder that contains the API token
 #'   for a specified REDCap project. If the file does not
 #'   exist, a warning will be displayed and a file template
@@ -1781,8 +1781,8 @@ go_to <- function( path ) {
 #'   into the file.
 #' @return A list with slots for folder pathway of interest (e.g.,
 #'   the project directory, the R scripts folder, etc.), and an
-#'   additional list with labels (e.g., \code{c('Project','project')})
-#'   that can be used with the \code{\link{go_to}} function to navigate
+#'   additional list with labels (e.g., `c('Project','project')`)
+#'   that can be used with the [go_to()] function to navigate
 #'   to the associated folder.
 #'
 #' @author Kevin Potter
@@ -2114,7 +2114,7 @@ update_filename = function( description,
 #'
 #' @return Either...
 #' \enumerate{
-#'   \item A logical value, \code{TRUE} if the file is present;
+#'   \item A logical value, `TRUE` if the file is present;
 #'   \item A logical vector for all files in the folder;
 #'   \item The index position for the file if it exists;
 #'   \item The file name.
@@ -2162,7 +2162,7 @@ file_present <- function( string,
 
 }
 
-#### 1) load_package ####
+#### 17) load_package ####
 #' Installs and Loads an R Package
 #'
 #' Checks if a package is installed, and if not, sees if it
@@ -2176,7 +2176,7 @@ file_present <- function( string,
 #' }
 #' @param repo An optional character string with the Github
 #'   repository name (in the form 'username/repository').
-#'   If \code{NULL}, assumes the username is 'rettopnivek'
+#'   If `NULL`, assumes the username is 'rettopnivek'
 #'   and that the repository is 'package_name'.
 #' @param ... Additional parameters for the 'devtools'
 #'   installation functions.

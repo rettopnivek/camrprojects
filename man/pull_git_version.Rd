@@ -8,7 +8,7 @@ pull_git_version()
 }
 \value{
 A character string giving the version number, in the
-  format of MAJOR.MINOR.PATCH.
+format of MAJOR.MINOR.PATCH.
 }
 \description{
 A function to extract the git version for an R project

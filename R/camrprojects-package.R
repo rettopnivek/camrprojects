@@ -31,8 +31,8 @@
 #' Mass General Brigham (MGB) hospital. A complete list
 #' of the functions available in the package can be
 #' obtained via the command
-#' \code{ls(pos = "package:camrprojects")} after
-#' loading in the package via a call to \code{library}.
+#' `ls(pos = "package:camrprojects")` after
+#' loading in the package via a call to `library`.
 #'
 #' @importFrom magrittr %>%
 #' @import dplyr

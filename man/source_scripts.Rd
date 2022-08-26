@@ -9,13 +9,13 @@ source_scripts(files_to_include = NULL, path = "R")
 \arguments{
 \item{files_to_include}{A vector of either...
 \itemize{
-  \item Numeric indices denoting which files
-    to include;
-  \item A character string matching the initial
-     set of letters across all relevant files (e.g., if
-     all scripts of interest start with the letter 'S');
-  \item A character vector with the full file names
-    for the files to include.
+\item Numeric indices denoting which files
+to include;
+\item A character string matching the initial
+set of letters across all relevant files (e.g., if
+all scripts of interest start with the letter 'S');
+\item A character vector with the full file names
+for the files to include.
 }}
 
 \item{path}{The folder name with the scripts to source.}

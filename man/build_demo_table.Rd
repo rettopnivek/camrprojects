@@ -32,7 +32,7 @@ variable}
 }}
 }
 \value{
-
+A data frame.
 }
 \description{
 A function that will build a data frame that is well-

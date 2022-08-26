@@ -26,7 +26,7 @@ the file (e.g., 'Processed_data').}
 \item{cur_time}{The date and time the file was created,
 preferably in the format YYYY_MM_DD-HH_MM.
 If not provided, computed automatically via the base
-R function \code{\link[base]{Sys.time}}.}
+R function \code{\link[base:Sys.time]{base::Sys.time()}}.}
 
 \item{commit_num}{A character string, the 7-digit alphanumeric
 commit reference - if not provided, automatically computed.}
@@ -38,7 +38,7 @@ to the current working directory.}
 \value{
 Creates two .csv files, one for the processed data
 and another for the associated data dictionary (created
-automatically via the \code{\link{data_frame_from_dictionary_meta_data}}
+automatically via the \code{\link[=data_frame_from_dictionary_meta_data]{data_frame_from_dictionary_meta_data()}}
 function).
 }
 \description{

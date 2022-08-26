@@ -15,7 +15,7 @@ A convenience function that allows a user to quickly navigate
 to specified folders in the Project directory via an easily
 readable command. Requires a list called \code{folder_pathways}
 with the paths and associated labels to exist in the global environment
-(see \code{\link{create_folder_pathways}}).
+(see \code{\link[=create_folder_pathways]{create_folder_pathways()}}).
 }
 \author{
 Kevin Potter

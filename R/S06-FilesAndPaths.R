@@ -138,7 +138,7 @@ camr_popd <- function () {
 #' with an additional .csv file with a data dictionary.
 #'
 #' @param dtf A data frame with column attributes that
-#'   include a list of class \code{dictionary_meta_data}.
+#'   include a list of class `dictionary_meta_data`.
 #' @param proj A character string, the abbreviation for
 #'   the study (e.g., 'MMJ', 'ARCHES', 'PCORI', etc.).
 #' @param desc A character string, the description of
@@ -146,7 +146,7 @@ camr_popd <- function () {
 #' @param cur_time The date and time the file was created,
 #'   preferably in the format YYYY_MM_DD-HH_MM.
 #'   If not provided, computed automatically via the base
-#'   R function \code{\link[base]{Sys.time}}.
+#'   R function [base::Sys.time()].
 #' @param commit_num A character string, the 7-digit alphanumeric
 #'   commit reference - if not provided, automatically computed.
 #' @param file_path An optional character string, the absolute
@@ -155,7 +155,7 @@ camr_popd <- function () {
 #'
 #' @return Creates two .csv files, one for the processed data
 #' and another for the associated data dictionary (created
-#' automatically via the \code{\link{data_frame_from_dictionary_meta_data}}
+#' automatically via the [data_frame_from_dictionary_meta_data()]
 #' function).
 #'
 #' @export

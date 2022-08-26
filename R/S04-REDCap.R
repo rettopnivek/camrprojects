@@ -25,8 +25,8 @@
 #### 1.2) redcap_read ####
 #' Read All Records From a REDCap Project
 #'
-#' This function seeks to mimic the \code{redcap_read()}
-#' function for the (now defunct) \code{REDCapR} package,but
+#' This function seeks to mimic the `redcap_read()`
+#' function for the (now defunct) `REDCapR` package,but
 #' with a more robust output that can handle bizarre characters
 #' and calculated fields. This function handles all REST API calls
 #' using httr. This function also uses calls to [furrr] and [future]
@@ -529,9 +529,8 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
 #'
 #' @author Michael Pascale
 #'
-#' @examples
-#'
 #' @export
+
 camr_ckdict <- function (dict) {
   dict[is.na(dict)] <- ''
   field_prefixes_list <- list()

@@ -18,7 +18,7 @@ CAM standard for R names.
 }
 \description{
 Rename a data frame downloaded from REDCap using the field annotation located
-in the metadata data frame downloaded with the data. See [valiate_var_name()]
+in the metadata data frame downloaded with the data. See \code{\link[=valiate_var_name]{valiate_var_name()}}
 for more information on the naming standard. Warns the user for any field
 that does not contain a new name that conforms to the standard in the field
 annotation.

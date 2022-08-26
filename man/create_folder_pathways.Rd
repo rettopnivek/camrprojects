@@ -18,21 +18,21 @@ that can then be updated with the \code{add_path} argument. If
 \code{NULL} (the default), automatically generates the list AND
 the standard folder hierarchy for a CAM RStudio project, where...
 \describe{
-  \item{Project}{The project directory}
-  \item{+ R}{The folder for R scripts}
-  \item{+ Data}{}
-  \item{++ Data_processing}{Processing scripts to clean the raw data}
-  \item{++ Raw_data_files}{Files, such as downloads from REDCap, to
-    be cleaned and processed}
+\item{Project}{The project directory}
+\item{+ R}{The folder for R scripts}
+\item{+ Data}{}
+\item{++ Data_processing}{Processing scripts to clean the raw data}
+\item{++ Raw_data_files}{Files, such as downloads from REDCap, to
+be cleaned and processed}
 }}
 
 \item{add_path}{An optional named list to add a new folder path and
 associated labels to an existing \code{folder_pathways} object.
 Must contain three elements:
 \describe{
-  \item{path}{The absolute path to the folder to add;}
-  \item{title}{The internal label for the slot for the folder path;}
-  \item{labels}{The set of labels to use in the \code{go_to} call.}
+\item{path}{The absolute path to the folder to add;}
+\item{title}{The internal label for the slot for the folder path;}
+\item{labels}{The set of labels to use in the \code{go_to} call.}
 }}
 
 \item{redcap}{Logical; if \code{TRUE}, when creating the
@@ -59,15 +59,15 @@ into the file.}
 }
 \value{
 A list with slots for folder pathway of interest (e.g.,
-  the project directory, the R scripts folder, etc.), and an
-  additional list with labels (e.g., \code{c('Project','project')})
-  that can be used with the \code{\link{go_to}} function to navigate
-  to the associated folder.
+the project directory, the R scripts folder, etc.), and an
+additional list with labels (e.g., \code{c('Project','project')})
+that can be used with the \code{\link[=go_to]{go_to()}} function to navigate
+to the associated folder.
 }
 \description{
 Creates/update a list that contains paths for the folder hierarchy
 for a standard CAM RStudio project. This list can then be accessed
-by the \code{\link{go_to}} function for fast and readable folder
+by the \code{\link[=go_to]{go_to()}} function for fast and readable folder
 navigation.
 }
 \examples{

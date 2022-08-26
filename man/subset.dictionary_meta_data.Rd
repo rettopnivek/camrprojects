@@ -12,17 +12,17 @@
 \item{type}{The type of element to extract. Options
 include:
 \itemize{
-  \item \code{'category'}
-  \item \code{'type'}
-  \item \code{'sub-category'}
-  \item \code{'description'}
-  \item \code{'redcap'}
-  \item \code{'values and labels'}
-  \item \code{'scale'}
-  \item \code{'subscale'}
-  \item \code{'summary'}
-  \item \code{'codes for missing'}
-  \item \code{'units'}
+\item \code{'category'}
+\item \code{'type'}
+\item \code{'sub-category'}
+\item \code{'description'}
+\item \code{'redcap'}
+\item \code{'values and labels'}
+\item \code{'scale'}
+\item \code{'subscale'}
+\item \code{'summary'}
+\item \code{'codes for missing'}
+\item \code{'units'}
 }}
 }
 \value{

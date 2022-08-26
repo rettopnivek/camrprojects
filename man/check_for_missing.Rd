@@ -18,12 +18,12 @@ missing data (e.g., \code{NA}, \code{''}).}
 \value{
 A list with...
 \itemize{
-  \item \code{missing_values}: A logical vector indicating
-    which values of \code{x} are missing;
-  \item \code{x_no_missing}: All non-missing values of \code{x};
-  \item \code{codes_for_missing}: A list with all missing
-    value codes that were found in \code{x}. If no missing
-    values were found, is \code{NULL}.
+\item \code{missing_values}: A logical vector indicating
+which values of \code{x} are missing;
+\item \code{x_no_missing}: All non-missing values of \code{x};
+\item \code{codes_for_missing}: A list with all missing
+value codes that were found in \code{x}. If no missing
+values were found, is \code{NULL}.
 }
 }
 \description{

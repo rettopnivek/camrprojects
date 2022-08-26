@@ -7,13 +7,10 @@
 camr_ckdict(dict)
 }
 \arguments{
-\item{dict}{REDCap metadata table as downloaded by [redcap_read()].}
+\item{dict}{REDCap metadata table as downloaded by \code{\link[=redcap_read]{redcap_read()}}.}
 }
 \description{
 Verify REDCap data dictionary.
-}
-\examples{
-
 }
 \author{
 Michael Pascale

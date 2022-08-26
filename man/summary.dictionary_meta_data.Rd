@@ -11,8 +11,8 @@
 }
 \value{
 A list with numeric summaries for
-  continuous or categorical variables (not
-  all variables will have summaries).
+continuous or categorical variables (not
+all variables will have summaries).
 }
 \description{
 Function to extract the numeric summaries (e.g.,

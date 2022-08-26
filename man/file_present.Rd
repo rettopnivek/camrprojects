@@ -10,12 +10,12 @@ file_present(string, output = "Logical", std_name = FALSE)
 \item{string}{A file name or part of a file name to search for.}
 
 \item{output}{Character string indicating the type of output to
-  return, either...
+return, either...
 \enumerate{
-  \item 'Logical' or 'logical'
-  \item 'Vector', 'vector', or 'vec'
-  \item 'Index' or 'index'
-  \item 'Name' or 'name'
+\item 'Logical' or 'logical'
+\item 'Vector', 'vector', or 'vec'
+\item 'Index' or 'index'
+\item 'Name' or 'name'
 }}
 
 \item{std_name}{A logical indicating whether the file follows the
@@ -25,10 +25,10 @@ and description of the file.}
 \value{
 Either...
 \enumerate{
-  \item A logical value, \code{TRUE} if the file is present;
-  \item A logical vector for all files in the folder;
-  \item The index position for the file if it exists;
-  \item The file name.
+\item A logical value, \code{TRUE} if the file is present;
+\item A logical vector for all files in the folder;
+\item The index position for the file if it exists;
+\item The file name.
 }
 }
 \description{

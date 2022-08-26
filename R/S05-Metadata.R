@@ -99,16 +99,16 @@
 #'
 #' @return A list consisting of...
 #' \itemize{
-#'   \item \code{Description} A brief description of the
+#'   \item `Description` A brief description of the
 #'     scale/subscale and its purpose
-#'   \item \code{Scale} A list with the scale name, abbreviation,
+#'   \item `Scale` A list with the scale name, abbreviation,
 #'     number of items, lowest to highest possible score (if
 #'     applicable), clinical cut-offs (if applicable), and
 #'     APA-styled references for the scale development/interpretation;
-#'   \item \code{Subscale} A list with the subscale name,
+#'   \item `Subscale` A list with the subscale name,
 #'     number of items, lowest to highest possible score,
 #'     clinical cut-offs (if applicable).
-#'   \item \code{Units} The units of measurement.
+#'   \item `Units` The units of measurement.
 #' }
 #'
 #' @examples
@@ -4396,7 +4396,7 @@ known_scales <- function( abbreviation = NULL,
 #'   for the scale (e.g., 'HADS' or 'CUDIT').
 #' @param cut_off An optional numeric vector giving any cut-offs
 #'   used in the scale (e.g., the CUDIT uses a clinical cut-off
-#'   of scores at \code{8} or higher to indicate problematic
+#'   of scores at `8` or higher to indicate problematic
 #'   cannabis use).
 #' @param reference A character vector with APA-style
 #'   references that describe the measure and relevant
@@ -4405,7 +4405,7 @@ known_scales <- function( abbreviation = NULL,
 #'   measure scores (e.g., describe what higher scores
 #'   indicate, such as how higher scores on the CUDIT
 #'   indicate more problematic cannabis use).
-#' @param subscale Logical; if \code{TRUE}, instead outputs
+#' @param subscale Logical; if `TRUE`, instead outputs
 #'   the reporting format for subscales (consisting only
 #'   of the subscale name its number of items).
 #'
@@ -4484,15 +4484,15 @@ scale_format <- function(name,
 #'   respectively.
 #' @param n The number of rows to create when
 #'   generating a template for the matrix to
-#'   pass to the \code{custom} argument.
+#'   pass to the `custom` argument.
 #' @param separator The punctuation used
 #'   to separate abbreviations, typically
 #'   a period.
 #'
 #' @author  Kevin Potter
 #'
-#' @return A character string. If only \code{n} is
-#'   provided, a matrix with \code{n} rows with
+#' @return A character string. If only `n` is
+#'   provided, a matrix with `n` rows with
 #'   columns 'Abbr' and 'Label' to use as a
 #'   template for custom abbreviations/labels.
 #'
@@ -4884,7 +4884,7 @@ create_summary_for_x <- function( x_no_missing,
 #' Constructor Function for Dictionary Meta-Data Class
 #'
 #' A function to create a list with the proper
-#' slots for the class \code{dictionary_meta_data}.
+#' slots for the class `dictionary_meta_data`.
 #'
 #' @param Column_name A standardized column name,
 #'   (e.g., 'GGG.TTT.Var_name' or
@@ -4907,7 +4907,7 @@ create_summary_for_x <- function( x_no_missing,
 #'   with the variable names from the raw data frame downloaded
 #'   from REDCap used to create the current column.
 #' @param Values_and_labels If specified, a named list
-#'   with two vectors, \code{Values} and \code{Labels},
+#'   with two vectors, `Values` and `Labels`,
 #'   giving the raw values and the corresponding
 #'   labels (e.g., for Likert-scale responses).
 #' @param Scale If specified, a list ..
@@ -4918,7 +4918,7 @@ create_summary_for_x <- function( x_no_missing,
 #' @param Units If specified, a character string describing
 #'   the units of measurement for the column.
 #' @param Codes_for_missing A list of the codes (e.g.,
-#'   \code{NA}, \code{''}, etc.) for missing values.
+#'   `NA`, `''`, etc.) for missing values.
 #' @param Groups_collected_over A vector of values
 #'   describing the study groups for which the
 #'   current variable was collected.
@@ -4937,7 +4937,7 @@ create_summary_for_x <- function( x_no_missing,
 #'
 #' @author Kevin Potter
 #'
-#' @return A named list of class \code{dictionary_meta_data}.
+#' @return A named list of class `dictionary_meta_data`.
 #'
 #' @export
 
@@ -4990,14 +4990,14 @@ new_dictionary_meta_data <- function( Column_name = '',
 #' Check if a Variable is of Class Dictionary Meta-Data
 #'
 #' Method to check if an R object is of class
-#' \code{dictionary_meta_data}.
+#' `dictionary_meta_data`.
 #'
 #' @param x An R object to be checked.
 #'
 #' @author Kevin Potter
 #'
-#' @return A logical value, \code{TRUE} if \code{x}
-#' is of class \code{dictionary_meta_data}.
+#' @return A logical value, `TRUE` if `x`
+#' is of class `dictionary_meta_data`.
 #'
 #' @export
 
@@ -5009,14 +5009,14 @@ is.dictionary_meta_data <- function(x) {
 #' Validate Contents for Dictionary Meta-Data Class Variables
 #'
 #' A function to check whether the content for
-#' R objects of class \code{dictionary_meta_data}
+#' R objects of class `dictionary_meta_data`
 #' have been correctly specified.
 #'
-#' @param x An R object of class \code{dictionary_meta_data}.
+#' @param x An R object of class `dictionary_meta_data`.
 #'
 #' @author  Kevin Potter
 #'
-#' @return If any content is misspecified for \code{x}
+#' @return If any content is misspecified for `x`
 #' returns an informative error message.
 #'
 #' @export
@@ -5189,26 +5189,26 @@ validate_dictionary_meta_data <- function(x) {
 #'   }
 #' @param scale_details An optional list with information for
 #'   scale/inventory/questionnaire scores. See the functions
-#'   \code{\link{known_scales}} and \code{\link{scale_format}}
+#'   [known_scales()] and [scale_format()]
 #'   on standardized formats for the input.
 #' @param subscale_details An optional list with information for
 #'   subscale scores. See the functions
-#'   \code{\link{known_scales}} and \code{\link{scale_format}}
+#'   [known_scales()] and [scale_format()]
 #'   on standardized formats for the input.
 #' @param summary_of_x A character string, either...
 #'   \itemize{
-#'     \item \code{continuous}: The mean, standard
+#'     \item `continuous`: The mean, standard
 #'       deviation, min, 16% quantile, 1st quartile,
 #'       median, 3rd quartile, 84% quantile, and max,
 #'       along with the frequency and percent missing;
-#'     \item \code{categorical}: The frequency and percent
+#'     \item `categorical`: The frequency and percent
 #'       for each category, along with frequency and
 #'       percent missing.
-#'     \item \code{range}: The min and max values, along
+#'     \item `range`: The min and max values, along
 #'       with frequency and percent missing.
 #'   }
 #' @param codes_for_missing A list with the codes used to
-#'   indicate missing values (e.g., \code{NA} or \code{''}).
+#'   indicate missing values (e.g., `NA` or `''`).
 #' @param units_of_x A character string detailing the units
 #'   of measurement for the variable (e.g., height in cm,
 #'   summed scores, likert-scale response, etc.).
@@ -5217,23 +5217,23 @@ validate_dictionary_meta_data <- function(x) {
 #' @param notes An character string, a free text field for
 #'   any additional notes regarding the variable.
 #' @param group_var An optional character string giving
-#'   the column in \code{dtf} containing the group labels
+#'   the column in `dtf` containing the group labels
 #'   (e.g., labels for intervention versus control groups).
 #' @param time_var An optional character string giving the
-#'   the column in \code{dtf} containing the different
+#'   the column in `dtf` containing the different
 #'   time points (e.g., baseline versus follow-up time points).
 #' @param study_var An optional character string giving
-#'   the column in \code{dtf} containing the study labels
+#'   the column in `dtf` containing the study labels
 #'   (e.g., labels for pilot versus active studies).
 #' @param abbr_labels An optional named list (either
-#'   \code{variable_category}, \code{date_type}, or
-#'   \code{sub_category}) containing the matrix to
-#'   pass to the \code{custom} argument for the
-#'   \code{\link{column_abbreviations}} function.
+#'   `variable_category`, `date_type`, or
+#'   `sub_category`) containing the matrix to
+#'   pass to the `custom` argument for the
+#'   [column_abbreviations()] function.
 #' @param known_scale An optional argument to pass
-#'   along output from the \code{\link{known_scales}}
+#'   along output from the [known_scales()]
 #'   function, which can be used in lieu of the
-#'   \code{scale_details} and \code{subscale_details}
+#'   `scale_details` and `subscale_details`
 #'   arguments.
 #' @param digits Number of digits to round to for summaries.
 #'
@@ -5458,11 +5458,11 @@ add_dictionary_meta_data <- function(dtf,
 #'
 #' @param x A data frame.
 #' @param column A column name (non-standard evaluation
-#'   possible) in \code{x} from which to extract
-#'   the attribute of class \code{dictionary_meta_data}.
+#'   possible) in `x` from which to extract
+#'   the attribute of class `dictionary_meta_data`.
 #'
 #' @return Either the extracted list of class
-#' \code{dictionary_meta_data} or a logical
+#' `dictionary_meta_data` or a logical
 #' vector indicating which columns do or
 #' do not have dictionary meta-data.
 #'
@@ -5504,11 +5504,11 @@ meta <- function( x = NULL, column = '' ) {
 #### 4.6) print.dictionary_meta_data ####
 #' Display Dictionary Meta-Data Information
 #'
-#' A print method for the \code{dictionary_meta_data}
+#' A print method for the `dictionary_meta_data`
 #' class, printing to the console key information
 #' contained within the dictionary meta-data fields.
 #'
-#' @param x An R object of class \code{dictionary_meta_data}.
+#' @param x An R object of class `dictionary_meta_data`.
 #'
 #' @author  Kevin Potter
 #'
@@ -5715,7 +5715,7 @@ print.dictionary_meta_data <- function(x, digits = 2 ) {
 #' frequencies/percentages for categorical variables,
 #' etc.) from the dictionary meta-data.
 #'
-#' @param x A list of class \code{dictionary_meta_data}.
+#' @param x A list of class `dictionary_meta_data`.
 #'
 #' @return A list with numeric summaries for
 #'   continuous or categorical variables (not
@@ -5736,27 +5736,27 @@ summary.dictionary_meta_data <- function( x ) {
 #' Extract Components From Dictionary Meta-Data
 #'
 #' Function to extract a specific element from
-#' a list of class \code{dictionary_meta_data}.
+#' a list of class `dictionary_meta_data`.
 #'
-#' @param x A list of class \code{dictionary_meta_data}.
+#' @param x A list of class `dictionary_meta_data`.
 #' @param type The type of element to extract. Options
 #'   include:
 #'   \itemize{
-#'     \item \code{'category'}
-#'     \item \code{'type'}
-#'     \item \code{'sub-category'}
-#'     \item \code{'description'}
-#'     \item \code{'redcap'}
-#'     \item \code{'values and labels'}
-#'     \item \code{'scale'}
-#'     \item \code{'subscale'}
-#'     \item \code{'summary'}
-#'     \item \code{'codes for missing'}
-#'     \item \code{'units'}
+#'     \item `'category'`
+#'     \item `'type'`
+#'     \item `'sub-category'`
+#'     \item `'description'`
+#'     \item `'redcap'`
+#'     \item `'values and labels'`
+#'     \item `'scale'`
+#'     \item `'subscale'`
+#'     \item `'summary'`
+#'     \item `'codes for missing'`
+#'     \item `'units'`
 #'   }
 #'
 #' @return A sub-list, the specified component from the
-#' list of class \code{dictionary_meta_data}.
+#' list of class `dictionary_meta_data`.
 #'
 #' @export
 
@@ -5978,8 +5978,8 @@ update_dictionary_meta_data <- function( dtf ) {
 #' with collaborators.
 #'
 #' @param dtf A data frame with columns whose
-#'   attributes include \code{dictionary_meta_data}.
-#' @param progress Logical; if \code{TRUE}
+#'   attributes include `dictionary_meta_data`.
+#' @param progress Logical; if `TRUE`
 #'   tracks progress of extracting meta-data from
 #'   columns - useful for debugging purposes.
 #'

@@ -17,16 +17,16 @@ output.}
 \value{
 A list consisting of...
 \itemize{
-  \item \code{Description} A brief description of the
-    scale/subscale and its purpose
-  \item \code{Scale} A list with the scale name, abbreviation,
-    number of items, lowest to highest possible score (if
-    applicable), clinical cut-offs (if applicable), and
-    APA-styled references for the scale development/interpretation;
-  \item \code{Subscale} A list with the subscale name,
-    number of items, lowest to highest possible score,
-    clinical cut-offs (if applicable).
-  \item \code{Units} The units of measurement.
+\item \code{Description} A brief description of the
+scale/subscale and its purpose
+\item \code{Scale} A list with the scale name, abbreviation,
+number of items, lowest to highest possible score (if
+applicable), clinical cut-offs (if applicable), and
+APA-styled references for the scale development/interpretation;
+\item \code{Subscale} A list with the subscale name,
+number of items, lowest to highest possible score,
+clinical cut-offs (if applicable).
+\item \code{Units} The units of measurement.
 }
 }
 \description{

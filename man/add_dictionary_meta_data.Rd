@@ -57,33 +57,33 @@ variable was derived.}
 
 \item{values_and_labels}{An optional named list of two vectors:
 \enumerate{
-  \item Values: A vector of the unique values (e.g., numeric
-  codes, abbreviations, logical values) stored in the column;
-  \item Labels: A character vector with the descriptive labels
-  for each corresponding value.
+\item Values: A vector of the unique values (e.g., numeric
+codes, abbreviations, logical values) stored in the column;
+\item Labels: A character vector with the descriptive labels
+for each corresponding value.
 }}
 
 \item{scale_details}{An optional list with information for
 scale/inventory/questionnaire scores. See the functions
-\code{\link{known_scales}} and \code{\link{scale_format}}
+\code{\link[=known_scales]{known_scales()}} and \code{\link[=scale_format]{scale_format()}}
 on standardized formats for the input.}
 
 \item{subscale_details}{An optional list with information for
 subscale scores. See the functions
-\code{\link{known_scales}} and \code{\link{scale_format}}
+\code{\link[=known_scales]{known_scales()}} and \code{\link[=scale_format]{scale_format()}}
 on standardized formats for the input.}
 
 \item{summary_of_x}{A character string, either...
 \itemize{
-  \item \code{continuous}: The mean, standard
-    deviation, min, 16% quantile, 1st quartile,
-    median, 3rd quartile, 84% quantile, and max,
-    along with the frequency and percent missing;
-  \item \code{categorical}: The frequency and percent
-    for each category, along with frequency and
-    percent missing.
-  \item \code{range}: The min and max values, along
-    with frequency and percent missing.
+\item \code{continuous}: The mean, standard
+deviation, min, 16\% quantile, 1st quartile,
+median, 3rd quartile, 84\% quantile, and max,
+along with the frequency and percent missing;
+\item \code{categorical}: The frequency and percent
+for each category, along with frequency and
+percent missing.
+\item \code{range}: The min and max values, along
+with frequency and percent missing.
 }}
 
 \item{codes_for_missing}{A list with the codes used to
@@ -115,10 +115,10 @@ the column in \code{dtf} containing the study labels
 \code{variable_category}, \code{date_type}, or
 \code{sub_category}) containing the matrix to
 pass to the \code{custom} argument for the
-\code{\link{column_abbreviations}} function.}
+\code{\link[=column_abbreviations]{column_abbreviations()}} function.}
 
 \item{known_scale}{An optional argument to pass
-along output from the \code{\link{known_scales}}
+along output from the \code{\link[=known_scales]{known_scales()}}
 function, which can be used in lieu of the
 \code{scale_details} and \code{subscale_details}
 arguments.}

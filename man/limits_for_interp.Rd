@@ -35,9 +35,9 @@ fall outside the range of the provided vectors.}
 }
 \value{
 A vector of 5 values, the lower x and y-axis values
-  followed by the upper x and y-axis values that bracket the
-  point to interpolate. If there are no coordinates bracketting
-  the specified coordinate, a vector of \code{NA} values is returned.
+followed by the upper x and y-axis values that bracket the
+point to interpolate. If there are no coordinates bracketting
+the specified coordinate, a vector of \code{NA} values is returned.
 }
 \description{
 A function that, given a vector of x and y values,

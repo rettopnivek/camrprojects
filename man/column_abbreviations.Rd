@@ -35,9 +35,9 @@ a period.}
 }
 \value{
 A character string. If only \code{n} is
-  provided, a matrix with \code{n} rows with
-  columns 'Abbr' and 'Label' to use as a
-  template for custom abbreviations/labels.
+provided, a matrix with \code{n} rows with
+columns 'Abbr' and 'Label' to use as a
+template for custom abbreviations/labels.
 }
 \description{
 Function to match labels describing

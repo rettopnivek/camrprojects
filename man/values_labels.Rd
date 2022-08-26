@@ -25,9 +25,6 @@ A function that takes two columns in a data frame
 a subsequent column of associated labels)
 and displays the assignment of values to labels.
 }
-\examples{
-
-}
 \author{
 Kevin Potter
 }

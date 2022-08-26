@@ -120,7 +120,7 @@ assigned to the variable.}
 A list with the completed meta-data fields.
 }
 \description{
-A function that adds meta-data (see \code{\link[base]{attributes}})
+A function that adds meta-data (see \code{\link[base:attributes]{base::attributes()}})
 to variables in a data frame or list that can be used for data
 dictionary purposes. For standardized column names, many
 fields can be auto-completed.

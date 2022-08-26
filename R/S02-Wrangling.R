@@ -44,11 +44,11 @@
 #'   standardized naming convention. If true, just matches the tag
 #'   and description of the file.
 #' @param ... Additional arguments passed to the
-#'   \code{\link[base:list.files]{dir()}} function.
+#'   [`dir()`][base::list.files] function.
 #'
 #' @return Either...
 #' \enumerate{
-#'   \item A logical value, \code{TRUE} if the file is present;
+#'   \item A logical value, `TRUE` if the file is present;
 #'   \item A logical vector for all files in the folder;
 #'   \item The index position for the file if it exists;
 #'   \item The file name.
@@ -109,7 +109,7 @@ match_to_files <- function( string,
 #'   the environment variable.
 #' @param path A character string, a relative or
 #'   absolute path to a folder.
-#' @param latest Logical; if \code{TRUE} returns only
+#' @param latest Logical; if `TRUE` returns only
 #'   the latest version of a file whose name contains
 #'   a date.
 #'
@@ -177,22 +177,22 @@ file_paths <- function( file_name = NULL,
 #' @param x A data frame or a list of variables with matching lengths.
 #' @param variable_names A vector of variables names to loop over when
 #'   attempting to isolate the unique value.
-#' @param entries A logical vector, \code{TRUE} for rows to search for
-#'   the unique value and \code{FALSE} otherwise.
+#' @param entries A logical vector, `TRUE` for rows to search for
+#'   the unique value and `FALSE` otherwise.
 #' @param default The default output to return if no unique values can
 #'   be found.
 #' @param missing A vector of values to treat as missing and exclude
 #'   when searching for the unique value.
 #' @param reference An optional character string giving the variable
-#'   name in \code{x} to use when printing warnings in the case of
+#'   name in `x` to use when printing warnings in the case of
 #'   multiple values being found. Defaults to the first variable
-#'   in \code{x}.
-#' @param check_for_multiple Logical; if \code{TRUE} will check if
+#'   in `x`.
+#' @param check_for_multiple Logical; if `TRUE` will check if
 #'   more than one value was found in the subset of rows to consider
 #'   and display a warning message with details if this occurs.
-#' @param allow_multiple Logical; if \code{TRUE} will allow multiple
+#' @param allow_multiple Logical; if `TRUE` will allow multiple
 #'   return values. By default, it does not override
-#'   \code{check_for_multiple}, so remember to change this
+#'   `check_for_multiple`, so remember to change this
 #'   if applicable.
 #'
 #' @author Kevin Potter, William Schmitt
@@ -336,9 +336,9 @@ extract_unique_value <- function( x,
 #'
 #' @param dtf A data frame.
 #' @param ... Character strings with the sub-strings to match
-#'   (or exclude) against the column names in \code{dtf}.
-#'   If an entry starts with either \code{!}, \code{~}, or
-#'   \code{-}, any columns containing the substring will be
+#'   (or exclude) against the column names in `dtf`.
+#'   If an entry starts with either `!`, `~`, or
+#'   `-`, any columns containing the substring will be
 #'   excluded. Otherwise, the function will locate
 #'   all column names containing all inputted sub-strings.
 #'
@@ -453,8 +453,6 @@ clmn <- function( dtf, ... ) {
 #' @return A data frame with a column for values and
 #' a column for associated labels.
 #'
-#' @examples
-#'
 #' @export
 
 values_labels <- function( dtf, values, labels ) {
@@ -483,29 +481,29 @@ values_labels <- function( dtf, values, labels ) {
 #' Checks for Missing Data
 #'
 #' Given a list of different codes for missing
-#' data (e.g., \code{NA}, \code{''}, etc.),
+#' data (e.g., `NA`, `''`, etc.),
 #' identifies missing data in a vector and
 #' also determines which missing data codes are
 #' applicable.
 #'
 #' @param x A vector of values.
 #' @param codes A list of different codes for
-#'   missing data (e.g., \code{NA}, \code{''}).
+#'   missing data (e.g., `NA`, `''`).
 #'
-#' @details Vectors of class \code{Date} are
+#' @details Vectors of class `Date` are
 #' handled slightly differently, as comparisons
 #' against values that are not dates will return
-#' \code{NA}. Therefore, dates are only checked
-#' against other dates and for \code{NA} values.
+#' `NA`. Therefore, dates are only checked
+#' against other dates and for `NA` values.
 #'
 #' @return A list with...
 #' \itemize{
-#'   \item \code{missing_values}: A logical vector indicating
-#'     which values of \code{x} are missing;
-#'   \item \code{x_no_missing}: All non-missing values of \code{x};
-#'   \item \code{codes_for_missing}: A list with all missing
-#'     value codes that were found in \code{x}. If no missing
-#'     values were found, is \code{NULL}.
+#'   \item `missing_values`: A logical vector indicating
+#'     which values of `x` are missing;
+#'   \item `x_no_missing`: All non-missing values of `x`;
+#'   \item `codes_for_missing`: A list with all missing
+#'     value codes that were found in `x`. If no missing
+#'     values were found, is `NULL`.
 #' }
 #'
 #' @author  Kevin Potter
@@ -617,18 +615,18 @@ check_for_missing <- function( x,
 #' values from an input vector.
 #'
 #' @param x A vector of values to match over.
-#' @param matches A list of values in \code{x} to match over
+#' @param matches A list of values in `x` to match over
 #' @param new_values A vector of new values to assign based on
-#'   matches to elements from \code{matches} (vector must be
-#'   of equivalent length to \code{matches}).
+#'   matches to elements from `matches` (vector must be
+#'   of equivalent length to `matches`).
 #' @param type The type of matching, either 'partial' or 'exact'
-#'   (uses \code{grepl} or \code{\%in\%}, respectively).
+#'   (uses `grepl` or `\%in\%`, respectively).
 #' @param default Either a single value to assign in the absence of
-#'   a match, or a vector equivalent in length to \code{x}.
+#'   a match, or a vector equivalent in length to `x`.
 #' @param replace_if An optional vector specifying the subset of
 #'   default values when it is appropriate to assign new values.
 #'
-#' @return A new vector of equivalent length to \code{x}, with
+#' @return A new vector of equivalent length to `x`, with
 #'   values assigned based on successful matches.
 #'
 #' @author Kevin Potter
@@ -728,21 +726,21 @@ match_and_assign <- function( x, matches, new_values, type = 'partial',
 #'   the levels for a within-participant variable (e.g.,
 #'   time points or visits).
 #' @param include An optional logical vector matching in length
-#'   to the number of rows in \code{dtf}, indicating the subset
-#'   of cases to shuffle. If \code{NULL} all rows are used.
+#'   to the number of rows in `dtf`, indicating the subset
+#'   of cases to shuffle. If `NULL` all rows are used.
 #' @param group_levels An optional character vector, the subset
-#'   of levels of \code{group} to consider.
-#' @param original_freq Logical; if \code{TRUE} shuffles
+#'   of levels of `group` to consider.
+#' @param original_freq Logical; if `TRUE` shuffles
 #'   data in a way that preserves the original frequencies
 #'   for group levels - otherwise, assigns new levels in
 #'   equal frequencies.
-#' @param save_unshuffled Logical; if \code{TRUE} adds a
+#' @param save_unshuffled Logical; if `TRUE` adds a
 #'   new column with the original unshuffled group levels.
 #' @param rng_seed An integer, the RNG seed to use to ensure
 #'   reproducibility.
 #'
 #' @return A data frame with shuffled group levels for the
-#'   \code{group} variable.
+#'   `group` variable.
 #'
 #' @author Kevin Potter
 #'

@@ -1,6 +1,6 @@
 Package: camrprojects
 Title: Portable Functions for R Projects at CAM-MGH
-Version: 1.2.5
+Version: 1.2.6
 Authors@R: 
     person(given = "Kevin",
            family = "Potter",
@@ -34,7 +34,7 @@ Imports:
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Suggests:
     knitr,
     covr,
@@ -43,3 +43,4 @@ Suggests:
     rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)

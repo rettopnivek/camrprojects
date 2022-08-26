@@ -9,9 +9,9 @@ path_by_os(paths)
 \arguments{
 \item{paths}{A named vector consisting of...
 \describe{
-  \item{Windows}{The path for Windows-based operating systems}
-  \item{Mac}{The path for Mac-based operating systems}
-  \item{Linux}{The path for Linux-based operating systems}
+\item{Windows}{The path for Windows-based operating systems}
+\item{Mac}{The path for Mac-based operating systems}
+\item{Linux}{The path for Linux-based operating systems}
 }}
 }
 \value{

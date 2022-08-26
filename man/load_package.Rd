@@ -11,8 +11,8 @@ load_package(package_name, from = "CRAN", repo = NULL, ...)
 
 \item{from}{Where to download the package from; options include...
 \enumerate{
-  \item 'CRAN'
-  \item 'Github'
+\item 'CRAN'
+\item 'Github'
 }}
 
 \item{repo}{An optional character string with the Github
