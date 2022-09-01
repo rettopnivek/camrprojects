@@ -8,7 +8,7 @@
 #        kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-08-24
+# Last updated 2022-09-01
 
 #### 1) camr_documentation_template ####
 #' Create a Template for a Function's Documentation
@@ -50,6 +50,16 @@ camr_template_function_documentation <- function(
   # func_name <- 'peach.R02.process_session_details'
   # script_path <- 'R/R02-process_session_details.R'
   # tag_for_proj_fun <- 'peach.R'
+
+  # setwd(
+  #   paste0(
+  #     "D:/CAM_postdoc/R_packages/Development_code/",
+  #     "Development_code-camrprojects"
+  #   )
+  # )
+  # func_name <- "project.R01.path_to_data"
+  # script_path <- 'R/R01-first_set_of_functions.R'
+  # tag_for_proj_fun <- 'project.R'
 
   #### 1.1) Setup ####
 
@@ -170,10 +180,12 @@ camr_template_function_documentation <- function(
   ) )
 
   end_of_func <- which(
-    grepl(
-      paste0( "# End '", func_name, "'" ), current_script, fixed = TRUE
-    )
+    current_script == "}"
   )
+
+  end_of_func <- end_of_func[
+    min( which( end_of_func > start_of_func ) )
+  ]
 
   #### 1.2.2) Determine packages used in script ####
 
@@ -211,8 +223,6 @@ camr_template_function_documentation <- function(
 
   #### 1.2.3) Extract function arguments ####
 
-  # ADD CHECK FOR FUNCTION WITH NO ARGUMENTS
-
   func_arg <-
     which( grepl( ') {', current_script, fixed = TRUE ) )
 
@@ -227,21 +237,26 @@ camr_template_function_documentation <- function(
     remove_char( func_arg, c( ",", ")", "{", " " ) )
   K <- length( func_arg )
 
-  default_values <- rep( "", K )
+  if ( all( func_arg == "" ) ) {
+    K <- 0
+    func_arg_types <- ""
+  } else {
 
-  for ( k in 1:K ) {
-    if ( grepl( "=", func_arg[k], fixed = TRUE ) ) {
-      arg_val <- strsplit( func_arg[k], split = "=", fixed = TRUE )[[1]]
-      func_arg[k] <- arg_val[1]
-      default_values[k] <- arg_val[2]
+    default_values <- rep( "", K )
+
+    for ( k in 1:K ) {
+      if ( grepl( "=", func_arg[k], fixed = TRUE ) ) {
+        arg_val <- strsplit( func_arg[k], split = "=", fixed = TRUE )[[1]]
+        func_arg[k] <- arg_val[1]
+        default_values[k] <- arg_val[2]
+      }
     }
+
+    func_arg_types <- substr( func_arg, start = 1, stop = 4 )
+
   }
 
-  func_arg_types <- substr( func_arg, start = 1, stop = 4 )
-
-  #### ?.2.4) Internal use of project functions ####
-
-  # ADD CHECK FOR WHEN NO PROJECT FUNCTIONS USED
+  #### 1.2.4) Internal use of project functions ####
 
   lines_for_func <-
     start_of_func:end_of_func
@@ -314,58 +329,47 @@ camr_template_function_documentation <- function(
 
   N_arg <- length( func_arg )
 
-  doc_arg <- paste0(
-    "# @param '",
-    func_arg,
-    "' A ",
-    data_types[ func_arg_types ]
-  )
-  extra <- rep( ".\n", N_arg )
+  if ( all( func_arg == "") ) {
 
-  for ( j in 1:N_arg ) {
+    doc_arg <- ""
 
-    if ( func_arg[j] %in% generated_targets ) {
+  } else {
 
-      extra[j] <- paste0(
-        " (see target output from the '",
-        func_generating_targets[
-          generated_targets %in% func_arg[j]
-        ],
-        "' function).\n"
-      )
+    doc_arg <- paste0(
+      "# @param '",
+      func_arg,
+      "' A ",
+      data_types[ func_arg_types ]
+    )
+    extra <- rep( ".\n", N_arg )
 
-    }
+    for ( j in 1:N_arg ) {
 
-  }
+      if ( func_arg[j] %in% generated_targets ) {
 
-  doc_arg <- paste0( doc_arg, extra )
-
-  for ( j in 1:N_arg ) {
-
-    if ( nchar( doc_arg[j] ) >= max_chr ) {
-
-      split_by_spaces <- strsplit( doc_arg[j], split = " " )[[1]]
-
-      lines_for_arg <- floor(
-        cumsum(
-          nchar( split_by_spaces ) + 1:length( split_by_spaces )
-        ) / max_chr
-      ) + 1
-
-      mx <- max( lines_for_arg )
-      vec <- rep( "", mx )
-
-      for ( k in 1:mx ) {
-
-        vec[k] <-
-          paste( split_by_spaces[ lines_for_arg == k ], collapse = " " )
-        if ( k > 1 ) {
-          vec[k] <- paste0( "#   ", vec[k] )
-        }
+        extra[j] <- paste0(
+          " (see target output from the '",
+          func_generating_targets[
+            generated_targets %in% func_arg[j]
+          ],
+          "' function).\n"
+        )
 
       }
 
-      doc_arg[j] <- paste( vec, collapse = "\n" )
+    }
+
+    doc_arg <- paste0( doc_arg, extra )
+
+    for ( j in 1:N_arg ) {
+
+      doc_arg[j] <-
+        stringr::str_wrap( doc_arg[j], width = max_chr, exdent = 3 )
+      if ( grepl( '\n', doc_arg[j], fixed = TRUE ) ) {
+        doc_arg[j] <- gsub( '\n', '\n#', doc_arg[j], fixed = TRUE )
+      }
+      doc_arg[j] <- paste0( doc_arg[j], "\n" )
+
     }
 
   }
@@ -388,8 +392,7 @@ camr_template_function_documentation <- function(
 
   }
 
-  if ( !any( proj_fun_used == "" ) ) {
-
+  if ( !any( proj_fun_used == "" ) & !length( proj_fun_used ) == 0 ) {
 
     pre_req <- c(
       pre_req,
@@ -398,6 +401,18 @@ camr_template_function_documentation <- function(
         proj_fun_used,
         "' function\n"
       )
+    )
+
+  }
+
+  pre_req_tag <- ""
+
+  if ( length( pre_req ) > 0 ) {
+
+    pre_req_tag <- paste0(
+      '# \n',
+      '# @details \n',
+      '# Prerequisites: \n'
     )
 
   }
@@ -435,9 +450,7 @@ camr_template_function_documentation <- function(
     '# [Insert description]. \n',
     '# \n',
     doc_arg,
-    '# \n',
-    '# @details \n',
-    '# Prerequisites: \n',
+    pre_req_tag,
     pre_req,
     '# \n',
     doc_ret
