@@ -5,19 +5,20 @@
 # Maintained by...
 #   Michael Pascale
 #   Kevin Potter
-# email: mppascale@mgh.harvard.edu
-#        kpotter5@mgh.harvard.edu
+# Email:
+#   mppascale@mgh.harvard.edu
+#   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2021-07-29
+# Last updated: 2022-09-08
 
 # Table of contents
-# 1) limits_for_interp
-# 2) linear_interp
-# 3) build_demo_table
-# 4) univariate_stat
+# 1) camr_limits_for_interpolation
+# 2) camr_linear_interpolation
+# 3) camr_build_demographics_table
+# 4) camr_statistics
 
-#### 1) limits_for_interp ####
+#### 1) camr_limits_for_interpolation ####
 #' Function to Find Limits for Interpolation
 #'
 #' A function that, given a vector of x and y values,
@@ -51,31 +52,34 @@
 #' y = c( 0, .5, 2, 4, 8, 16 )
 #'
 #' # Value between x-axis values 2 and 3
-#' inp = limits_for_interp( 2.5, x, y )
-#' linear_interp( inp )
+#' inp = camr_limits_for_interpolation( 2.5, x, y )
+#' camr_linear_interpolation( inp )
 #'
-#' #' # Interpolate x-axis value
-#' inp = limits_for_interp( 3, x, y, interp_y = F )
-#' linear_interp( inp, interp_y = F )
+#' # Interpolate x-axis value
+#' inp = camr_limits_for_interpolation( 3, x, y, interp_y = F )
+#' camr_linear_interpolation( inp, interp_y = F )
 #'
 #' # Value at an existing point
-#' inp = limits_for_interp( 3, x, y )
-#' linear_interp( inp )
+#' inp = camr_limits_for_interpolation( 3, x, y )
+#' camr_linear_interpolation( inp )
 #'
 #' # Value out of range
-#' inp = limits_for_interp( 6, x, y )
-#' linear_interp( inp )
+#' inp = camr_limits_for_interpolation( 6, x, y )
+#' camr_linear_interpolation( inp )
 #'
 #' # Approximation with first/last value (use with caution)
-#' inp = limits_for_interp( 6, x, y, use_first_last = T )
-#' linear_interp( inp )
+#' inp = camr_limits_for_interpolation( 6, x, y, use_first_last = T )
+#' camr_linear_interpolation( inp )
 #'
 #' @export
 
-limits_for_interp = function( value, x, y,
-                              interp_y = T,
-                              use_first_last = F,
-                              warn_if_first_last = T ) {
+camr_limits_for_interpolation = function(
+    value,
+    x,
+    y,
+    interp_y = TRUE,
+    use_first_last = FALSE,
+    warn_if_first_last = TRUE ) {
 
   # Check that time/outcome are actually aligned
   if ( length( x ) != length( y ) ) {
@@ -187,7 +191,7 @@ limits_for_interp = function( value, x, y,
   return( out )
 }
 
-#### 2) linear_interp ####
+#### 2) camr_linear_interpolation ####
 #' Function for Linear Interpolation
 #'
 #' Given a pair of x and y values, uses linear
@@ -213,22 +217,26 @@ limits_for_interp = function( value, x, y,
 #'
 #' @examples
 #' # Linear interpolation for y
-#' linear_interp( c( x0 = 0, y0 = 0, x1 = 1, y1 = 2, x = .5 ) )
+#' inp <- c( x0 = 0, y0 = 0, x1 = 1, y1 = 2, x = .5 )
+#' camr_linear_interpolation( inp )
 #' # Linear interpolation for x
-#' linear_interp( c( x0 = 0, y0 = 0, x1 = 1, y1 = 2, y = .5 ), FALSE )
+#' inp <- c( x0 = 0, y0 = 0, x1 = 1, y1 = 2, y = .5 )
+#' camr_linear_interpolation( inp, FALSE )
 #' # Linear interpolation across multiple values
 #' x = c( 0, 1, 2 )
 #' y = c( 0, 2, 4 )
 #' # Create matrix with 5th column for points to interpolate at
 #' m = cbind( x[-3], y[-3], x[-1], y[-1], c( .5, 1.5 ) )
 #' # Linear interpolation for y values
-#' apply( m, 1, linear_interp )
+#' apply( m, 1, camr_linear_interpolation )
 #' # Linear interpolation for x values (NA for value outside boundary)
-#' apply( m, 1, linear_interp, interp_y = F )
+#' apply( m, 1, camr_linear_interpolation, interp_y = FALSE )
 #'
 #' @export
 
-linear_interp <- function( vec, interp_y = T ) {
+camr_linear_interpolation <- function(
+    vec,
+    interp_y = TRUE ) {
 
   vec <- as.vector( vec )
 
@@ -308,7 +316,7 @@ linear_interp <- function( vec, interp_y = T ) {
   return( out )
 }
 
-#### 3) build_demo_table ####
+#### 3) camr_build_demographics_table ####
 #' Build Demographics Table
 #'
 #' A function that will build a data frame that is well-
@@ -349,7 +357,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #' )
 #'
 #' # Runs function on CHR and INT variables
-#' dt <- build_demo_table(
+#' dt <- camr_build_demographics_table(
 #'   df,
 #'   SSS.CHR.Group,
 #'   list(
@@ -359,7 +367,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #' )
 #'
 #' # Runs function on SBJ.INT and SBJ.CHR variables
-#' dt <- build_demo_table(
+#' dt <- camr_build_demographics_table(
 #'   df,
 #'   SSS.CHR.Group,
 #'   list(
@@ -369,7 +377,7 @@ linear_interp <- function( vec, interp_y = T ) {
 #' )
 #'
 #' # Runs function on individual columns
-#' dt <- build_demo_table(
+#' dt <- camr_build_demographics_table(
 #'   df,
 #'   SSS.CHR.Group,
 #'   list(
@@ -380,8 +388,10 @@ linear_interp <- function( vec, interp_y = T ) {
 #' @export
 #' @md
 
-
-build_demo_table <- function(df, grp, funcs) {
+camr_build_demographics_table <- function(
+    df,
+    grp,
+    funcs ) {
 
   eqGrp <- rlang::enquo(grp)
 
@@ -547,7 +557,7 @@ build_demo_table <- function(df, grp, funcs) {
   return(tb)
 }
 
-#### 4) univariate_stat ####
+#### 4) camr_statistics ####
 #' Compute Univariate Statistic
 #'
 #' A function for flexible and robust computation of univariate
@@ -581,43 +591,44 @@ build_demo_table <- function(df, grp, funcs) {
 #' # Sepal length
 #' sln <- iris$Sepal.Length
 #' # Number of observations for sepal length
-#' univariate_stat( sln )
+#' camr_statistics( sln )
 #'
 #' # Mean sepal length
-#' univariate_stat( sln, f = mean )
+#' camr_statistics( sln, f = mean )
 #' # Define custom function for formatted mean
 #' f_x <- function(x) as.character( round( mean(x), 2 ) )
-#' univariate_stat( sln, f = f_x )
+#' camr_statistics( sln, f = f_x )
 #'
 #' # Petal length
 #' pln <- iris$Petal.Length
 #' # Conditional mean for sepal length when petal length < 3.5
-#' univariate_stat( sln, f = f_x, include = pln < 3.5 )
+#' camr_statistics( sln, f = f_x, include = pln < 3.5 )
 #'
 #' # Species of iris
 #' spc <- iris$Species
 #' # Isolate species 'virginica'
 #' vrg <- spc == 'virginica'
 #' # No petal lengths less than 3.5 for virginica, so return default
-#' univariate_stat(
+#' camr_statistics(
 #'   sln[vrg], f = f_x, include = pln[vrg] < 3.5, default = 'No obs'
 #' )
 #'
 #' # Compute percentage of species 'setosa'
 #' f_p <- function(x) paste0( round( 100*mean(x == 'setosa') ), '%' )
-#' univariate_stat( spc, f = f_p )
+#' camr_statistics( spc, f = f_p )
 #' # Exclude 'virginica'
-#' univariate_stat( spc, f = f_p, exclude = 'virginica' )
+#' camr_statistics( spc, f = f_p, exclude = 'virginica' )
 #'
 #' @export
 
-univariate_stat <- function( x,
-                             f = length,
-                             include = NULL,
-                             exclude = NULL,
-                             na.rm = T,
-                             default = NA,
-                             ... ) {
+camr_statistic <- function(
+    x,
+    f = length,
+    include = NULL,
+    exclude = NULL,
+    na.rm = TRUE,
+    default = NA,
+    ... ) {
 
   # Initialize output
   out <- default

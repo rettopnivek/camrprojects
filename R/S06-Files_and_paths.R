@@ -351,3 +351,161 @@ camr_latest <- function (prefix, description, extension, root=NULL, path=NULL, p
   vint_idx <- order(vchr_paths_matching %>% str_remove("^.*/"), decreasing = TRUE)
   vchr_paths_matching[vint_idx][1]
 }
+
+
+
+
+
+
+
+
+
+
+#### 1.1) camr_match_to_files ####
+#' Checks for Partial Matches Between a String and a Set of Files
+#'
+#' Checks if a file is present in the specified directory.
+#' Can check either for regular files or files using MGH-CAM's
+#' standardized file naming template:
+#' TXX-Description-MM_DD_YYYY-HH_MM.ext.
+#'
+#' @param string A file name or part of a file name to search for.
+#' @param output Character string indicating the type of output to
+#'   return, either...
+#' \enumerate{
+#'   \item 'Logical' or 'logical'
+#'   \item 'Vector', 'vector', or 'vec'
+#'   \item 'Index' or 'index'
+#'   \item 'Name' or 'name'
+#' }
+#' @param std_name A logical indicating whether the file follows the
+#'   standardized naming convention. If true, just matches the tag
+#'   and description of the file.
+#' @param ... Additional arguments passed to the
+#'   [`dir()`][base::list.files] function.
+#'
+#' @return Either...
+#' \enumerate{
+#'   \item A logical value, `TRUE` if the file is present;
+#'   \item A logical vector for all files in the folder;
+#'   \item The index position for the file if it exists;
+#'   \item The file name.
+#' }
+#'
+#' @author Kevin Potter
+#'
+#' @export
+
+camr_match_to_files <- function(
+    string,
+    output = 'Logical',
+    std_name = FALSE,
+    ... ) {
+
+  # All files and folders present
+  # in working directory
+  all_files <- dir( ... )
+
+  # Determine if (standard) file name is present
+  # in list of files/folders
+  if (std_name) {
+    fmatch <- regexpr('^\\w\\d{2}-[^-]*', string, perl = T)
+    tag_and_desc <- regmatches(string, fmatch)
+    check <- grepl(tag_and_desc, all_files, fixed = T)
+  } else{
+    check <- grepl( string, all_files, fixed = T )
+  }
+
+  # Output
+  if ( output %in% c( 'Logical', 'logical' ) ) {
+    return( any( check ) )
+  }
+  if ( output %in% c( 'Vector', 'vector', 'vec' ) ) {
+    return( check )
+  }
+  if ( output %in% c( 'Index', 'index' ) ) {
+    return( which( check ) )
+  }
+  if ( output %in% c( 'Name', 'name' ) ) {
+    if ( any( check ) ) {
+      return( all_files[ check ] )
+    } else {
+      return( NULL )
+    }
+  }
+
+}
+
+#### 1.2) camr_file_paths ####
+#' Returns File/Folder Paths
+#'
+#' Returns an absolute file or folder path.
+#' Folder paths can be extracted from a
+#' pre-specified environmental variable.
+#'
+#' @param file_name A character string, a
+#'   partial match to the file of interest.
+#' @param env_var A character string, the name for
+#'   the environment variable.
+#' @param path A character string, a relative or
+#'   absolute path to a folder.
+#' @param latest Logical; if `TRUE` returns only
+#'   the latest version of a file whose name contains
+#'   a date.
+#'
+#' @return A character string.
+#'
+#' @author Kevin Potter
+#'
+#' @export
+
+camr_file_paths <- function(
+    file_name = NULL,
+    env_var = NULL,
+    path = NULL,
+    latest = TRUE ) {
+
+  if ( !is.null( env_var ) ) {
+    path = Sys.getenv( env_var )
+    if ( path == '' ) {
+      stop( 'Environmental variable for path not found' )
+    }
+  }
+
+  if ( is.null( path ) ) {
+    path <- getwd()
+  }
+
+  if ( !is.null( file_name ) ) {
+
+    # All files and folders present
+    # in working directory
+    all_files <- dir( path = path )
+
+    # Determine if file name is present
+    # in list of files/folders
+    check <- grepl(file_name, all_files, fixed = T)
+
+    if ( any(check) ) {
+      x <- all_files[check]
+    } else {
+      x <- NULL
+    }
+
+    if ( length( x ) == 0 ) {
+      stop( 'File not found' )
+    }
+
+    if ( latest ) {
+      return( paste0( path, '/', sort( x )[ length(x) ] ))
+    } else {
+      return( paste0( path, '/', sort( x ) ))
+    }
+
+  } else {
+    return( path )
+  }
+
+}
+
+

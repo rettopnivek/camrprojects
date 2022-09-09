@@ -1,4 +1,4 @@
-# Dictionary meta-data functions
+# Data dictionary functions
 # Written by...
 #   Megan Cooke
 #   Kevin Potter
@@ -6,11 +6,12 @@
 # Maintained by...
 #   Michael Pascale
 #   Kevin Potter
-# email: mppascale@mgh.harvard.edu
-#        kpotter5@mgh.harvard.edu
+# Email:
+#   mppascale@mgh.harvard.edu
+#   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-05-27
+# Last updated: 2022-09-08
 
 # Table of contents
 # 1) Scale and subscale functions
@@ -122,8 +123,9 @@
 #'
 #' @export
 
-known_scales <- function( abbreviation = NULL,
-                          subscale = '' ) {
+camr_inventories <- function(
+    abbreviation = NULL,
+    subscale = '' ) {
 
   if ( is.null( abbreviation ) & subscale == '' ) {
 
@@ -4376,8 +4378,6 @@ known_scales <- function( abbreviation = NULL,
   }
 }
 
-
-
 #### 1.2) scale_format ####
 #' Standardized Reporting Format for Scales/Inventories/Questionnaires
 #'
@@ -4423,6 +4423,11 @@ known_scales <- function( abbreviation = NULL,
 #' )
 #'
 #' @export
+
+camr_inventory_format <- function(
+) {
+
+}
 
 scale_format <- function(name,
                          n_items,
@@ -4521,11 +4526,11 @@ scale_format <- function(name,
 #'
 #' @export
 
-column_abbreviations <- function( column_name = '',
-                                  type = NULL,
-                                  custom = NULL,
-                                  n = NA,
-                                  separator = "." ) {
+camr_column_abbreviations <- function( column_name = '',
+                                       type = NULL,
+                                       custom = NULL,
+                                       n = NA,
+                                       separator = "." ) {
 
   # Pre-defined abbreviations and
   # labels for variable categories
@@ -4821,10 +4826,11 @@ column_abbreviations <- function( column_name = '',
 #
 # @return A list.
 
-create_summary_for_x <- function( x_no_missing,
-                                  missing_values,
-                                  type,
-                                  digits ) {
+camr_descriptive_summary_of_x <- function(
+    x_no_missing,
+    missing_values,
+    type,
+    digits ) {
 
 
   n_obs <- length( missing_values )
@@ -4878,7 +4884,11 @@ create_summary_for_x <- function( x_no_missing,
   return( summary_of_x )
 }
 
-#### 4) Functions for class 'dictionary_meta_data' ####
+#### 4) Functions for class 'data_dictionary_entry' ####
+
+
+
+
 
 #### 4.1) new_dictionary_meta_data ####
 #' Constructor Function for Dictionary Meta-Data Class
