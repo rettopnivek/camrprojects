@@ -794,7 +794,7 @@ camr_match_and_assign <- function(
   }
 
   if ( is.null( replace_if ) ) {
-    replace_if <- rep( TRUE< N )
+    replace_if <- rep( TRUE, N )
   }
 
   checkmate::assert_logical( replace_if, len = N )

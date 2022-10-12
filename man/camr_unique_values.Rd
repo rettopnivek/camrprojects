@@ -77,9 +77,11 @@ example_CAM_data_set |>
   camr_unique_values(
     IDS.INT.Screening,
     c( "SBJ.INT.Age", "SBJ.INT.Age_at_visit_1" ),
-    propagate = FALSE
+    propagate = FALSE,
+    warn_if_multiple = FALSE
   )
-# Appropriately generates warning for
+# If 'warn_if_multiple' was TRUE function
+# would appropriately generate warning for
 # 3rd individual who has different ages
 # recorded across variables
 

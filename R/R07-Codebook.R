@@ -1299,7 +1299,7 @@ camr_add_codebook_entry <- function(
 
       subcategory <- camr_column_abbreviations(
         column_name,
-        type = 'Subcategory',
+        type = NULL,
         custom = custom_abbr_labels$subcategory
       )
 

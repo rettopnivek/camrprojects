@@ -20,6 +20,7 @@
 # 2) Folders and directories
 #   2.1) camr_pushd
 #   2.2) camr_popd
+# 3) ...
 
 #### 1) File paths and names ####
 
@@ -539,6 +540,102 @@ camr_popd <- function() {
     .camr_stack <<- .camr_stack[-1]
   } else {
     warning('The directory stack is empty.')
+  }
+
+}
+
+#### 3) camr_source_scripts ####
+#' Source in Multiple R Scripts in a Folder
+#'
+#' A convenience function that loops through
+#' and reads in code in .R files stored in a
+#' folder located in the current working directory.
+#'
+#' @param files_to_include A vector of either...
+#'   \itemize{
+#'     \item Numeric indices denoting which files
+#'       to include;
+#'     \item A character string matching the initial
+#'        set of letters across all relevant files (e.g., if
+#'        all scripts of interest start with the letter 'S');
+#'     \item A character vector with the full file names
+#'       for the files to include.
+#'   }
+#' @param path The folder name with the scripts to source.
+#'
+#' @author Kevin Potter
+#'
+#' @export
+
+camr_source_scripts = function( files_to_include = NULL,
+                                path = 'R' ) {
+  # Folders to load
+  all_files <- dir(
+    path = path
+  )
+
+  # Identify R scripts
+
+  f <- function( x ) {
+    grepl( x, all_files, fixed = T )
+  }
+  # Files must have extension .R
+  r_files <-
+    ( f( '.R' ) | f( '.r' ) ) &
+    !( f( '.RData' ) | f( '.rdata' ) |
+         f( '.Rmd' ) | f( '.rmd' ) |
+         f( '.rda' )
+    )
+
+  # Isolate .R files
+  if ( any( r_files ) ) {
+    all_files <- all_files[ r_files ]
+  } else {
+    stop( 'No .R files found' )
+  }
+
+  # Check if subset of files should be included
+  if ( !is.null( files_to_include ) ) {
+
+    # If numeric indices were provided
+    if ( is.numeric( files_to_include ) ) {
+      files_to_source <- all_files[ files_to_include ]
+    }
+
+    # If a character vector was provided
+    if ( is.character( files_to_include ) ) {
+
+      # If a single character string with no '.R' extension
+      # was provided
+      if ( length( files_to_include ) == 1 &
+           !any( grepl( '.R', files_to_include, fixed = T ) ) ) {
+
+        n_letters <- nchar( files_to_include )
+
+        to_check <- substr( all_files, start = 1, stop = n_letters )
+
+        files_to_source <- all_files[
+          files_to_include %in% to_check
+        ]
+
+      } else {
+        # Exact matching to file names
+        files_to_source <- all_files[ all_files %in% files_to_include ]
+      }
+
+    }
+  } else {
+    # Otherwise take all files in folder
+    files_to_source <- all_files
+  }
+
+  # Source in all specified R scripts
+  if ( length( files_to_source ) > 0 ) {
+    sapply( 1:length( files_to_source ), function(i) {
+      source( paste0( path, "/", files_to_source[i] ) )
+    } )
+  } else {
+    stop( 'No files found matching given criteria' )
   }
 
 }
