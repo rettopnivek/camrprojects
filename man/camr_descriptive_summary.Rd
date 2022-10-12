@@ -43,6 +43,10 @@ example_CAM_data_set$SBJ.INT.Biological_sex |>
   camr_descriptive_summary( "categorical") |>
   data.frame()
 
+example_CAM_data_set$SSS.DAT.Date_of_visit |>
+  camr_descriptive_summary( "range") |>
+  data.frame()
+
 }
 \author{
 Kevin Potter

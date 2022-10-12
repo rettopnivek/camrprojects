@@ -458,6 +458,10 @@ camr_collected_over <- function(
 #'   camr_descriptive_summary( "categorical") |>
 #'   data.frame()
 #'
+#' example_CAM_data_set$SSS.DAT.Date_of_visit |>
+#'   camr_descriptive_summary( "range") |>
+#'   data.frame()
+#'
 #' @export
 
 camr_descriptive_summary <- function(
@@ -533,20 +537,41 @@ camr_descriptive_summary <- function(
 
   if ( type == 'range' ) {
 
-    summary_of_x <- list(
-      content = c(
-        sum( !missing_values ),
-        min( x_no_missing ),
-        max( x_no_missing ),
-        sum( missing_values )
-      ),
-      additional_content = c(
-        "N",
-        "Min",
-        "Max",
-        "N missing"
+    if ( any( class( x ) %in% c( "POSIXct", "POSIXt" ) ) ) {
+
+      summary_of_x <- list(
+        content = c(
+          sum( !missing_values ),
+          as.character( min( x_no_missing ) ),
+          as.character( max( x_no_missing ) ),
+          sum( missing_values )
+        ),
+        additional_content = c(
+          "N",
+          "Min",
+          "Max",
+          "N missing"
+        )
       )
-    )
+
+    } else {
+
+      summary_of_x <- list(
+        content = c(
+          sum( !missing_values ),
+          min( x_no_missing ),
+          max( x_no_missing ),
+          sum( missing_values )
+        ),
+        additional_content = c(
+          "N",
+          "Min",
+          "Max",
+          "N missing"
+        )
+      )
+
+    }
 
   }
 
