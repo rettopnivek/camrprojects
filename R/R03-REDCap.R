@@ -152,7 +152,7 @@ camr_redcap_read = function(
 
     # Create parameter vector
     paramList <- append(baseParams, curIds)
-    datResp <- postFormJSONToDf(
+    datResp <- camr_post_form_JSON_to_dtf(
       url = redcap_uri,
       params = paramList
     )
