@@ -78,7 +78,7 @@ camr_redcap_read = function(
 
   # Download REDCap Metadata (e.g. data dictionary) to determine
   # unique identifier field.
-  metaDtfResp <- postFormJSONToDf(
+  metaDtfResp <- camr_post_form_JSON_to_dtf(
     url = redcap_uri,
     params = list(
       token = token,
@@ -100,7 +100,7 @@ camr_redcap_read = function(
   ))
 
   # Use unique id to get list of participants
-  ptListResp <- postFormJSONToDf(
+  ptListResp <- camr_post_form_JSON_to_dtf(
     url = redcap_uri,
     params = list(
       token = token,

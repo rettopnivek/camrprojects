@@ -142,33 +142,6 @@ camr_file_name <- function(
     # Close 'If a date and time is not provided'
   }
 
-  separator <- ''
-  if ( grepl( '-', datetime, fixed = TRUE ) ) {
-    separator <- '-'
-  }
-  if ( grepl( '_', datetime, fixed = TRUE ) ) {
-    separator <- '_'
-  }
-  if ( grepl( '.', datetime, fixed = TRUE ) ) {
-    separator <- '.'
-  }
-
-  time_str <- paste0( '\\d{2}', separator, '\\d{2}', separator, '\\d{2}$' )
-
-  n_digits <- stringr::str_count( pattern = "\\d")
-  if ( n_digits == 12 ) {
-    time_str <- paste0( '\\d{2}', separator, '\\d{2}$' )
-  }
-
-  checkmate::assert_character(
-    datetime,
-    pattern = paste0(
-      '^\\d{4}', separator, '\\d{2}', separator, '\\d{2}',
-      '-',
-      time_str
-    )
-  )
-
   # Extract commit number
   if ( isTRUE(git) && git2r::in_repository() ) {
 
@@ -188,11 +161,14 @@ camr_file_name <- function(
     }
 
     # Close 'Extract commit number'
-  } else if ( is.character(git) && nchar(git) > 0 ) {
+  } else if ( is.character(git) ) {
 
     commit <- git
 
     # Close else for 'Extract commit number'
+  }
+  if ( commit != "" ) {
+    commit <- paste0( "-", commit )
   }
 
   file_name <- paste0(
