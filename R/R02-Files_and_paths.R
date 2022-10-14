@@ -10,7 +10,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-09-10
+# Last updated 2022-10-14
 
 # Table of contents
 # 1) File paths and names
@@ -21,6 +21,7 @@
 #   2.1) camr_pushd
 #   2.2) camr_popd
 # 3) camr_source_scripts
+# 4) camr_load_from_RData
 
 #### 1) File paths and names ####
 
@@ -622,3 +623,26 @@ camr_source_scripts = function(
 
 }
 
+#### 4) camr_load_from_RData ####
+#' Load R Object From .RData File
+#'
+#' Loads a specified R object in from a \code{.RData} file.
+#'
+#' @param path_to_RData_file A character string, the
+#'   file path to the \code{.RData} file.
+#' @param object_name A character string, the specific
+#'   R object to load from the \code{.RData} file.
+#'
+#' @return An R object loaded in from the \code{.RData} file.
+#'
+#' @export
+
+camr_load_from_RData <- function(
+    path_to_RData_file,
+    object_name ) {
+
+  # Load in .RData file
+  load( path_to_RData_file )
+
+  return( get( object_name ) )
+}
