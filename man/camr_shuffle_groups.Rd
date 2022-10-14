@@ -11,7 +11,7 @@ camr_shuffle_groups(
   within = NULL,
   include = NULL,
   group_levels = NULL,
-  original_freq = FALSE,
+  prob_levels = NULL,
   save_unshuffled = TRUE,
   rng_seed = NULL
 )
@@ -36,16 +36,16 @@ of cases to shuffle. If \code{NULL} all rows are used.}
 \item{group_levels}{An optional character vector, the subset
 of levels of \code{group} to consider.}
 
-\item{original_freq}{Logical; if \code{TRUE} shuffles
-data in a way that preserves the original frequencies
-for group levels - otherwise, assigns new levels in
-equal frequencies.}
-
 \item{save_unshuffled}{Logical; if \code{TRUE} adds a
 new column with the original unshuffled group levels.}
 
 \item{rng_seed}{An integer, the RNG seed to use to ensure
 reproducibility.}
+
+\item{original_freq}{Logical; if \code{TRUE} shuffles
+data in a way that preserves the original frequencies
+for group levels - otherwise, assigns new levels in
+equal frequencies.}
 }
 \value{
 A data frame with shuffled group levels for the

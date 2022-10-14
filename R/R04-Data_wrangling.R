@@ -1067,7 +1067,7 @@ camr_shuffle_groups <- function(
     within = NULL,
     include = NULL,
     group_levels = NULL,
-    original_freq = FALSE,
+    prob_levels = NULL,
     save_unshuffled = TRUE,
     rng_seed = NULL ) {
 
@@ -1090,6 +1090,11 @@ camr_shuffle_groups <- function(
   if ( is.null( group_levels ) ) {
 
     group_levels <- unique( GRP )
+
+    # Remove common missing values
+    group_levels <- group_levels[
+      !is.na( group_levels ) & group_levels != ""
+    ]
 
     # Close 'Determine levels for grouping variable'
   }
@@ -1117,7 +1122,7 @@ camr_shuffle_groups <- function(
     # Shuffle group assignments
 
     # Preserve original frequencies for levels
-    if ( original_freq ) {
+    if ( is.null( prob_levels ) ) {
 
       grp$Group <- sample( grp$Group )
 
@@ -1125,7 +1130,9 @@ camr_shuffle_groups <- function(
     } else {
 
       grp$Group <- sample(
-        group_levels, size = nrow( grp ),
+        group_levels,
+        prob = prob_levels,
+        size = nrow( grp ),
         replace = TRUE
       )
 
@@ -1165,7 +1172,7 @@ camr_shuffle_groups <- function(
     # within-participant assignments
     WTH <- dtf[[ within ]]
 
-    # Determine group level assigned to each particiant
+    # Determine group level assigned to each participant
     # by each level of the within-participant variable
     grp <- aggregate(
       GRP[ include ],
@@ -1181,30 +1188,34 @@ camr_shuffle_groups <- function(
     # Shuffle group assignments
 
     # Preserve original frequencies for levels
-    if ( original_freq ) {
+    if ( is.null( prob_levels ) ) {
 
-      # Loop over particpants
+      # Loop over participants
       for ( s in 1:n_ids ) {
 
         j <- grp$ID == ids[s]
         # Reorder existing group levels
         grp$Group[j] <- sample( grp$Group[j] )
 
-        # Close 'Loop over particpants'
+        # Close 'Loop over participants'
       }
 
       # Close 'Preserve original frequencies for levels'
     } else {
 
-      # Loop over particpants
+      # Loop over participants
       for ( s in 1:n_ids ) {
 
         # Isolate data for current participant
         j <- grp$ID == ids[s]
         # Assign new group levels
-        grp$Group[j] <- sample( group_levels, size = sum(j) )
+        grp$Group[j] <- sample(
+          group_levels,
+          prob = prob_levels,
+          size = sum(j)
+        )
 
-        # Close 'Loop over particpants'
+        # Close 'Loop over participants'
       }
 
       # Close else for 'Preserve original frequencies for levels'
@@ -1238,7 +1249,7 @@ camr_shuffle_groups <- function(
       # Rewrite grouping variable with new shuffled levels
       dtf[[ group ]][j] <- grp$Group[s]
 
-      # Close 'Loop over particpants'
+      # Close 'Loop over participants'
     }
 
     # Close else for 'If group assignment is not within participant'

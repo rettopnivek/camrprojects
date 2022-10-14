@@ -20,7 +20,7 @@
 # 2) Folders and directories
 #   2.1) camr_pushd
 #   2.2) camr_popd
-# 3) ...
+# 3) camr_source_scripts
 
 #### 1) File paths and names ####
 
@@ -517,7 +517,11 @@ camr_pushd <- function(
   if (fs::dir_exists(path)) {
     .camr_stack <<- c(path, .camr_stack)
   } else {
-    warning('Path does not exist and has not been added to the directory stack.')
+    warning(
+      paste0(
+        'Path does not exist and has not been added to the directory stack.'
+      )
+    )
   }
 }
 
@@ -567,8 +571,10 @@ camr_popd <- function() {
 #'
 #' @export
 
-camr_source_scripts = function( files_to_include = NULL,
-                                path = 'R' ) {
+camr_source_scripts = function(
+    files_to_include = NULL,
+    path = 'R' ) {
+
   # Folders to load
   all_files <- dir(
     path = path

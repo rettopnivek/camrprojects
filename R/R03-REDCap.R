@@ -5,14 +5,32 @@
 # Maintained by...
 #   Michael Pascale
 #   Kevin Potter
-# email: mppascale@mgh.harvard.edu
-#        kpotter5@mgh.harvard.edu
+# email:
+#   mppascale@mgh.harvard.edu
+#   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-09-10
+# Last updated 2022-10-14
 
 # Table of contents
-
+# 1) Functions to read from REDCap
+#   1.1) camr_redcap_read
+#   1.2) camr_redcap_download
+#     1.2.1) Download Project Information
+#     1.2.2) Download Raw Data
+#     1.2.3) Download Metadata
+#     1.2.4) Download Form-Event Map
+#     1.2.5) Generate README
+# 2) Functions for Naming Conventions
+#   2.1) validate_var_name
+#   2.2) rename_redcap_vars
+#   2.3) camr_ckdict
+#     2.3.1) Validate Field Name
+#     2.3.2) Validate VARNAME
+#     2.3.3) Check VARNAME Format
+#     2.3.4) Check Field Type Against VARNAME
+#     2.3.5) Check Quality Control Fields
+#     2.3.6) Construct New VARNAME
 
 #### 1) Functions to read from REDCap ####
 
@@ -210,17 +228,29 @@ camr_redcap_read = function(
 }
 
 #### 1.2) camr_redcap_download ####
-#' Title
+#' Download Data From a REDCap Project
 #'
-#' Description.
+#' Function to download data from a REDCap
+#' Project and create a list of outputs.
 #'
-#' @param chr_rc_uri ...
-#' @param chr_rc_token ...
+#' @param chr_rc_uri A character string, the URL
+#'   to use for the \code{httr::POST} function.
+#' @param chr_rc_token A character string, the
+#'   user's API token for the specified REDCap
+#'   project.
 #'
-#' @return A list.
-#'
-#' @examples
-#' # Examples
+#' @return A list consisting of...
+#' \itemize{
+#'   \item{'description'} {String. Explains the project from
+#'     which the data was downloaded}.
+#'   \item{'database'}{List. Information regarding the REDCap
+#'     project.}
+#'   \item{ 'data' }{Dataframe. All REDCap data with one
+#'     datapoint per row.}
+#'   \item{ 'metadata' }{Dataframe. REDCap data dictionary.}
+#'   \item{ 'form_event_map' }{Dataframe. Mappings between
+#'     REDCap events and instruments administered at each.}
+#' }
 #'
 #' @export
 
@@ -240,8 +270,10 @@ camr_redcap_download <- function(
 
   }
 
-  assert_string(chr_rc_uri, pattern = '^https://')
-  assert_string(chr_rc_token, n.chars = 32, pattern = '[0-9A-F]{32}')
+  checkmate::assert_string(chr_rc_uri, pattern = '^https://')
+  checkmate::assert_string(
+    chr_rc_token, n.chars = 32, pattern = '[0-9A-F]{32}'
+  )
 
   #### 1.2.1) Download Project Information ####
 
@@ -277,7 +309,7 @@ camr_redcap_download <- function(
     exportDataAccessGroups = 'false'
   )
 
-  dtm_init <- now()
+  dtm_init <- lubridate::now()
 
   rsp_response <- httr::POST(
     chr_rc_uri, body = lst_formdata, encode = "form"
@@ -291,7 +323,10 @@ camr_redcap_download <- function(
     type = 'text/tab-separated-values',
     encoding = 'UTF-8',
     trim_ws = TRUE,
-    col_types = 'c', na = '') |> filter(!is.na(value))
+    col_types = 'c', na = ''
+  ) |> dplyr::filter(
+    !is.na(value)
+  )
 
   #### 1.2.3) Download Metadata ####
 
@@ -336,7 +371,7 @@ camr_redcap_download <- function(
 
   #### 1.2.5) Generate README ####
 
-  chr_description <- str_glue(
+  chr_description <- stringr::str_glue(
     paste0(
       'MGH Center for Addiction Medicine\n',
       'Title (IRB No. XXXXXXXXXXX)\n',
@@ -354,7 +389,7 @@ camr_redcap_download <- function(
     description=chr_description,
     database=lst_database,
     data=df_data_eav |>
-      left_join(df_metadata |> select(
+      dplyr::left_join(df_metadata |> dplyr::select(
         field_name, form_name), by='field_name'),
     metadata=df_metadata,
     form_event_map=df_form_event_map
@@ -567,10 +602,6 @@ validate_var_name <- function(str, type = "R") {
 #' @return A data frame where all columns have been renamed to conform to
 #' the CAM standard for R names.
 #'
-#' @examples
-#'
-#' # TODO
-#'
 #' @export
 
 rename_redcap_vars <- function(rcDtf, metaDtf) {
@@ -726,7 +757,7 @@ camr_ckdict <- function (
     field_choices <- row$select_choices_or_calculations
     field_annotation <- row$field_annotation
 
-    #### Validate Field Name ####
+    #### 2.3.1) Validate Field Name ####
 
     if (stringr::str_length(field_name) > 26) {
 
@@ -751,7 +782,7 @@ camr_ckdict <- function (
 
     }
 
-    #### Validate VARNAME ####
+    #### 2.3.2) Validate VARNAME ####
 
     if (field_type != 'descriptive') {
       var_name <-
@@ -776,7 +807,7 @@ camr_ckdict <- function (
       var_instrument <- var_decomposed[4]
       var_tail <- var_decomposed[5]
 
-      ##### Check VARNAME Format #####
+      #### 2.3.3) Check VARNAME Format ####
 
       if(any(is.na(c(var_group, var_type, var_tail)))) {
 
@@ -855,7 +886,7 @@ camr_ckdict <- function (
 
       var_name_list <- c(var_name_list, var_name)
 
-      ##### Check Field Type Against VARNAME #####
+      #### 2.3.4) Check Field Type Against VARNAME ####
 
       if (field_type == 'text') {
         validation <- row$text_validation_type_or_show_slider_number
@@ -999,7 +1030,7 @@ camr_ckdict <- function (
         )
       }
 
-      #### Check Quality Control Fields ####
+      #### 2.3.5) Check Quality Control Fields ####
 
       if (!is.na(field_suffix)) {
         if (field_suffix == 'compby') {
@@ -1052,7 +1083,7 @@ camr_ckdict <- function (
         }
       }
 
-      ##### Construct New VARNAME #####
+      #### 2.3.6) Construct New VARNAME ####
 
       new_var_name <- stringr::str_c(
         na.omit(c(var_group, var_type,
@@ -1100,6 +1131,4 @@ camr_ckdict <- function (
 
   return( issue_list )
 }
-
-
 

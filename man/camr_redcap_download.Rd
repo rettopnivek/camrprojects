@@ -2,22 +2,33 @@
 % Please edit documentation in R/R03-REDCap.R
 \name{camr_redcap_download}
 \alias{camr_redcap_download}
-\title{Title}
+\title{Download Data From a REDCap Project}
 \usage{
 camr_redcap_download(chr_rc_uri = "", chr_rc_token = "")
 }
 \arguments{
-\item{chr_rc_uri}{...}
+\item{chr_rc_uri}{A character string, the URL
+to use for the \code{httr::POST} function.}
 
-\item{chr_rc_token}{...}
+\item{chr_rc_token}{A character string, the
+user's API token for the specified REDCap
+project.}
 }
 \value{
-A list.
+A list consisting of...
+\itemize{
+\item{'description'} {String. Explains the project from
+which the data was downloaded}.
+\item{'database'}{List. Information regarding the REDCap
+project.}
+\item{ 'data' }{Dataframe. All REDCap data with one
+datapoint per row.}
+\item{ 'metadata' }{Dataframe. REDCap data dictionary.}
+\item{ 'form_event_map' }{Dataframe. Mappings between
+REDCap events and instruments administered at each.}
+}
 }
 \description{
-Description.
-}
-\examples{
-# Examples
-
+Function to download data from a REDCap
+Project and create a list of outputs.
 }

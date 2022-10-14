@@ -23,11 +23,6 @@ located in the metadata data frame downloaded with the data. See
 Warns the user for any field that does not contain a new name that
 conforms to the standard in the field annotation.
 }
-\examples{
-
-# TODO
-
-}
 \author{
 William Schmitt
 }

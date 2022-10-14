@@ -12,8 +12,24 @@
 # Last updated: 2022-10-06
 
 # Table of contents
-
-
+# 1) Helper functions
+#   1.1) camr_column_abbreviations
+#   1.2) camr_collected_over
+#   1.3) camr_descriptive_summary
+# 2) Functions for codebook entries
+#   2.1) camr_new_codebook_entry
+#     2.1.1) is.codebook_entry
+#   2.2) camr_add_codebook_entry
+#     2.2.1) camr_ace
+#   2.3) camr_in_codebook_entry
+#     2.3.1) camr_ice
+#   2.4) camr_pull_codebook_entry
+#     2.4.1) camr_puce
+#   2.5) camr_display_codebook_entry
+#     2.5.1) camr_dice
+#   2.6) camr_deidentified_codebook_entry
+#   2.?) camr_update_codebook_entry
+#   2.?) camr_data_frame_from_codebook_entry
 
 #### 1) Helper functions ####
 
