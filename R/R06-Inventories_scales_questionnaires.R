@@ -548,7 +548,7 @@ camr_inventories <- function(
       interpretation = ""
     )
 
-    ### Overall
+    ### Subscales
     if ( subscale != '' ) {
 
       ### Severity
@@ -942,7 +942,8 @@ camr_inventories <- function(
   if ( abbreviation == 'CHRT' ) {
 
     out$Description <- paste0(
-      "Measure of risk based on suicidal ideation and intent"
+      "Scores for the CHRT - measure of risk based on ",
+      "suicidal ideation and intent"
     )
 
     out$Units <- "Summed score"
@@ -3079,8 +3080,17 @@ camr_inventories <- function(
         'Cooper, M. L. (1994). Motivations for Alcohol Use Among ',
         'Adolescents: Development and Validation of a Four-Factor ',
         'Model. Psychological Assessment, 6 (2), 117-128.'
+      ),
+      interpretation = paste0(
+        "Higher scores indicate greater overall motivation to drink"
       )
+    )
 
+    out$Units <- 'Averaged score'
+
+    out$Description <- paste0(
+      "Scores for the DMQ - measure of a ",
+      "patient's motivation to use alcohol"
     )
 
     ### Subscales
@@ -3816,9 +3826,9 @@ camr_inventories <- function(
 
     ### Overall
     out$Scale <- list(
-      name = 'Multidimensional Iowa Suggestibility Scale',
+      name = 'Pittsburgh Sleep Quality Index',
       n_items = 19,
-      range = c( NA, NA ),
+      range = c( 0, 21 ),
       abbreviation = 'PSQI',
       cut_off = NA,
       reference =
@@ -3826,10 +3836,20 @@ camr_inventories <- function(
           'Buysse,D.J., Reynolds,C.F., Monk,T.H., ',
           'Berman,S.R., & Kupfer,D.J. (1989). The Pittsburgh Sleep',
           ' Quality Index (PSQI): A new instrument for psychiatric',
-          ' research and practice. Psychiatry Research, 28(2), 193-213. ',
-          'http://www.opapc.com/uploads/documents/PSQI.pdf'
-        )
+          ' research and practice. Psychiatry Research, 28 (2), 193-213. ',
+          'https://doi.org/10.1016/0165-1781(89)90047-4'
+        ),
+      interpretation = paste0(
+        "Higher scores indicate worse sleep quality"
+      )
     )
+
+    out$Description <- paste0(
+      'Global scores for the PSQI – measure of the ',
+      'subjective sleep quality of a person'
+    )
+
+    out$Units <- "Summed score"
 
     ### Subscales
     if ( subscale != '' ) {
@@ -3838,11 +3858,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 1' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 1 subscale– measure of the ',
+          'Scores for the PSQI component 1 subscale – measure of the ',
           'subjective sleep quality of subject'
         )
 
-        out$Units <- NA
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 1',
@@ -3863,11 +3883,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 2' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 2 subscale– measure of the ',
+          'Scores for the PSQI component 2 subscale – measure of the ',
           'sleep latency of subject '
         )
 
-        out$Units <- 'Summed score'
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 2',
@@ -3887,11 +3907,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 3' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 3 subscale– measure of the ',
+          'Scores for the PSQI component 3 subscale – measure of the ',
           'sleep duration of subject'
         )
 
-        out$Units <- NA
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 3',
@@ -3911,11 +3931,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 4' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 4 subscale– measure of the ',
+          'Scores for the PSQI component 4 subscale – measure of the ',
           'habitual sleep efficiency of subject'
         )
 
-        out$Units <- NA
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 4',
@@ -3937,11 +3957,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 5' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 5 subscale– measure of the ',
+          'Scores for the PSQI component 5 subscale – measure of the ',
           'sleep disturbances experienced by subject'
         )
 
-        out$Units <- 'Summed score'
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 5',
@@ -3961,11 +3981,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 6' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 6 subscale– measure of the ',
+          'Scores for the PSQI component 6 subscale – measure of the ',
           'subject’s use of sleeping medication'
         )
 
-        out$Units <- NA
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 6',
@@ -3985,11 +4005,11 @@ camr_inventories <- function(
       if ( subscale %in% c( 'Component 7' ) ) {
 
         out$Description <- paste0(
-          'Scores for the PSQI component 7 subscale– measure of the ',
+          'Scores for the PSQI component 7 subscale – measure of the ',
           'daytime dysfunction experienced by subject'
         )
 
-        out$Units <- 'Summed score'
+        out$Units <- "Ordinal ranking"
 
         out$Subscale <- list(
           name = 'Component 7',
@@ -4004,6 +4024,7 @@ camr_inventories <- function(
 
         # Close 'Component 7'
       }
+
       # Close 'Subscales'
     }
 

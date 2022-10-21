@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-10-06
+# Last updated: 2022-10-18
 
 # Table of contents
 # 1) Helper functions
@@ -28,8 +28,8 @@
 #   2.5) camr_display_codebook_entry
 #     2.5.1) camr_dice
 #   2.6) camr_deidentified_codebook_entry
+#   2.7) camr_data_frame_from_codebook_entry
 #   2.?) camr_update_codebook_entry
-#   2.?) camr_data_frame_from_codebook_entry
 
 #### 1) Helper functions ####
 
@@ -120,7 +120,8 @@ camr_column_abbreviations <- function(
     c( 'SCN', 'Neural imaging scan details' ),
     c( 'RMT', 'Remote survey results' ),
     c( 'DTQ', 'Data quality' ),
-    c( 'INC', 'Indices for inclusion' )
+    c( 'INC', 'Indices for inclusion' ),
+    c( 'DGN', 'Clinical diagnoses' )
   )
   colnames( abbr_labels.var_cat ) <- c(
     'Abbr',
@@ -553,7 +554,7 @@ camr_descriptive_summary <- function(
 
   if ( type == 'range' ) {
 
-    if ( any( class( x ) %in% c( "POSIXct", "POSIXt" ) ) ) {
+    if ( any( class( x ) %in% c( "Date", "POSIXct", "POSIXt" ) ) ) {
 
       summary_of_x <- list(
         content = c(
@@ -2230,7 +2231,7 @@ camr_deidentified_codebook_entry <- function(
 
     } )
 
-    all_columns[ names( any_deidentified ) ] <- any_deidentified
+    all_columns[ colnames( dtf )[ index ] ] <- any_deidentified
 
     return( all_columns )
   } else {
@@ -2239,25 +2240,69 @@ camr_deidentified_codebook_entry <- function(
 
 }
 
+#### 2.7) camr_data_frame_from_codebook_entry ####
+#' Create Data Frame From Codebook Entries
+#'
+#' Function that creates a data frame containing
+#' all codebook entries - useful for creating
+#' a .csv codebook.
+#'
+#' @param dtf A data frame whose variables have
+#'   codebook entries.
+#'
+#' @return A data frame with all codebook entries.
+#'
+#' @export
+
+camr_data_frame_from_codebook_entry <- function(
+    dtf ) {
+
+  columns_with_entries <- camr_pull_codebook_entry( dtf )
+  N_entries <- sum( columns_with_entries )
+
+  if ( N_entries == 0 ) {
+    stop( "No codebook entries found" )
+  }
+
+  index <- which( columns_with_entries )
+
+  N_rows <- sapply( 1:N_entries, function(j) {
+
+    nrow( camr_pull_codebook_entry( dtf[[ index[j] ]] ) ) + 1
+
+  } )
+
+  index_rows <- lapply( seq_along( N_rows ), function(j) {
+
+    return( rep( j, N_rows[j] ) )
+
+  } ) |> unlist()
+
+  out <- data.frame(
+    Variable = rep( "---", length( index_rows ) ),
+    Content_type = "",
+    Content = "",
+    Additional_content = "",
+    Entry_type = ""
+  )
+
+  for ( j in 1:N_entries ) {
+
+    current_entry <- camr_pull_codebook_entry( dtf[[ index[j] ]] )
+
+    i <- which( index_rows == j )
+
+    out[ i[1:nrow(current_entry)], ] <- current_entry
+
+  }
+
+  return( out )
+}
+
 #### 2.?) camr_update_codebook_entry ####
 
 # camr_update_codebook_entry <- function(
-#     dtf ) {
-#
-# }
-
-#### 2.?) camr_data_frame_from_codebook_entry ####
-
-# camr_data_frame_from_codebook_entry <- function(
-#     dtf ) {
-#
-#   out <- data.frame(
-#     Variable = "",
-#     Content_type = "",
-#     Content = "",
-#     Additional_content = "",
-#     Entry_type = ""
-#   )
+    #     dtf ) {
 #
 # }
 
