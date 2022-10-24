@@ -1223,7 +1223,7 @@ camr_add_codebook_entry <- function(
   )
 
   # Check 'created_from'
-  checkmate::assert_string( created_from )
+  checkmate::assert_character( created_from )
 
   # Check 'data_quality_checks'
   assert_string_of_length_1( data_quality_checks, 'data_quality_checks' )
