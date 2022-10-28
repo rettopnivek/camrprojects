@@ -2,9 +2,20 @@
 % Please edit documentation in R/R02-Files_and_paths.R
 \name{camr_file_name}
 \alias{camr_file_name}
+\alias{camr_name_file}
 \title{Generate a Standardized File Name}
 \usage{
 camr_file_name(
+  description,
+  extension = NULL,
+  project = NULL,
+  date = NULL,
+  time = NULL,
+  datetime = NULL,
+  git = TRUE
+)
+
+camr_name_file(
   description,
   extension = NULL,
   project = NULL,
@@ -26,7 +37,8 @@ giving the file extension sans period. If
 
 \item{project}{An optional character string with
 the project label. If \code{NULL} will attempt to
-extract from an environment variable or a config file.}
+extract from an environment variable (CAMR_PROJECT)
+or a project-level config file.}
 
 \item{date}{An optional character string giving
 the date (typically in the format YYYY_MM_DD).}

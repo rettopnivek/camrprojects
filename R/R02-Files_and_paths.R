@@ -40,7 +40,8 @@
 #'   \code{NULL} defaults to \code{RData}.
 #' @param project An optional character string with
 #'   the project label. If \code{NULL} will attempt to
-#'   extract from an environment variable or a config file.
+#'   extract from an environment variable (CAMR_PROJECT)
+#'   or a project-level config file.
 #' @param date An optional character string giving
 #'   the date (typically in the format YYYY_MM_DD).
 #' @param time An optional character string giving
@@ -68,54 +69,47 @@ camr_file_name <- function(
     git = TRUE ) {
 
   # Check inputs
-  checkmate::assert_character(description, pattern='^\\w+$')
+  checkmate::assert_character(description, pattern='^(\\w|\\.)+$')
   checkmate::assert_character(extension, pattern='^\\w+$', null.ok=TRUE)
-  checkmate::assert_character(project, pattern='^\\w+$', null.ok=TRUE)
+  checkmate::assert_character(project, pattern='^\\w*$', null.ok=TRUE)
 
-  # If file extension is provided
-  if ( !is.null( extension ) ) {
+  # If file extension is not provided
+  if ( is.null( extension ) ) {
 
-    # Remove periods
-    extension <-
-      gsub( ".", "", extension, fixed = TRUE )
+    # If every file description includes an extension
+    vlgl_has_extension <- grepl('\\.\\w{1,4}$', description)
+    if (any(vlgl_has_extension)) {
 
-    # Close 'If file extension is provided'
+      mchr_split <- str_match(description, '^(.*)\\.(\\w{1,4})$')
+
+      description <- if_else(vlgl_has_extension, mchr_split[,2], description)
+      extension <- if_else(vlgl_has_extension, mchr_split[,3], 'RData')
+
+      # Close 'If every file description includes an extension'
+    } else {
+      extension <- 'RData'
+      # Close else for 'If every file description includes an extension'
+    }
+    # Close 'If file extension is not provided'
   } else {
-
-    extension <- 'RData'
-
-    # Close else for 'If file extension is provided'
+    checkmate::assert_character(description, pattern='^\\w+$')
+    # Close else for 'If file extension is not provided'
   }
 
   # If label for project is not provided
   if ( is.null( project ) ) {
 
-    # Attempt to find via environmental variable
-    project <- Sys.getenv( "PROJECT" )
+    # Attempt to find via environmental variable, then project config file
+    project <- Sys.getenv('CAMR_PROJECT', NA) %??% tryCatch(config::get('project'), error=camr_pass) %??% ''
 
-    # If no environmental variable
-    if ( project == "" ) {
+    # Close 'If label for project is not provided'
+  }
 
-      # Attempt to find via config file
-      project <- config::get('project')
-
-      # If no config file
-      if ( is.null( project ) ) {
-
-        err_msg <- 'Project not specified nor present in project config.'
-
-        stop( err_msg )
-
-        # Close 'If no config file'
-      }
-
-      # Close 'If no environmental variable'
-    }
-
+  if (project != '') {
     # Double-check project label
     checkmate::assert_character(project, pattern='^\\w+$')
 
-    # Close 'If label for project is not provided'
+    project <- paste0(project, '-')
   }
 
   # If a date and time is not provided
@@ -173,8 +167,8 @@ camr_file_name <- function(
   }
 
   file_name <- paste0(
+    project,
     paste(
-      project,
       description,
       datetime,
       sep = '-'
@@ -182,92 +176,15 @@ camr_file_name <- function(
     commit, '.', extension
   )
 
-  return( fs::path_sanitize(file_name) )
+  camr_sanitize_path(file_name)
 }
 
-#### 1.2) camr_filename ####
+#### 1.2) camr_name_file ####
 
-#' Generates a Standard File Name
-#'
-#' @param description A character string. Preferably UpperCamelCase
-#'   with no spaces.
-#' @param extension An optional character string. The file extension(s)
-#'   with no leading `.`.
-#' @param project An optional character string. Name of the project.
-#'   Defaults to that stored in config.yml if present.
-#' @param date An optional character string for the date. Preferably in
-#'   YYYY_MM_DD format - defaults to the current date.
-#' @param time An optional character string for the time. Preferably in
-#'   HH_MM_SS format - defaults to the current time in UTC.
-#' @param git Optional logical. The project is a git repository. Defaults
-#'   to `TRUE`.
-#'
-#' @return String. The generated file name.
-#'
-#' @author Michael Pascale
-#'
+#' @rdname camr_file_name
 #' @export
-#' @md
 
-camr_filename <- function(
-    description,
-    extension = NULL,
-    project = config::get('project'),
-    date = format(Sys.time(), '%Y_%m_%d', tz = "UTC"),
-    time = format(Sys.time(), '%H_%M_%S', tz = "UTC"),
-    git = TRUE ) {
-
-  commit <- NULL
-
-  project %??% stop('Project not specified nor present in project config.')
-
-  checkmate::assert_character(description, pattern='^\\w+$')
-  checkmate::assert_character(extension, pattern='^\\w+$', null.ok=TRUE)
-  checkmate::assert_character(project, pattern='^\\w+$', null.ok=TRUE)
-  checkmate::assert_character(date, pattern='^\\d{4}_\\d{2}_\\d{2}$')
-  checkmate::assert_character(time, pattern='^\\d{2}_\\d{2}_\\d{2}$')
-
-  # Extract commit number
-  if ( isTRUE(git) && git2r::in_repository() ) {
-
-    commit <- substr(git2r::last_commit()$sha, 0, 7)
-    status <- git2r::status(untracked = FALSE)
-
-    # Check for uncommitted changes
-    if ( length( c(status$unstaged, status$staged) ) != 0 ) {
-
-      commit <- paste0(commit, 'm')
-      warning( paste0(
-        'Uncommited changes are present. Output files ',
-        'will have a version ending in "m".'
-      ) )
-
-      # Close 'Check for uncommitted changes'
-    }
-
-    # Close 'Extract commit number'
-  } else if ( is.character(git) && nchar(git) > 0 ) {
-
-    commit <- git
-
-    # Close else for 'Extract commit number'
-  }
-
-  filename <- stringr::str_c(
-    purrr::compact(c(project, description, date, time, commit)),
-    collapse='-'
-  )
-
-  extension <- ifelse(
-    is.null(extension),
-    '',
-    stringr::str_c('.', extension)
-  )
-
-  filename <- paste0(filename, extension)
-
-  fs::path_sanitize(filename)
-}
+camr_name_file <- camr_file_name
 
 #### 2.2) camr_file_path ####
 #' Determine Absolute Path to a File
@@ -645,4 +562,56 @@ camr_load_from_RData <- function(
   load( path_to_RData_file )
 
   return( get( object_name ) )
+}
+
+
+#' Sanitize a filename by removing directory paths and invalid characters.
+#'
+#' This function is taken directly from `fs::path_sanitize` to avoid dependency.
+#'
+#' `path_sanitize()` removes the following:
+#' - [Control characters](https://en.wikipedia.org/wiki/C0_and_C1_control_codes)
+#' - [Reserved characters](https://kb.acronis.com/content/39790)
+#' - Unix reserved filenames (`.` and `..`)
+#' - Trailing periods and spaces (invalid on Windows)
+#' - Windows reserved filenames (`CON`, `PRN`, `AUX`, `NUL`, `COM1`, `COM2`,
+#'   `COM3`, COM4, `COM5`, `COM6`, `COM7`, `COM8`, `COM9`, `LPT1`, `LPT2`,
+#'   `LPT3`, `LPT4`, `LPT5`, `LPT6`, LPT7, `LPT8`, and `LPT9`)
+#' The resulting string is then truncated to [255 bytes in length](https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits)
+#'
+#' @param chr_filename A character vector to be sanitized.
+#' @param chr_replacement A character vector used to replace invalid characters.
+#'
+#' @seealso <https://www.npmjs.com/package/sanitize-filename>, upon which this
+#'   function is based.
+#'
+#' @return Character vector containing the sanitized path.
+#' @export
+#'
+#' @examples
+#' # potentially unsafe string
+#' str <- "~/.\u0001ssh/authorized_keys"
+#' path_sanitize(str)
+#'
+#' path_sanitize("..")
+camr_sanitize_path <- function (chr_filename, chr_replacement = "")
+{
+
+  illegal <- "[/\\?<>\\:*|\":]"
+  control <- "[[:cntrl:]]"
+  reserved <- "^[.]+$"
+  windows_reserved <- "^(con|prn|aux|nul|com[0-9]|lpt[0-9])([.].*)?$"
+  windows_trailing <- "[. ]+$"
+  chr_filename <- gsub(illegal, chr_replacement, chr_filename)
+  chr_filename <- gsub(control, chr_replacement, chr_filename)
+  chr_filename <- gsub(reserved, chr_replacement, chr_filename)
+  chr_filename <- gsub(windows_reserved, chr_replacement, chr_filename,
+                   ignore.case = TRUE)
+  chr_filename <- gsub(windows_trailing, chr_replacement, chr_filename)
+  chr_filename <- substr(chr_filename, 1, 255)
+  if (chr_replacement == "") {
+    return(chr_filename)
+  }
+
+  camr_sanitize_path(chr_filename, "")
 }

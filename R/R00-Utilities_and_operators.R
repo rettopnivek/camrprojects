@@ -464,4 +464,37 @@ camr_hms <- function(
   return( out )
 }
 
+#### 3.3) camr_pass ####
 
+#' Do Nothing
+#'
+#' This function provides functionality similar to Python's `pass` keyword. It
+#' will ignore all input and return NULL.
+#'
+#' @param .lgl_pass_quetly Optional. If true a warning message is displayed.
+#' @param .chr_pass_message Optional. Message to display if warnings enabled.
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' tryCatch({
+#'  # non-critical, ignorable error.
+#' }, error=camr_pass)
+#'
+#' fn_example <- function(x, y) {
+#'  camr_pass(.lgl_pass_quietly=FALSE)
+#' }
+#' }
+camr_pass <- function(
+    ...,
+    .lgl_pass_quietly=TRUE,
+    .chr_pass_message='(camr::camr_pass) not implemented.'
+  ) {
+
+  if (!.lgl_pass_quietly)
+    warning(.chr_pass_message)
+
+  NULL
+}
