@@ -110,6 +110,8 @@ camr_file_name <- function(
     checkmate::assert_character(project, pattern='^\\w+$')
 
     project <- paste0(project, '-')
+  } else {
+    warning('Project name not specified nor present in project-level configuration.')
   }
 
   # If a date and time is not provided
@@ -121,6 +123,24 @@ camr_file_name <- function(
       date <- camrprojects::camr_ymd()
 
       # Close 'If no date is provided'
+    } else if (is.Date(date)) {
+
+      if (is.na(date)) {
+        stop('Date cannot be missing, if provided.')
+      }
+
+      date <- date |> format('%Y_%m_%d')
+
+      # Close first else for 'If no date is provided'
+    } else {
+
+      date <- lubridate::ymd(date, quiet=TRUE) |> format('%Y_%m_%d')
+
+      if (is.na(date)) {
+        stop('Invalid date format. Must by YYYY-MM-DD.')
+      }
+
+      # Close final else for 'If no date is provided'
     }
 
     # If no time is provided
@@ -129,12 +149,48 @@ camr_file_name <- function(
       time <- camrprojects::camr_hms()
 
       # Close 'If no time is provided'
+    } else {
+
+      time <- time |>
+        str_split('[^\\d]+', simplify=TRUE) |>
+        str_pad(2, pad='0') |>
+        paste(collapse='_') |>
+        str_extract('^(0[0-9]|1[0-9]|2[0-3])_([0-5][0-9])(_([0-5][0-9]))?$')
+
+      if (is.na(time)) {
+        stop('Invalid time format. Must be HH:MM or HH:MM:SS with ',
+             'each component delimited in some way.')
+      }
+      # Close else for 'If no date is provided'
     }
 
     # Create date and time for file name
     datetime <- paste0( date, '-', time )
 
     # Close 'If a date and time is not provided'
+  } else {
+
+    # If provided datetime is of type POSIXt
+    if (is.POSIXt(datetime)) {
+
+      if (is.na(datetime)) {
+        stop('Datetime cannot be missing, if provided.')
+      }
+
+      datetime <- datetime |> format('%Y_%m_%d-%H_%M_%S')
+      # Close 'If provided datetime is of type POSIXt'
+    } else {
+      datetime <- lubridate::ymd_hms(datetime, truncated=1, quiet=TRUE)
+
+      if (is.na(datetime)) {
+        stop('Invalid datetime format. Must be YYYY-MM-DD HH:MM or HH:MM:SS.')
+      }
+
+      datetime <- datetime |> format('%Y_%m_%d-%H_%M_%S')
+      # Close else for 'If provided datetime is of type POSIXt'
+    }
+
+    # Close else for 'If a date and time is not provided'.
   }
 
   # Extract commit number
@@ -148,8 +204,8 @@ camr_file_name <- function(
 
       commit <- paste0(commit, 'm')
       warning( paste0(
-        'Uncommited changes are present. Output files ',
-        'will have a version ending in "m".'
+        'Uncommited changes are present in this git repository. ',
+        'Filename will have a commit hash with "m" appended.'
       ) )
 
       # Close 'Check for uncommitted changes'
@@ -161,7 +217,10 @@ camr_file_name <- function(
     commit <- git
 
     # Close else for 'Extract commit number'
+  } else {
+    commit <- ''
   }
+
   if ( commit != "" ) {
     commit <- paste0( "-", commit )
   }
