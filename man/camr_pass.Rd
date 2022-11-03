@@ -30,3 +30,6 @@ fn_example <- function(x, y) {
 }
 }
 }
+\author{
+Michael Pascale
+}

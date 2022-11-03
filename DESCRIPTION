@@ -1,6 +1,6 @@
 Package: camrprojects
 Title: Portable Functions for R Projects at CAM-MGH
-Version: 2.0.2
+Version: 2.0.3
 Authors@R: 
     person(given = "Kevin",
            family = "Potter",

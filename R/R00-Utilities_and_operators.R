@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-10-07
+# Last updated: 2022-11-03
 
 # Table of contents
 # 1) Operators
@@ -21,6 +21,7 @@
 #   1.4) `%not_in%`
 #   1.5) `%pm%`
 #   1.6) `%em%`
+#   1.7) `%rows%`
 # 2) Constants
 #   2.1) camr_const_datetime_regex
 # 3) Utility functions
@@ -30,6 +31,7 @@
 #     3.2.2) camr_ymd_hm
 #     3.2.3) camr_ymd_hms
 #     3.2.4) camr_hms
+#   3.3) camr_pass
 
 #### 1) Operators ####
 
@@ -298,6 +300,56 @@ NULL
 
 }
 
+#### 1.7) `%rows%` ####
+#' Binary Operator for Subsetting Rows While Preserving Attributes
+#'
+#' The binary operator \code{%rows%} returns the subset of specified
+#' rows for a data frame without removing column attributes.
+#'
+#' @param x A data frame.
+#' @param y An integer vector, logical vector, or character vector
+#'   specifying the rows in \code{x} to keep.
+#'
+#' @return A data frame, a subset of \code{x}.
+#'
+#' @author Kevin Potter
+#'
+#' @examples
+#' dtf <- data.frame(
+#'   X1 = 1:4,
+#'   X2 = LETTERS[1:4],
+#'   X3 = c( TRUE, TRUE, FALSE, FALSE )
+#' )
+#' attributes( dtf$X1 ) <- list( Example_attr = "Integer" )
+#' attributes( dtf$X2 ) <- list( Example_attr = "Character" )
+#' attributes( dtf$X3 ) <- list( Example_attr = "Logical" )
+#'
+#' # Each column has an attribute
+#' str( dtf )
+#'
+#' # Normal indexing removes attributes
+#' str( dtf[1:2,] )
+#'
+#' # Can use operator to avoid losing attributes
+#' str( dtf %rows% 1:2 )
+#'
+#' @export
+
+`%rows%` <- function(
+    x,
+    y ) {
+
+  out <- x[y,]
+
+  K <- ncol( x )
+
+  for ( k in 1:K ) {
+    attributes( out[[k]] ) <- attributes( x[[k]] )
+  }
+
+  return( out )
+}
+
 #### 2) Constants ####
 
 #### 2.1) camr_const_datetime_regex ####
@@ -465,7 +517,6 @@ camr_hms <- function(
 }
 
 #### 3.3) camr_pass ####
-
 #' Do Nothing
 #'
 #' This function provides functionality similar to Python's `pass` keyword. It
@@ -473,6 +524,8 @@ camr_hms <- function(
 #'
 #' @param .lgl_pass_quetly Optional. If true a warning message is displayed.
 #' @param .chr_pass_message Optional. Message to display if warnings enabled.
+#'
+#' @author Michael Pascale
 #'
 #' @return NULL
 #' @export

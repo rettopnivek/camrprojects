@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-10-18
+# Last updated: 2022-11-03
 
 # Table of contents
 # 1) Helper functions
@@ -1514,6 +1514,14 @@ camr_add_codebook_entry <- function(
 
   )
 
+  no_details <-
+    cdbk_entry$Content %in% "" &
+    cdbk_entry$Additional_content %in% ""
+
+  cdbk_entry <- cdbk_entry[ !no_details, ]
+
+  cdbk_entry$Entry_type <- 'Pipeline'
+
   # Update attributes
   dtf[[ column_name ]] <- camr_add_attribute(
     dtf[[ column_name ]],
@@ -2296,15 +2304,217 @@ camr_data_frame_from_codebook_entry <- function(
 
   }
 
+  no_details <-
+    out$Content %in% "" &
+    out$Additional_content %in% ""
+  out <- out[ !no_details, ]
+
   return( out )
 }
 
-#### 2.?) camr_update_codebook_entry ####
+#### 2.8) camr_update_codebook_entry ####
+#' Update Codebook Entries for Data Frame
+#'
+#' Function that updates the descriptive summaries,
+#' codes for misssing data, and cases collected over
+#' for relevant codebook entries for a data frame
+#' that is a subset of a larger data set.
+#'
+#' @param dtf A data frame whose variables have
+#'   codebook entries.
+#'
+#' @return A data frame with updated codebook entries.
+#'
+#' @export
 
-# camr_update_codebook_entry <- function(
-    #     dtf ) {
-#
-# }
+camr_update_codebook_entry <- function(
+    dtf ) {
 
+  columns_with_entries <- camr_pull_codebook_entry( dtf )
+  N_entries <- sum( columns_with_entries )
 
+  if ( N_entries == 0 ) {
+    stop( "No codebook entries found" )
+  }
+
+  index <- which( columns_with_entries )
+
+  # Loop over codebook entries
+  for ( j in seq_along( index ) ) {
+
+    # Extract codebook entry
+    cdbk_entry <- camr_puce( dtf[[ index[j] ]] )
+
+    #### 2.8.1) Descriptive summary ####
+
+    # Check for descriptive summary
+    dsc_sm <- cdbk_entry$Content_type %in% 'Descriptive summary'
+
+    # If entry includes descriptive summary
+    if ( any( dsc_sm ) ) {
+
+      is_continuous <-
+        '1st quartile' %in% cdbk_entry$Additional_content[ dsc_sm ]
+      is_range <-
+        'Min' %in% cdbk_entry$Additional_content[ dsc_sm ] &
+        '1st quartile' %not_in% cdbk_entry$Additional_content[ dsc_sm ]
+      is_categorical <- FALSE
+      if ( !is_continuous & !is_range ) is_categorical <- TRUE
+
+      # If summary for continuous variable
+      if ( is_continuous ) {
+
+        # Determine number of digits
+        val <- cdbk_entry$Content[ dsc_sm ][2]
+
+        if ( val %pm% "." ) {
+          dgt <-
+            nchar( strsplit( val, split = ".", fixed = TRUE )[[1]][2] )
+        } else {
+          dgt <- 0
+        }
+
+        # Update descriptive summary
+        cdbk_cnt <- camr_descriptive_summary(
+          dtf[[ index[j] ]],
+          type = 'continuous',
+          digits = dgt
+        )
+
+        # Close 'If summary for continuous variable'
+      }
+
+      # If summary for categorical variable
+      if ( is_categorical ) {
+
+        # Update descriptive summary
+        cdbk_cnt <- camr_descriptive_summary(
+          dtf[[ index[j] ]],
+          type = 'categorical'
+        )
+
+        # Close 'If summary for categorical variable'
+      }
+
+      # If summary for range
+      if ( is_range ) {
+
+        # Update descriptive summary
+        cdbk_cnt <- camr_descriptive_summary(
+          dtf[[ index[j] ]],
+          type = 'range'
+        )
+
+        # Close 'If summary for range'
+      }
+
+      # Update codebook entry
+      to_keep <-
+        cdbk_entry$Additional_content[ dsc_sm ] %in%
+        cdbk_cnt$additional_content
+
+      if ( any(to_keep) ) {
+        cdbk_entry$Content[ dsc_sm ][ to_keep ] <- cdbk_cnt$content
+        cdbk_entry$Additional_content[ dsc_sm ][ to_keep ] <-
+          cdbk_cnt$additional_content
+      }
+
+      # Close 'If entry includes descriptive summary'
+    }
+
+    #### 2.8.2) Codes for missing data ####
+
+    # Check for missing data codes
+    cds_md <- cdbk_entry$Content_type %in% 'Codes for missing data'
+
+    # If any codes
+    if ( any( cds_md ) ) {
+
+      missing_codes <- cdbk_entry$Content[cds_md]
+
+      # Loop over codes
+      for ( k in 1:length( missing_codes ) ) {
+
+        # NA values
+        if ( missing_codes[k] == '`NA`' ) {
+
+          # Remove code
+          if ( !any( is.na( dtf[[ index[j] ]] ) ) ) {
+
+            cdbk_entry$Content[ cds_md ][k] <- ""
+            cdbk_entry$Additional_content[ cds_md ][k] <- ""
+
+            # Close 'Remove code'
+          }
+
+          # Close 'NA values'
+        } else {
+
+          # Remove code
+          if ( missing_codes[k] %not_in% dtf[[ index[j] ]] ) {
+
+              cdbk_entry$Content[ cds_md ][k] <- ""
+              cdbk_entry$Additional_content[ cds_md ][k] <- ""
+
+            # Close 'Remove code'
+          }
+
+          # Close else for 'NA values'
+        }
+
+        # Close 'Loop over codes'
+      }
+
+      # Close 'If any codes'
+    }
+
+    #### 2.8.3) Collected over ####
+
+    # Check for cases
+    cll_ov <- cdbk_entry$Content_type %in% 'Collected over'
+
+    # If any cases
+    if ( any( cll_ov ) ) {
+
+      cases_collected_over <- cdbk_entry$Content[cll_ov]
+      relevant_variables <- cdbk_entry$Additional_content[cll_ov]
+
+      # Loop over cases
+      for ( k in 1:length( cases_collected_over ) ) {
+
+        no_case_found <-
+          cases_collected_over[k] %not_in% dtf[[ relevant_variables[k] ]]
+
+        # Remove case
+        if ( no_case_found ) {
+
+          cdbk_entry$Content[ cll_ov ][k] <- ""
+          cdbk_entry$Additional_content[ cll_ov ][k] <- ""
+
+          # Close 'Remove case'
+        }
+
+        # Close 'Loop over cases'
+      }
+
+      # Close 'If any cases'
+    }
+
+    #### 2.8.4) Update entry in data frame ####
+
+    no_details <-
+      cdbk_entry$Content %in% "" &
+      cdbk_entry$Additional_content %in% ""
+
+    cdbk_entry <- cdbk_entry[ !no_details, ]
+
+    lst <- attributes( dtf[[ index[j] ]] )
+    lst$codebook_entry <- cdbk_entry
+    attributes( dtf[[ index[j] ]] ) <- lst
+
+    # Close 'Loop over codebook entries'
+  }
+
+  return( dtf )
+}
 
