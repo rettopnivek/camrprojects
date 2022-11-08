@@ -137,3 +137,39 @@ camr_latest <- function (
   vchr_paths_matching[vint_idx][1]
 }
 
+#### 3) ... ####
+
+camr_clinical_diagnoses <- function(
+    diagnosis = "",
+    type = "" ) {
+
+  if ( diagnosis == 'CUD' ) {
+
+    if ( type %in% c( 'Symptom counts', 'symptom counts',
+                      'Symptoms', 'symptoms' ) ) {
+
+      out$description <- paste0(
+        'Symptom counts for the Cannabis Use Disorder Checklist'
+      )
+
+      out$units_of_measurement = "Symptom counts"
+
+      out$values_and_labels = list(
+        Values = c(0,2,4,6),
+        Labels = c(
+          "No disorder",
+          "Mild disorder",
+          "Moderate disorder",
+          "Severe disorder"
+        )
+      )
+
+      out$notes =
+        "Reference: https://doi.org/10.1176/appi.books.9780890425596"
+
+    }
+
+  }
+
+}
+

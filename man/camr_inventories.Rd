@@ -46,5 +46,5 @@ camr_inventories( 'HADS', subscale = 'Anxiety' )
 
 }
 \author{
-Kevin Potter
+Megan Cooke, Jacob Weiss, Kevin Potter
 }

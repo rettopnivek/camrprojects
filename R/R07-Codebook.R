@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-03
+# Last updated: 2022-11-07
 
 # Table of contents
 # 1) Helper functions
@@ -29,7 +29,7 @@
 #     2.5.1) camr_dice
 #   2.6) camr_deidentified_codebook_entry
 #   2.7) camr_data_frame_from_codebook_entry
-#   2.?) camr_update_codebook_entry
+#   2.8) camr_update_codebook_entry
 
 #### 1) Helper functions ####
 
@@ -1701,6 +1701,27 @@ camr_in_codebook_entry <- function(
     # If for a subscale
     if ( is.list( args[[1]]$Subscale ) ) {
 
+      range_label <- c( "Min", "Max" )
+
+      if ( all( !is.na( args[[1]]$Subscale$range ) ) ) {
+
+        if ( !is.null( names( args[[1]]$Subscale$range ) ) ) {
+
+          range_label <- names( args[[1]]$Scale$range )
+
+        }
+
+      }
+
+      ref_id <- args[[1]]$Scale$reference_identifier
+
+      n_ref <- length( ref_id )
+      if ( is.null( names( ref_id ) ) ) {
+        ref_type <- rep( 'No reference', n_ref )
+      } else {
+        ref_type <- paste0( 'Reference ', names( ref_id ) )
+      }
+
       out <- list(
         content = c(
           args[[1]]$Scale$name,
@@ -1710,7 +1731,8 @@ camr_in_codebook_entry <- function(
           args[[1]]$Subscale$n_items,
           args[[1]]$Subscale$range[1],
           args[[1]]$Subscale$range[2],
-          args[[1]]$Subscale$interpretation
+          args[[1]]$Subscale$interpretation,
+          ref_pointer
         ),
         additional_content = c(
           "Name",
@@ -1718,14 +1740,36 @@ camr_in_codebook_entry <- function(
           "Number of items",
           "Subscale name",
           "Subscale number of items",
-          "Min",
-          "Max",
-          "Interpretation"
+          range_label[1],
+          range_label[2],
+          "Interpretation",
+          ref_type
         )
       )
 
       # Close 'If for a subscale'
     } else {
+
+      range_label <- c( "Min", "Max" )
+
+      if ( all( !is.na( args[[1]]$Scale$range ) ) ) {
+
+        if ( !is.null( names( args[[1]]$Scale$range ) ) ) {
+
+          range_label <- names( args[[1]]$Scale$range )
+
+        }
+
+      }
+
+      ref_id <- args[[1]]$Scale$reference_identifier
+
+      n_ref <- length( ref_id )
+      if ( is.null( names( ref_id ) ) ) {
+        ref_type <- rep( 'No reference', n_ref )
+      } else {
+        ref_type <- paste0( 'Reference ', names( ref_id ) )
+      }
 
       out <- list(
         content = c(
@@ -1734,15 +1778,17 @@ camr_in_codebook_entry <- function(
           args[[1]]$Scale$n_items,
           args[[1]]$Scale$range[1],
           args[[1]]$Scale$range[2],
-          args[[1]]$Scale$interpretation
+          args[[1]]$Scale$interpretation,
+          ref_id
         ),
         additional_content = c(
           "Name",
           "Abbreviation",
           "Number of items",
-          "Min",
-          "Max",
-          "Interpretation"
+          range_label[1],
+          range_label[2],
+          "Interpretation",
+          ref_type
         )
       )
 
@@ -2303,11 +2349,6 @@ camr_data_frame_from_codebook_entry <- function(
     out[ i[1:nrow(current_entry)], ] <- current_entry
 
   }
-
-  no_details <-
-    out$Content %in% "" &
-    out$Additional_content %in% ""
-  out <- out[ !no_details, ]
 
   return( out )
 }
