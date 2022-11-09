@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-07
+# Last updated: 2022-11-08
 
 # Table of contents
 # 1) Helper functions
@@ -1732,7 +1732,7 @@ camr_in_codebook_entry <- function(
           args[[1]]$Subscale$range[1],
           args[[1]]$Subscale$range[2],
           args[[1]]$Subscale$interpretation,
-          ref_pointer
+          ref_id
         ),
         additional_content = c(
           "Name",

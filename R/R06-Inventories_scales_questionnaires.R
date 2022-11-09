@@ -11,7 +11,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-07
+# Last updated: 2022-11-08
 
 # Table of contents
 # 1) camr_inventories
@@ -130,8 +130,41 @@ camr_inventories <- function(
       '    subscale = "Motor"\n',
       '    subscale = "Planning"\n\n',
 
-      'Behavior Rating Inventory of Executive Function\n',
-      '  abbreviation = "BRIEF"\n\n',
+      'Behavior Rating Inventory of Executive Function 2nd Edition\n',
+      '  abbreviation = "BRIEF2"\n',
+      '    subscale = "Inhibit (Raw)"\n',
+      '    subscale = "Inhibit (Percentile)"\n',
+      '    subscale = "Inhibit (T-score)"\n',
+      '    subscale = "Self-Monitor (Raw)"\n',
+      '    subscale = "Self-Monitor (Percentile)"\n',
+      '    subscale = "Self-Monitor (T-score)"\n',
+      '    subscale = "Shift (Raw)"\n',
+      '    subscale = "Shift (Percentile)"\n',
+      '    subscale = "Shift (T-score)"\n',
+      '    subscale = "Emotional Control (Raw)"\n',
+      '    subscale = "Emotional Control (Percentile)"\n',
+      '    subscale = "Emotional Control (T-score)"\n',
+      '    subscale = "Task Completion (Raw)"\n',
+      '    subscale = "Task Completion (Percentile)"\n',
+      '    subscale = "Task Completion (T-score)"\n',
+      '    subscale = "Working Memory (Raw)"\n',
+      '    subscale = "Working Memory (Percentile)"\n',
+      '    subscale = "Working Memory (T-score)"\n',
+      '    subscale = "Plan|Organize (Raw)"\n',
+      '    subscale = "Plan|Organize (Percentile)"\n',
+      '    subscale = "Plan|Organize (T-score)"\n',
+      '    subscale = "Behavioral Regulation (Raw)"\n',
+      '    subscale = "Behavioral Regulation (Percentile)"\n',
+      '    subscale = "Behavioral Regulation (T-score)"\n',
+      '    subscale = "Emotion Regulation (Raw)"\n',
+      '    subscale = "Emotion Regulation (Percentile)"\n',
+      '    subscale = "Emotion Regulation (T-score)"\n',
+      '    subscale = "Cognitive Regulation (Raw)"\n',
+      '    subscale = "Cognitive Regulation (Percentile)"\n',
+      '    subscale = "Cognitive Regulation (T-score)"\n',
+      '    subscale = "General Executive (Raw)"\n',
+      '    subscale = "General Executive (Percentile)"\n',
+      '    subscale = "General Executive (T-score)"\n\n',
 
       'Brief Pain Inventory (Short form)\n',
       '  abbreviation = "BPI"\n',
@@ -283,7 +316,6 @@ camr_inventories <- function(
 
       'Prodromal Questionnaire-Brief\n',
       '  abbreviation = "PQB"\n',
-      '    subscale = "Total Score"\n',
       '    subscale = "Distress"\n\n',
 
       'Provider Expectations for Recovery Scale\n',
@@ -839,7 +871,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 inhibit subscale - ',
-          'measure of ...'
+          'measure of inhibitory control and impulsivity'
         )
 
         out$Units <- "Summed score"
@@ -850,7 +882,8 @@ camr_inventories <- function(
           range = c( Min = 8, Max = 24 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate less inhibitory control and ",
+            "greater impulsivity"
           )
         )
 
@@ -862,7 +895,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 inhibit subscale - ',
-          'measure of ...'
+          'measure of inhibitory control and impulsivity'
         )
 
         out$Units <- "Percentile rank"
@@ -873,7 +906,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate less inhibitory control and ",
+            "greater impulsivity"
           )
         )
 
@@ -885,7 +919,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 inhibit subscale - ',
-          'measure of ...'
+          'measure of inhibitory control and impulsivity'
         )
 
         out$Units <- "T-score"
@@ -894,9 +928,10 @@ camr_inventories <- function(
           name = 'Inhibit (T-score)',
           n_items = 8,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate less inhibitory control and ",
+            "greater impulsivity"
           )
         )
 
@@ -910,7 +945,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 self-monitor subscale - ',
-          'measure of ...'
+          'measure of how aware individuals are on the impact of ',
+          'their behavior on others and outcomes'
         )
 
         out$Units <- "Summed score"
@@ -921,7 +957,8 @@ camr_inventories <- function(
           range = c( Min = 5, Max = 15 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "monitoring impact of one's behavior"
           )
         )
 
@@ -933,7 +970,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 self-monitor subscale - ',
-          'measure of ...'
+          'measure of how aware individuals are on the impact of ',
+          'their behavior on others and outcomes'
         )
 
         out$Units <- "Percentile rank"
@@ -944,7 +982,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "monitoring impact of one's behavior"
           )
         )
 
@@ -956,7 +995,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 self-Monitor subscale - ',
-          'measure of ...'
+          'measure of how aware individuals are on the impact of ',
+          'their behavior on others and outcomes'
         )
 
         out$Units <- "T-score"
@@ -965,9 +1005,10 @@ camr_inventories <- function(
           name = 'Self-Monitor (T-score)',
           n_items = 5,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "monitoring impact of one's behavior"
           )
         )
 
@@ -981,7 +1022,9 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 shift subscale - ',
-          'measure of ...'
+          'measure of ability to adapt to different ',
+          'situations or activities or problems as ',
+          'circumstance demands'
         )
 
         out$Units <- "Summed score"
@@ -992,7 +1035,8 @@ camr_inventories <- function(
           range = c( Min = 8, Max = 24 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency ",
+            "to get stuck or focused on a given topic or problem"
           )
         )
 
@@ -1004,7 +1048,9 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 shift subscale - ',
-          'measure of ...'
+          'measure of ability to adapt to different ',
+          'situations or activities or problems as ',
+          'circumstance demands'
         )
 
         out$Units <- "Percentile rank"
@@ -1015,7 +1061,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency ",
+            "to get stuck or focused on a given topic or problem"
           )
         )
 
@@ -1027,7 +1074,9 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 shift subscale - ',
-          'measure of ...'
+          'measure of ability to adapt to different ',
+          'situations or activities or problems as ',
+          'circumstance demands'
         )
 
         out$Units <- "T-score"
@@ -1036,9 +1085,10 @@ camr_inventories <- function(
           name = 'Shift (T-score)',
           n_items = 8,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency ",
+            "to get stuck or focused on a given topic or problem"
           )
         )
 
@@ -1052,7 +1102,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 emotional control subscale - ',
-          'measure of ...'
+          'measure of impact of executive function on emotional ',
+          'expression and ability to modulate emotional responses'
         )
 
         out$Units <- "Summed score"
@@ -1063,7 +1114,8 @@ camr_inventories <- function(
           range = c( Min = 6, Max = 18 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency to ",
+            "have overblown emotional reactions to minor events"
           )
         )
 
@@ -1075,7 +1127,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 emotional control subscale - ',
-          'measure of ...'
+          'measure of impact of executive function on emotional ',
+          'expression and ability to modulate emotional responses'
         )
 
         out$Units <- "Percentile rank"
@@ -1086,7 +1139,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency to ",
+            "have overblown emotional reactions to minor events"
           )
         )
 
@@ -1098,7 +1152,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 emotional control subscale - ',
-          'measure of ...'
+          'measure of impact of executive function on emotional ',
+          'expression and ability to modulate emotional responses'
         )
 
         out$Units <- "T-score"
@@ -1107,9 +1162,10 @@ camr_inventories <- function(
           name = 'Emotional Control (T-score)',
           n_items = 6,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate a greater tendency to ",
+            "have overblown emotional reactions to minor events"
           )
         )
 
@@ -1123,7 +1179,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 task completion subscale - ',
-          'measure of ...'
+          'measure of ability to independently generate ideas or ',
+          'responses or problem-solving strategies and finish a task'
         )
 
         out$Units <- "Summed score"
@@ -1134,7 +1191,8 @@ camr_inventories <- function(
           range = c( Min = 7, Max = 21 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in generating ",
+            "problem-solving approaches and completing tasks"
           )
         )
 
@@ -1146,7 +1204,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 task completion subscale - ',
-          'measure of ...'
+          'measure of ability to independently generate ideas or ',
+          'responses or problem-solving strategies and finish a task'
         )
 
         out$Units <- "Percentile rank"
@@ -1157,7 +1216,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in generating ",
+            "problem-solving approaches and completing tasks"
           )
         )
 
@@ -1169,7 +1229,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 task completion subscale - ',
-          'measure of ...'
+          'measure of ability to independently generate ideas or ',
+          'responses or problem-solving strategies and finish a task'
         )
 
         out$Units <- "T-score"
@@ -1178,9 +1239,10 @@ camr_inventories <- function(
           name = 'Task Completion (T-score)',
           n_items = 7,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in generating ",
+            "problem-solving approaches and completing tasks"
           )
         )
 
@@ -1194,7 +1256,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 working memory subscale - ',
-          'measure of ...'
+          'measure of online representational memory - capacity ',
+          'to hold or encode information in mind'
         )
 
         out$Units <- "Summed score"
@@ -1205,7 +1268,9 @@ camr_inventories <- function(
           range = c( Min = 8, Max = 24 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "keeping relevant information in mind for problem ",
+            "solving"
           )
         )
 
@@ -1217,7 +1282,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 working memory subscale - ',
-          'measure of ...'
+          'measure of online representational memory - capacity ',
+          'to hold or encode information in mind'
         )
 
         out$Units <- "Percentile rank"
@@ -1228,7 +1294,9 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "keeping relevant information in mind for problem ",
+            "solving"
           )
         )
 
@@ -1240,7 +1308,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 working memory subscale - ',
-          'measure of ...'
+          'measure of online representational memory - capacity ',
+          'to hold or encode information in mind'
         )
 
         out$Units <- "T-score"
@@ -1249,9 +1318,11 @@ camr_inventories <- function(
           name = 'Working Memory (T-score)',
           n_items = 8,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "keeping relevant information in mind for problem ",
+            "solving"
           )
         )
 
@@ -1265,7 +1336,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 plan|organize subscale - ',
-          'measure of ...'
+          'measure of ability to mange current and future-oriented ',
+          'task demands'
         )
 
         out$Units <- "Summed score"
@@ -1276,7 +1348,8 @@ camr_inventories <- function(
           range = c( Min = 10, Max = 30 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in planning ",
+            "and organizing"
           )
         )
 
@@ -1288,7 +1361,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 plan|organize subscale - ',
-          'measure of ...'
+          'measure of ability to mange current and future-oriented ',
+          'task demands'
         )
 
         out$Units <- "Percentile rank"
@@ -1299,7 +1373,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in planning ",
+            "and organizing"
           )
         )
 
@@ -1311,7 +1386,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 plan|organize subscale - ',
-          'measure of ...'
+          'measure of ability to mange current and future-oriented ',
+          'task demands'
         )
 
         out$Units <- "T-score"
@@ -1320,9 +1396,10 @@ camr_inventories <- function(
           name = 'Plan|Organize (T-score)',
           n_items = 10,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in planning ",
+            "and organizing"
           )
         )
 
@@ -1336,7 +1413,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 behavioral regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate and monitor behavior ',
+          'effectively'
         )
 
         out$Units <- "Summed score"
@@ -1347,7 +1425,8 @@ camr_inventories <- function(
           range = c( Min = 13, Max = 39 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "behavioral regulation"
           )
         )
 
@@ -1359,7 +1438,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 behavioral regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate and monitor behavior ',
+          'effectively'
         )
 
         out$Units <- "Percentile rank"
@@ -1370,7 +1450,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "behavioral regulation"
           )
         )
 
@@ -1382,7 +1463,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 behavioral regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate and monitor behavior ',
+          'effectively'
         )
 
         out$Units <- "T-score"
@@ -1391,9 +1473,10 @@ camr_inventories <- function(
           name = 'Behavioral Regulation (T-score)',
           n_items = 13,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "behavioral regulation"
           )
         )
 
@@ -1407,7 +1490,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 emotion regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate emotional responses ',
+          'and to adapt to changes in situations and demands'
         )
 
         out$Units <- "Summed score"
@@ -1418,7 +1502,8 @@ camr_inventories <- function(
           range = c( Min = 14, Max = 42 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "emotional regulation"
           )
         )
 
@@ -1430,7 +1515,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 emotion regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate emotional responses ',
+          'and to adapt to changes in situations and demands'
         )
 
         out$Units <- "Percentile rank"
@@ -1441,7 +1527,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "emotional regulation"
           )
         )
 
@@ -1453,7 +1540,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 emotion regulation subscale - ',
-          'measure of ...'
+          'measure of ability to regulate emotional responses ',
+          'and to adapt to changes in situations and demands'
         )
 
         out$Units <- "T-score"
@@ -1462,9 +1550,10 @@ camr_inventories <- function(
           name = 'Emotion Regulation (T-score)',
           n_items = 14,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "emotional regulation"
           )
         )
 
@@ -1478,7 +1567,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 cognitive regulation subscale - ',
-          'measure of ...'
+          'measure of ability to control and manage cognitive processes ',
+          'and to problem-solve effectively'
         )
 
         out$Units <- "Summed score"
@@ -1489,7 +1579,8 @@ camr_inventories <- function(
           range = c( Min = 25, Max = 75 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "cognitive regulation"
           )
         )
 
@@ -1501,7 +1592,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 cognitive regulation subscale - ',
-          'measure of ...'
+          'measure of ability to control and manage cognitive processes ',
+          'and to problem-solve effectively'
         )
 
         out$Units <- "Percentile rank"
@@ -1512,7 +1604,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "cognitive regulation"
           )
         )
 
@@ -1524,7 +1617,8 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 cognitive regulation subscale - ',
-          'measure of ...'
+          'measure of ability to control and manage cognitive processes ',
+          'and to problem-solve effectively'
         )
 
         out$Units <- "T-score"
@@ -1533,9 +1627,10 @@ camr_inventories <- function(
           name = 'Cognitive Regulation (T-score)',
           n_items = 25,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater difficulty in ",
+            "cognitive regulation"
           )
         )
 
@@ -1549,7 +1644,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Raw score for the BRIEF2 general executive subscale - ',
-          'measure of ...'
+          'measure of general executive functioning'
         )
 
         out$Units <- "Summed score"
@@ -1560,7 +1655,8 @@ camr_inventories <- function(
           range = c( Min = 55, Max = 165 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater overall problems in ",
+            "general executive functioning"
           )
         )
 
@@ -1572,7 +1668,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'Percentile rank for the BRIEF2 general executive subscale - ',
-          'measure of ...'
+          'measure of general executive functioning'
         )
 
         out$Units <- "Percentile rank"
@@ -1583,7 +1679,8 @@ camr_inventories <- function(
           range = c( Min = 0, Max = 100 ),
           cut_off = NA,
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater overall problems in ",
+            "general executive functioning"
           )
         )
 
@@ -1595,7 +1692,7 @@ camr_inventories <- function(
 
         out$Description <- paste0(
           'T-score for the BRIEF2 general executive subscale - ',
-          'measure of ...'
+          'measure of general executive functioning'
         )
 
         out$Units <- "T-score"
@@ -1604,9 +1701,10 @@ camr_inventories <- function(
           name = 'General Executive (T-score)',
           n_items = 55,
           range = c( Mean = 50, SD = 10 ),
-          cut_off = NA,
+          cut_off = c( `Clinically elevated` = 70 ),
           interpretation = paste0(
-            "Higher scores indicate ..."
+            "Higher scores indicate greater overall problems in ",
+            "general executive functioning"
           )
         )
 
@@ -2096,7 +2194,7 @@ camr_inventories <- function(
     out$Scale <- list(
       name = 'Concise Health Risk Tracking scale',
       n_items = 12,
-      range = c( Min = 12, Max = 60 ),
+      range = c( Min = 0, Max = 48 ),
       abbreviation = 'CHRT',
       cut_off = c( NA ),
       reference = c(
@@ -4973,7 +5071,7 @@ camr_inventories <- function(
           'subscale – measure of the presence of OCD symptoms in subject'
         )
 
-        out$Units <- NA
+        out$Units <- 'Summed score'
 
         out$Subscale <- list(
           name = 'Obsessive Compulsive Disorder',
