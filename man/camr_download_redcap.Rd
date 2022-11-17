@@ -5,7 +5,7 @@
 \alias{camr_redcap_download}
 \title{Download Data From a REDCap Project}
 \usage{
-camr_download_redcap(chr_rc_uri = "", chr_rc_token = "")
+camr_download_redcap(chr_rc_uri = "", chr_rc_token = "", lgl_raw = TRUE)
 
 camr_redcap_download(...)
 }
@@ -16,6 +16,9 @@ to use for the \code{httr::POST} function.}
 \item{chr_rc_token}{A character string, the
 user's API token for the specified REDCap
 project.}
+
+\item{lgl_raw}{Optional. Download data in raw format.
+Defaults to TRUE.}
 }
 \value{
 A list consisting of...
@@ -28,7 +31,8 @@ project.}
 datapoint per row.}
 \item{ 'metadata' }{Dataframe. REDCap data dictionary.}
 \item{ 'form_event_map' }{Dataframe. Mappings between
-REDCap events and instruments administered at each.}
+REDCap events and instruments administered at each.
+This will be returned for longitudinal databases only.}
 }
 }
 \description{

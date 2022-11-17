@@ -238,6 +238,8 @@ camr_redcap_read = function(
 #' @param chr_rc_token A character string, the
 #'   user's API token for the specified REDCap
 #'   project.
+#' @param lgl_raw Optional. Download data in raw format.
+#' Defaults to TRUE.
 #'
 #' @return A list consisting of...
 #' \itemize{
@@ -249,14 +251,16 @@ camr_redcap_read = function(
 #'     datapoint per row.}
 #'   \item{ 'metadata' }{Dataframe. REDCap data dictionary.}
 #'   \item{ 'form_event_map' }{Dataframe. Mappings between
-#'     REDCap events and instruments administered at each.}
+#'     REDCap events and instruments administered at each.
+#'     This will be returned for longitudinal databases only.}
 #' }
 #'
 #' @export
 
 camr_download_redcap <- function(
     chr_rc_uri = "",
-    chr_rc_token = "" ) {
+    chr_rc_token = "",
+    lgl_raw=TRUE) {
 
   if ( chr_rc_uri == "" ) {
 
@@ -302,7 +306,7 @@ camr_download_redcap <- function(
     format = 'csv',             # Download in CSV Format
     type = 'eav',               # Entity-Attribute-Value/Long Form
     csvDelimiter = 'tab',
-    rawOrLabel = 'label',
+    rawOrLabel = ifelse(lgl_raw, 'raw', 'label'),
     rawOrLabelHeaders = 'raw',
     exportCheckboxLabel = 'false',
     exportSurveyFields = 'false',
@@ -400,6 +404,7 @@ camr_download_redcap <- function(
 }
 
 #' @rdname camr_download_redcap
+#' @export
 camr_redcap_download <- function(...) {
   camr_download_redcap(...)
 }
