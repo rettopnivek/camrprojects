@@ -15,7 +15,7 @@
 # Table of contents
 # 1) Functions to read from REDCap
 #   1.1) camr_redcap_read
-#   1.2) camr_redcap_download
+#   1.2) camr_download_redcap
 #     1.2.1) Download Project Information
 #     1.2.2) Download Raw Data
 #     1.2.3) Download Metadata
@@ -227,7 +227,7 @@ camr_redcap_read = function(
   return(out)
 }
 
-#### 1.2) camr_redcap_download ####
+#### 1.2) camr_download_redcap ####
 #' Download Data From a REDCap Project
 #'
 #' Function to download data from a REDCap
@@ -254,7 +254,7 @@ camr_redcap_read = function(
 #'
 #' @export
 
-camr_redcap_download <- function(
+camr_download_redcap <- function(
     chr_rc_uri = "",
     chr_rc_token = "" ) {
 
@@ -350,24 +350,25 @@ camr_redcap_download <- function(
 
 
   #### 1.2.4) Download Form-Event Map ####
+  df_form_event_map <- NULL
+  if (as.logical(lst_database$is_longitudinal)) {
+    message('Downloading form-event map...')
 
-  message('Downloading form-event map...')
+    lst_formdata <- list(
+      token = chr_rc_token,
+      content = 'formEventMapping',
+      format = 'csv'
+    )
 
-  lst_formdata <- list(
-    token = chr_rc_token,
-    content = 'formEventMapping',
-    format = 'csv'
-  )
-
-  rsp_response <- httr::POST(
-    chr_rc_uri, body = lst_formdata, encode = "form"
-  )
-  df_form_event_map <- httr::content(
-    rsp_response,
-    col_types =
-      readr::cols(unique_event_name = 'c', form = 'c', arm_num = 'i')
-  )
-
+    rsp_response <- httr::POST(
+      chr_rc_uri, body = lst_formdata, encode = "form"
+    )
+    df_form_event_map <- httr::content(
+      rsp_response,
+      col_types =
+        readr::cols(unique_event_name = 'c', form = 'c', arm_num = 'i')
+    )
+  }
 
   #### 1.2.5) Generate README ####
 
@@ -379,8 +380,8 @@ camr_redcap_download <- function(
       'Unprocessed REDCap dataset.\n',
       '\n',
       'PID:        { lst_database$project_id }\n',
-      'Timestamp:  { dtm_init |> with_tz(\'UTC\') ',
-      '|> format_ISO8601(precision=\'ymdhms\', usetz=TRUE) }\n',
+      'Timestamp:  { dtm_init |> lubridate::with_tz(\'UTC\') ',
+      '|> lubridate::format_ISO8601(precision=\'ymdhms\', usetz=TRUE) }\n',
       'Username:   { Sys.getenv(\'USER\', Sys.getenv(\'USERNAME\')) }\n',
       'Contents:   { nrow(df_data_eav) } datapoints\n'
     ) )
@@ -396,6 +397,11 @@ camr_redcap_download <- function(
   )
 
   return( out )
+}
+
+#' @rdname camr_download_redcap
+camr_redcap_download <- function(...) {
+  camr_download_redcap(...)
 }
 
 #### 2) Functions for Naming Conventions ####
