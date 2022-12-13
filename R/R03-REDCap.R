@@ -31,6 +31,8 @@
 #     2.3.4) Check Field Type Against VARNAME
 #     2.3.5) Check Quality Control Fields
 #     2.3.6) Construct New VARNAME
+# 3) Functions to Process REDCap Data
+#  3.1) camr_pivot_redcap_eav
 
 #### 1) Functions to read from REDCap ####
 
@@ -1142,4 +1144,66 @@ camr_ckdict <- function (
 
   return( issue_list )
 }
+
+
+
+#### 3) Functions to Process REDCap Data ####
+#####  3.1) camr_pivot_redcap_eav #####
+#' Extract tables from REDCap EAV downloads
+#'
+#' `camr_download_redcap()` downloads data in entity-attribute-value (EAV)
+#' format (one row per datapoint).
+#'
+#' @param df_redcap_eav A dataframe with REDCap data in EAV format.
+#' @param vchr_fields A set of REDCap field names to extract.
+#' @param lgl_collapse_checkboxes Whether to collapse checkbox fields with '|'.
+#' @param chr_event_pattern Optional. A pattern to validate event names against.
+#' @param chr_field_column Optional. Defaults to the API provided "field_name".
+#' @param chr_value_column Optional. Defaults to the API provided "value".
+#' @param chr_event_column Optional. Defaults to the API provided "redcap_event_name".
+#'
+#' @return A dataframe, with the columns of df_redcap_eav and those specified by
+#' vchr_fields.
+#'
+#' @keywords internal
+#' @export
+camr_pivot_redcap_eav <- function (
+    df_redcap_eav,
+    vchr_fields,
+    lgl_collapse_checkboxes=FALSE,
+    chr_event_pattern=NULL,
+    chr_field_column='field_name',
+    chr_value_column='value',
+    chr_event_column='redcap_event_name'
+) {
+  assert_data_frame(df_redcap_eav)
+  assert_character(vchr_fields)
+  assert_logical(lgl_collapse_checkboxes, len=1, null.ok=FALSE)
+  assert_string(chr_event_pattern, min.chars=1, null.ok=TRUE)
+  assert_string(chr_field_column)
+  assert_string(chr_value_column)
+  assert_string(chr_event_column)
+  assert_names(colnames(df_redcap_eav), must.include=(c(chr_field_column, chr_value_column, chr_event_column)))
+
+
+  df_redcap_eav |>
+    filter(
+      !!sym(chr_field_column) %in% vchr_fields,
+    ) |>
+    camr_assert(
+      is.null(chr_event_pattern) || all(str_detect(!!sym(chr_event_column), chr_event_pattern)),
+      paste0('Events in column ', chr_event_column, ' of df_redcap_eav must match "', chr_event_pattern, '".')
+    ) |>
+    # TODO: Check repeating forms.
+    pivot_wider(
+      names_from=chr_field_column,
+      values_from=chr_value_column,
+      values_fn=(if (lgl_collapse_checkboxes) \(vchr) paste(vchr, collapse='|') else NULL)
+    )
+}
+
+
+
+
+
 

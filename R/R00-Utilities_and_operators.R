@@ -36,6 +36,7 @@
 #     3.4.1) camr_list_idx
 #     3.4.2) camr_join_on_idx
 #   3.5) camr_write_csv
+#   3.6) camr_assert
 
 #### 1) Operators ####
 
@@ -632,4 +633,49 @@ camr_write_csv <- function(df_x, chr_filename, row.names=FALSE, na='', lgl_liter
 
   write.csv(df_x, chr_filename, row.names=row.names, na=na, eol='\r\n', fileEncoding='UTF-8')
   message('Wrote ', deparse(substitute(df_x)), ' to ', chr_filename, '.')
+}
+
+##### 3.6) camr_assert #####
+#' Pipe-friendly assertions
+#'
+#' `r lifecycle::badge("experimental")`
+#'
+#' The purpose of this function is to enable pipeable assertions on dataframe
+#' columns without the need to break the pipe-chain or to use inline functions.
+#'
+#' For example...
+#' `df_data |> (function (df) {if (!all(str_detect(df$x, '^a'))) stop('Elements of col x must start with "a".'); df})() |> ...`
+#'
+#' Can be written more readably...
+#' `df_data |> camr_assert(all(str_detect(x, '^a')), 'Elements of col x must start with "a".') |> ...`
+#'
+#' If the assertion passes, the object being tested will be passed through unchanged.
+#'
+#' @param any_x An object, preferably a dataframe, to pass through.
+#' @param lgl_expr A logical expression to evaluate within any_x.
+#' @param chr_message A message to be displayed by stop() if lgl_expr is false.
+#'
+#' @return any_x
+#'
+#' @keywords internal
+#' @export
+#'
+#' @examples
+#' iris |>
+#'   camr_assert(
+#'     any(Species =='versicolor'),
+#'     'Dataset contains no irises of species versicolor'
+#'   ) |>
+#'   summarize(
+#'    m_length = mean(Petal.Length)
+#'   )
+camr_assert <- function (any_x, lgl_expr, chr_message) {
+
+  if (!assert_logical(
+    eval_tidy(enquo(lgl_expr), any_x),
+    len=1,
+    any.missing=FALSE
+  )) stop(chr_message)
+
+  any_x
 }
