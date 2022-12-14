@@ -601,7 +601,7 @@ camr_join_on_idx <- function (df_x, df_y) {
   if(!all(vchr_indicies%in% colnames(df_x))) {
     stop(
       'camr_join_on_idx expects that the IDX columns of df_y will be present in df_x\n',
-      '    df_y has indicies: ', paste(camr_list_idx(df_scans), collapse=', ')
+      '    df_y has indicies: ', paste(vchr_indicies, collapse=', ')
     )
   }
 
