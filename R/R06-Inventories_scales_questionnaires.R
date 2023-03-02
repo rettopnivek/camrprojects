@@ -5897,8 +5897,7 @@ camr_add_inventory_item <- function(
   )
 
   lgc_codebook <-
-    ( chr_item_number != "" &
-        chr_inventory != "" ) |
+    ( chr_inventory != "" ) |
     ( chr_question != "" ) |
     ( chr_description != "" )
 
