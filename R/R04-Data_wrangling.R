@@ -477,6 +477,12 @@ camr_unique_values <- function(
 
   if ( !propagate ) {
     names( unq_val ) <- idx_to_loop
+  } else {
+
+    if ( length( variables ) == 1 ) {
+      attributes( unq_val ) <- attributes( dtf[[ variables ]] )
+    }
+
   }
 
   return( unq_val )

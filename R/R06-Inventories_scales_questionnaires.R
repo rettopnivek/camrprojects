@@ -844,12 +844,12 @@ camr_inventories <- function(
       abbreviation = 'BRIEF2',
       cut_off = NA,
       reference = paste0(
-        "Hendrickson, N. K., & McCrimmon, A. W. (2019). ',
+        'Hendrickson, N. K., & McCrimmon, A. W. (2019). ',
         'Test Review: Behavior Rating Inventory of Executive ',
         'Function®, Second Edition (BRIEF®2) by Gioia, G. A., ',
         'Isquith, P. K., Guy, S. C., & Kenworthy, L. Canadian ',
         'Journal of School Psychology, 34 (1), 73–78. ',
-        'https://doi.org/10.1177/0829573518797762"
+        'https://doi.org/10.1177/0829573518797762'
       ),
       reference_identifier = c(
         DOI = "10.1177/0829573518797762"
