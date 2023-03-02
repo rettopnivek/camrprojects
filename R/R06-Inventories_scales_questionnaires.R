@@ -11,7 +11,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-08
+# Last updated: 2023-03-02
 
 # Table of contents
 # 1) camr_inventories
@@ -57,6 +57,7 @@
 #   1.39) WTAR
 #   1.40) WHODAS 2.0
 #   1.41) Y-PSC
+# 2) camr_add_inventory_item
 
 #### 1) camr_inventories ####
 #' Pre-defined Output for Known Scales and Subscales
@@ -5778,3 +5779,213 @@ camr_inventories <- function(
     return( out )
   }
 }
+
+#### 2) camr_add_inventory_item ####
+#' Add Individual Inventory Item With Codebook Entry
+#'
+#' Convenience function to add a column with scores
+#' for an individual item or question from an
+#' inventory, survey, or questionnaire. Can also
+#' add the associated codebook entry for the item.
+#'
+#' @param dtf_original A data frame with the
+#'   column of scores for the given item or question.
+#' @param dtf_new A data frame to which the column
+#'   of scores will be added.
+#' @param chr_original_column A character string, the
+#'   column name in \code{dtf_original} to add.
+#' @param chr_new_column A character string, the
+#'   new column name to use in \code{dtf_new}.
+#' @param vec_response_options A vector, the original
+#'   response options. Used to recode the response
+#'   options if needed.
+#' @param vec_new_values A vector, the new values to
+#'   replace \code{vec_response options} with. Must
+#'   match in length to \code{vec_response_options}.
+#' @param lst_values_and_labels A named list with
+#'   \code{'content'} containing the numeric values
+#'   and \code{'additional_content'} containing the
+#'   labels or interpretations for the values.
+#' @param chr_inventory A character string, the
+#'   name of the inventory, survey, or questionnaire
+#'   to which the item belongs.
+#' @param chr_question A character string, the item's
+#'   framing question.
+#' @param chr_description A character string,
+#'   allows a user to specify a custom description
+#'   rather than one auto-filled using \code{chr_inventory}
+#'   and \code{chr_question}.
+#' @param ... Additional arguments for the
+#'   [camrprojects::camr_add_codebook_entry] function.
+#'
+#' @returns A data frame with an additional column
+#' containing the scores for the individual item
+#' or question.
+#'
+#' @export
+
+camr_add_inventory_item <- function(
+    dtf_original,
+    dtf_new,
+    chr_original_column,
+    chr_new_column,
+    vec_response_options = NULL,
+    vec_new_values = NULL,
+    lst_values_and_labels = "",
+    chr_inventory = "",
+    chr_question = "",
+    chr_description = "",
+    ... ) {
+
+  # Number of rows in data frame
+  N_rows <- nrow( dtf_new )
+
+  # Extract scores for specified item
+  vec_scores <- dtf_original[[ chr_original_column ]]
+
+  # If response options and new values are provided
+  if ( !is.null( vec_new_values ) & !is.null( vec_response_options ) ) {
+
+    # Initialize new vector of scores
+    vec_transformed_scores <- rep( NA, N_rows )
+
+    # Number of response options
+    N_options <- length( vec_response_options )
+
+    # Check inputs
+    if ( length( vec_new_values ) != N_options ) {
+
+      stop(
+        paste0(
+          "The arguments 'vec_new_values' and 'vec_response_options' ",
+          "must match in length"
+        )
+      )
+
+      # Close 'Check inputs'
+    }
+
+    # Loop over response options
+    for ( l in 1:N_options ) {
+
+      lgc_rows <- vec_scores %in% vec_response_options[l]
+      vec_transformed_scores[ lgc_rows ] <- vec_new_values[l]
+
+      # Close 'Loop over response options'
+    }
+
+    lst_values_and_labels <- list(
+      content = vec_new_values,
+      additional_content = vec_response_options
+    )
+
+    # Close 'If values and labels are provided'
+  } else {
+
+    vec_transformed_scores <- vec_scores
+
+    # Close else for 'If values and labels are provided'
+  }
+
+  mat_new <- cbind(
+    vec_transformed_scores
+  )
+  colnames( mat_new ) <- chr_new_column
+
+  dtf_new <- cbind(
+    dtf_new, mat_new
+  )
+
+  lgc_codebook <-
+    ( chr_item_number != "" &
+        chr_inventory != "" ) |
+    ( chr_question != "" ) |
+    ( chr_description != "" )
+
+  chr_item_number <- ''
+
+  # Extract item number
+  if ( grepl( 'Item_', chr_new_column, fixed = TRUE ) ) {
+
+    chr_parts <- strsplit(
+      chr_new_column, split = '.', fixed = TRUE
+    )[[1]]
+
+    chr_item_number <-
+      chr_parts[ grepl( 'Item_', chr_parts, fixed = TRUE ) ]
+    chr_item_number <- gsub(
+      'Item_', '', chr_item_number, fixed = TRUE
+    )
+    chr_item_number <- paste0(
+      ' ', chr_item_number
+    )
+
+    # Close 'Extract item number'
+  }
+
+  # If inputs for codebook entry provided
+  if ( lgc_codebook ) {
+
+    # Remove commas
+    if ( chr_question != '' ) {
+
+      chr_question <-
+        gsub( ',', ' - ', chr_question, fixed = TRUE )
+
+      # Close 'Remove commas'
+    }
+
+    # Combine item number + inventory + question
+    if ( chr_inventory != "" &
+         chr_question != "" ) {
+
+      chr_description <- paste0(
+        'Response to item',
+        chr_item_number,
+        ' for the ',
+        chr_inventory, ' asking: ',
+        chr_question
+      )
+
+      # Close 'Combine item number + inventory + question'
+    }
+
+    # Combine item number + inventory
+    if ( chr_inventory != "" &
+         chr_question == "" ) {
+
+      chr_description <- paste0(
+        'Response to item',
+        chr_item_number,
+        ' for the ',
+        chr_inventory
+      )
+
+      # Close 'Combine item number + inventory'
+    }
+
+    # Question
+    if ( chr_inventory == "" &
+         chr_question != "" ) {
+
+      chr_description <- chr_question
+
+      # Close 'Question'
+    }
+
+    # Create codebook entry
+    dtf_new <- dtf_new |> camr_add_codebook_entry(
+      chr_new_column,
+      description = chr_description,
+      values_and_labels = lst_values_and_labels,
+      created_from = chr_original_column,
+      non_standard = FALSE,
+      ...
+    )
+
+    # Close 'If inputs for codebook entry provided'
+  }
+
+  return( dtf_new )
+}
+

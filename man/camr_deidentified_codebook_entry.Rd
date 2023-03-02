@@ -53,3 +53,6 @@ related to an individual
 data( "example_CAM_data_set" )
 
 }
+\author{
+Kevin Potter
+}

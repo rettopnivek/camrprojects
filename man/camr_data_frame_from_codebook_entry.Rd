@@ -18,3 +18,6 @@ Function that creates a data frame containing
 all codebook entries - useful for creating
 a .csv codebook.
 }
+\author{
+Kevin Potter
+}
