@@ -29,7 +29,7 @@ Imports:
     stringr,
     testthat,
     tidyr,
-    checkmate,
+    checkmate (>= 2.1.0),
     config
 License: License: MIT + License
 Encoding: UTF-8

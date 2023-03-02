@@ -15,7 +15,7 @@
 # Table of contents
 # 1) Functions to read from REDCap
 #   1.1) camr_redcap_read
-#   1.2) camr_redcap_download
+#   1.2) camr_download_redcap
 #     1.2.1) Download Project Information
 #     1.2.2) Download Raw Data
 #     1.2.3) Download Metadata
@@ -31,6 +31,8 @@
 #     2.3.4) Check Field Type Against VARNAME
 #     2.3.5) Check Quality Control Fields
 #     2.3.6) Construct New VARNAME
+# 3) Functions to Process REDCap Data
+#  3.1) camr_pivot_redcap_eav
 
 #### 1) Functions to read from REDCap ####
 
@@ -227,7 +229,7 @@ camr_redcap_read = function(
   return(out)
 }
 
-#### 1.2) camr_redcap_download ####
+#### 1.2) camr_download_redcap ####
 #' Download Data From a REDCap Project
 #'
 #' Function to download data from a REDCap
@@ -238,6 +240,8 @@ camr_redcap_read = function(
 #' @param chr_rc_token A character string, the
 #'   user's API token for the specified REDCap
 #'   project.
+#' @param lgl_raw Optional. Download data in raw format.
+#' Defaults to TRUE.
 #'
 #' @return A list consisting of...
 #' \itemize{
@@ -249,14 +253,16 @@ camr_redcap_read = function(
 #'     datapoint per row.}
 #'   \item{ 'metadata' }{Dataframe. REDCap data dictionary.}
 #'   \item{ 'form_event_map' }{Dataframe. Mappings between
-#'     REDCap events and instruments administered at each.}
+#'     REDCap events and instruments administered at each.
+#'     This will be returned for longitudinal databases only.}
 #' }
 #'
 #' @export
 
-camr_redcap_download <- function(
+camr_download_redcap <- function(
     chr_rc_uri = "",
-    chr_rc_token = "" ) {
+    chr_rc_token = "",
+    lgl_raw=TRUE) {
 
   if ( chr_rc_uri == "" ) {
 
@@ -302,7 +308,7 @@ camr_redcap_download <- function(
     format = 'csv',             # Download in CSV Format
     type = 'eav',               # Entity-Attribute-Value/Long Form
     csvDelimiter = 'tab',
-    rawOrLabel = 'label',
+    rawOrLabel = ifelse(lgl_raw, 'raw', 'label'),
     rawOrLabelHeaders = 'raw',
     exportCheckboxLabel = 'false',
     exportSurveyFields = 'false',
@@ -350,24 +356,25 @@ camr_redcap_download <- function(
 
 
   #### 1.2.4) Download Form-Event Map ####
+  df_form_event_map <- NULL
+  if (as.logical(lst_database$is_longitudinal)) {
+    message('Downloading form-event map...')
 
-  message('Downloading form-event map...')
+    lst_formdata <- list(
+      token = chr_rc_token,
+      content = 'formEventMapping',
+      format = 'csv'
+    )
 
-  lst_formdata <- list(
-    token = chr_rc_token,
-    content = 'formEventMapping',
-    format = 'csv'
-  )
-
-  rsp_response <- httr::POST(
-    chr_rc_uri, body = lst_formdata, encode = "form"
-  )
-  df_form_event_map <- httr::content(
-    rsp_response,
-    col_types =
-      readr::cols(unique_event_name = 'c', form = 'c', arm_num = 'i')
-  )
-
+    rsp_response <- httr::POST(
+      chr_rc_uri, body = lst_formdata, encode = "form"
+    )
+    df_form_event_map <- httr::content(
+      rsp_response,
+      col_types =
+        readr::cols(unique_event_name = 'c', form = 'c', arm_num = 'i')
+    )
+  }
 
   #### 1.2.5) Generate README ####
 
@@ -379,8 +386,8 @@ camr_redcap_download <- function(
       'Unprocessed REDCap dataset.\n',
       '\n',
       'PID:        { lst_database$project_id }\n',
-      'Timestamp:  { dtm_init |> with_tz(\'UTC\') ',
-      '|> format_ISO8601(precision=\'ymdhms\', usetz=TRUE) }\n',
+      'Timestamp:  { dtm_init |> lubridate::with_tz(\'UTC\') ',
+      '|> lubridate::format_ISO8601(precision=\'ymdhms\', usetz=TRUE) }\n',
       'Username:   { Sys.getenv(\'USER\', Sys.getenv(\'USERNAME\')) }\n',
       'Contents:   { nrow(df_data_eav) } datapoints\n'
     ) )
@@ -396,6 +403,12 @@ camr_redcap_download <- function(
   )
 
   return( out )
+}
+
+#' @rdname camr_download_redcap
+#' @export
+camr_redcap_download <- function(...) {
+  camr_download_redcap(...)
 }
 
 #### 2) Functions for Naming Conventions ####
@@ -1131,4 +1144,66 @@ camr_ckdict <- function (
 
   return( issue_list )
 }
+
+
+
+#### 3) Functions to Process REDCap Data ####
+#####  3.1) camr_pivot_redcap_eav #####
+#' Extract tables from REDCap EAV downloads
+#'
+#' `camr_download_redcap()` downloads data in entity-attribute-value (EAV)
+#' format (one row per datapoint).
+#'
+#' @param df_redcap_eav A dataframe with REDCap data in EAV format.
+#' @param vchr_fields A set of REDCap field names to extract.
+#' @param lgl_collapse_checkboxes Whether to collapse checkbox fields with '|'.
+#' @param chr_event_pattern Optional. A pattern to validate event names against.
+#' @param chr_field_column Optional. Defaults to the API provided "field_name".
+#' @param chr_value_column Optional. Defaults to the API provided "value".
+#' @param chr_event_column Optional. Defaults to the API provided "redcap_event_name".
+#'
+#' @return A dataframe, with the columns of df_redcap_eav and those specified by
+#' vchr_fields.
+#'
+#' @keywords internal
+#' @export
+camr_pivot_redcap_eav <- function (
+    df_redcap_eav,
+    vchr_fields,
+    lgl_collapse_checkboxes=FALSE,
+    chr_event_pattern=NULL,
+    chr_field_column='field_name',
+    chr_value_column='value',
+    chr_event_column='redcap_event_name'
+) {
+  assert_data_frame(df_redcap_eav)
+  assert_character(vchr_fields)
+  assert_logical(lgl_collapse_checkboxes, len=1, null.ok=FALSE)
+  assert_string(chr_event_pattern, min.chars=1, null.ok=TRUE)
+  assert_string(chr_field_column)
+  assert_string(chr_value_column)
+  assert_string(chr_event_column)
+  assert_names(colnames(df_redcap_eav), must.include=(c(chr_field_column, chr_value_column, chr_event_column)))
+
+
+  df_redcap_eav |>
+    filter(
+      !!sym(chr_field_column) %in% vchr_fields,
+    ) |>
+    camr_assert(
+      is.null(chr_event_pattern) || all(str_detect(!!sym(chr_event_column), chr_event_pattern)),
+      paste0('Events in column ', chr_event_column, ' of df_redcap_eav must match "', chr_event_pattern, '".')
+    ) |>
+    # TODO: Check repeating forms.
+    pivot_wider(
+      names_from=chr_field_column,
+      values_from=chr_value_column,
+      values_fn=(if (lgl_collapse_checkboxes) \(vchr) paste(vchr, collapse='|') else NULL)
+    )
+}
+
+
+
+
+
 
