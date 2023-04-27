@@ -122,7 +122,9 @@ camr_column_abbreviations <- function(
     c( 'RMT', 'Remote survey results' ),
     c( 'DTQ', 'Data quality' ),
     c( 'INC', 'Indices for inclusion' ),
-    c( 'DGN', 'Clinical diagnoses' )
+    c( 'DGN', 'Clinical diagnoses' ),
+    c( 'BIO', 'Measurements from a biomedical instrument' ),
+    c( 'QCC', 'Quality control checks' )
   )
   colnames( abbr_labels.var_cat ) <- c(
     'Abbr',
@@ -135,8 +137,10 @@ camr_column_abbreviations <- function(
     c( 'INT', 'Integer' ),
     c( 'DBL', 'Double precision floating point number' ),
     c( 'LGC', 'Logical' ),
+    c( 'LGL', 'Logical' ),
     c( 'CHR', 'Character string' ),
     c( 'DAT', 'R Date-class variable for calendar dates' ),
+    c( 'DTM', 'R posixt datetime variable for calendar dates' ),
     c( 'FCT', 'Enumerated type - factor' ),
     c( 'DSC', 'Descriptive text field' )
   )
