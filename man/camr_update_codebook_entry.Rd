@@ -19,3 +19,6 @@ codes for misssing data, and cases collected over
 for relevant codebook entries for a data frame
 that is a subset of a larger data set.
 }
+\author{
+Kevin Potter
+}

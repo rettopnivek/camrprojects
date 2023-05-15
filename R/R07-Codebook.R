@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-08
+# Last updated: 2022-11-21
 
 # Table of contents
 # 1) Helper functions
@@ -30,6 +30,7 @@
 #   2.6) camr_deidentified_codebook_entry
 #   2.7) camr_data_frame_from_codebook_entry
 #   2.8) camr_update_codebook_entry
+#   2.9) camr_data_frame_to_codebook_entry
 
 #### 1) Helper functions ####
 
@@ -121,7 +122,9 @@ camr_column_abbreviations <- function(
     c( 'RMT', 'Remote survey results' ),
     c( 'DTQ', 'Data quality' ),
     c( 'INC', 'Indices for inclusion' ),
-    c( 'DGN', 'Clinical diagnoses' )
+    c( 'DGN', 'Clinical diagnoses' ),
+    c( 'BIO', 'Measurements from a biomedical instrument' ),
+    c( 'QCC', 'Quality control checks' )
   )
   colnames( abbr_labels.var_cat ) <- c(
     'Abbr',
@@ -134,8 +137,10 @@ camr_column_abbreviations <- function(
     c( 'INT', 'Integer' ),
     c( 'DBL', 'Double precision floating point number' ),
     c( 'LGC', 'Logical' ),
+    c( 'LGL', 'Logical' ),
     c( 'CHR', 'Character string' ),
     c( 'DAT', 'R Date-class variable for calendar dates' ),
+    c( 'DTM', 'R posixt datetime variable for calendar dates' ),
     c( 'FCT', 'Enumerated type - factor' ),
     c( 'DSC', 'Descriptive text field' )
   )
@@ -2250,6 +2255,8 @@ camr_dice <- function( ... ) {
 #'   * Any other unique identifying number, characteristic, or code
 #'   * Certificate/license numbers
 #'
+#' @author Kevin Potter
+#'
 #' @returns A logical vector matching in length to the number
 #' of colunns in \code{dtf}, equal to \code{TRUE} for
 #' any variables with codebook entries indicating the variable
@@ -2303,6 +2310,8 @@ camr_deidentified_codebook_entry <- function(
 #'
 #' @param dtf A data frame whose variables have
 #'   codebook entries.
+#'
+#' @author Kevin Potter
 #'
 #' @return A data frame with all codebook entries.
 #'
@@ -2363,6 +2372,8 @@ camr_data_frame_from_codebook_entry <- function(
 #'
 #' @param dtf A data frame whose variables have
 #'   codebook entries.
+#'
+#' @author Kevin Potter
 #'
 #' @return A data frame with updated codebook entries.
 #'
@@ -2557,5 +2568,222 @@ camr_update_codebook_entry <- function(
   }
 
   return( dtf )
+}
+
+#### 2.9) camr_data_frame_to_codebook_entry ####
+#' Convert Data Frame to Codebook Entry
+#'
+#' Function to extract codebook entries from a
+#' data frame and add them to the attributes for
+#' the relevant variables in a data frame of
+#' observations.
+#'
+#'
+#' @param dtf_main A data frame of observations.
+#' @param dtf_codebook A data frame with codebook
+#'   entries (see [camr_data_frame_from_codebook_entry]).
+#'
+#' @author Kevin Potter
+#'
+#' @return A data frame with codebook entries as
+#' attributes for the relevant variables.
+#'
+#' @export
+
+camr_data_frame_to_codebook_entry <- function(
+    dtf_main,
+    dtf_codebook ) {
+
+  chr_variable <- unique( dtf_codebook$Variable )
+  chr_variable <-
+    chr_variable[ chr_variable %not_in% c( "", "---" ) ]
+
+  J <- length( chr_variable )
+
+  for ( j in 1:J ) {
+
+    temp_add_cont <- list(
+      content = list(),
+      additional_content = list()
+    )
+
+    cur_category <- ""
+    cur_data_type <- ""
+    cur_subcat <- ""
+    cur_desc <- ""
+    cur_val_and_lab <- ""
+    cur_inv <- ""
+    cur_units <- ""
+    cur_desc_sum <- ""
+    cur_codes <- ""
+    cur_deid <- "FALSE"
+    cur_coll <- ""
+    cur_create <- ""
+    cur_dqc <- ""
+    cur_notes <- ""
+
+    dtf_entry <- dtf_codebook %rows% which(
+      dtf_codebook$Variable %in% chr_variable[j]
+    )
+
+    content_type <- c(
+      "Category", # 1
+      "Data type", # 2
+      "Subcategory", # 3
+      "Description", # 4
+      "Values and labels", # 5
+      "Inventory details", # 6
+      "Units of measurement", # 7
+      "Descriptive summary", # 8
+      "Codes for missing data", # 9
+      "De-identified", # 10
+      "Collected over", # 11
+      "Created from", # 12
+      "Data quality checks", # 13
+      "Notes" # 14
+    )
+
+    # Category
+    entries <- dtf_entry$Content_type %in% content_type[1]
+    if ( any( entries ) ) {
+      cur_category <- dtf_entry$Content[entries]
+    }
+
+    # Data type
+    entries <- dtf_entry$Content_type %in% content_type[2]
+    if ( any( entries ) ) {
+      cur_data_type <- dtf_entry$Content[entries]
+    }
+
+    # Subcategory
+    entries <- dtf_entry$Content_type %in% content_type[3]
+    if ( any( entries ) ) {
+      cur_subcat <- dtf_entry$Content[entries]
+    }
+
+    # Description
+    entries <- dtf_entry$Content_type %in% content_type[4]
+    if ( any( entries ) ) {
+      cur_desc <- dtf_entry$Content[entries]
+    }
+
+    # Values and labels
+    entries <- dtf_entry$Content_type %in% content_type[5]
+    if ( any( entries ) ) {
+
+      cur_val_and_lab <- temp_add_cont
+      cur_val_and_lab$content <-
+        dtf_entry$Content[entries]
+      cur_val_and_lab$additional_content <-
+        dtf_entry$Additional_content[entries]
+
+    }
+
+    # Inventory details
+    entries <- dtf_entry$Content_type %in% content_type[6]
+    if ( any( entries ) ) {
+
+      cur_inv <- temp_add_cont
+      cur_inv$content <-
+        dtf_entry$Content[entries]
+      cur_inv$additional_content <-
+        dtf_entry$Additional_content[entries]
+
+    }
+
+    # Units of measurement
+    entries <- dtf_entry$Content_type %in% content_type[7]
+    if ( any( entries ) ) {
+      cur_units <- dtf_entry$Content[entries]
+    }
+
+    # Descriptive summary
+    entries <- dtf_entry$Content_type %in% content_type[8]
+    if ( any( entries ) ) {
+
+      cur_desc_sum <- temp_add_cont
+      cur_desc_sum$content <-
+        dtf_entry$Content[entries]
+      cur_desc_sum$additional_content <-
+        dtf_entry$Additional_content[entries]
+
+    }
+
+    # Codes for missingness
+    entries <- dtf_entry$Content_type %in% content_type[9]
+    if ( any( entries ) ) {
+      cur_codes <- dtf_entry$Content[entries]
+    }
+
+    # Deidentified
+    entries <- dtf_entry$Content_type %in% content_type[10]
+    if ( any( entries ) ) {
+      cur_deid <- dtf_entry$Content[entries]
+    }
+
+    # Collected over
+    entries <- dtf_entry$Content_type %in% content_type[11]
+    if ( any( entries ) ) {
+
+      cur_coll <- temp_add_cont
+      cur_coll$content <-
+        dtf_entry$Content[entries]
+      cur_coll$additional_content <-
+        dtf_entry$Additional_content[entries]
+
+    }
+
+    # Created from
+    entries <- dtf_entry$Content_type %in% content_type[12]
+    if ( any( entries ) ) {
+
+      cur_create <- temp_add_cont
+      cur_create$content <-
+        dtf_entry$Content[entries]
+      cur_create$additional_content <-
+        dtf_entry$Additional_content[entries]
+
+    }
+
+    # Data-quality checks
+    entries <- dtf_entry$Content_type %in% content_type[13]
+    if ( any( entries ) ) {
+      cur_dqc <- dtf_entry$Content[entries]
+    }
+
+    # Notes
+    entries <- dtf_entry$Content_type %in% content_type[14]
+    if ( any( entries ) ) {
+      cur_notes <- dtf_entry$Content[entries]
+    }
+
+    cdbk_entry <- camr_new_codebook_entry(
+        Variable_name = chr_variable[j],
+        Category = cur_category,
+        Data_type = cur_data_type,
+        Subcategory = cur_subcat,
+        Description = cur_desc,
+        Values_and_labels = cur_val_and_lab,
+        Inventory = cur_inv,
+        Units_of_measurement = cur_units,
+        Descriptive_summary = cur_desc_sum,
+        Codes_for_missing_data = cur_codes,
+        Deidentified = cur_deid,
+        Collected_over = cur_coll,
+        Created_from = cur_create,
+        Data_quality_checks = cur_dqc,
+        Notes = cur_notes
+      )
+
+    # Update attributes
+    dtf_main[[ chr_variable[j] ]] <- camr_add_attribute(
+      dtf_main[[ chr_variable[j] ]],
+      cdbk_entry,
+      "codebook_entry"
+    )
+
+  }
+
+  return( dtf_main )
 }
 
