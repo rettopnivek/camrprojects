@@ -37,11 +37,15 @@
 #' @md
 
 camr_path <- function(
-    prefix,
+    prefix = c('input', 'output'),
     root = NULL,
     path = NULL,
     real = TRUE,
     create = FALSE ) {
+
+  .Deprecated('camr_build_path')
+
+  prefix <- match.arg(prefix)
 
   # Check inputs
   checkmate::assert_choice(prefix, c('input', 'output'))
@@ -78,63 +82,6 @@ camr_path <- function(
   }
 
   fs::path_real(fullpath)
-}
-
-#### 2) camr_latest ####
-#' Fetch the latest version a file given a description.
-#'
-#' `r lifecycle::badge("experimental")`
-#'
-#' Expects files named in the format output by `camr_filename`.
-#'
-#' @param prefix Passed to `camr_path`.
-#'
-#' @param root Optional. Passed to `camr_path`.
-#'
-#' @param path Optional. Base path of the file to be found.
-#'
-#' @param project Optional. Whether to expect the project name to prefix the
-#' file description field. Defaults to TRUE.
-#'
-#' @param recurse Optional. Whether to search recursively. Defaults to TRUE.
-#'
-#' @author Michael Pascale
-#' @keywords internal
-#'
-#' @export
-#' @md
-camr_latest <- function (
-    prefix,
-    description,
-    extension,
-    root = NULL,
-    path = NULL,
-    project = TRUE,
-    recurse = TRUE ) {
-
-
-  checkmate::assert_string(description)
-  checkmate::assert_string(path, null.ok=TRUE)
-  checkmate::assert_logical(project, len=1)
-  checkmate::assert_logical(recurse, len=1)
-
-  chr_path_directory <- camr_path(prefix, root, path)
-
-  chr_project = ifelse(
-    project,
-    config::get('project') %??% stop('Problem reading project config. More specifically, did not find the project name.'),
-    '.*?'
-  )
-
-  fs::dir_ls(
-    chr_path_directory,
-    recurse=recurse,
-    regexp=paste0('[/\\]', chr_project, '-', description, '-[^/\\]*\\.', extension, '$'),
-    ignore.case=TRUE
-  ) %>% unclass() %>% unname() -> vchr_paths_matching
-
-  vint_idx <- order(vchr_paths_matching %>% str_remove("^.*/"), decreasing = TRUE)
-  vchr_paths_matching[vint_idx][1]
 }
 
 #### 3) ... ####

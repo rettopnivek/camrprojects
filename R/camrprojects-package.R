@@ -39,7 +39,6 @@
 #' @import stringr
 #' @import tidyr
 #' @import checkmate
-#' @import fs
 #' @import rlang
 
 NULL

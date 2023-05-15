@@ -4,7 +4,13 @@
 \alias{camr_path}
 \title{Construct a Path Given Base Paths in Project Configuration File}
 \usage{
-camr_path(prefix, root = NULL, path = NULL, real = TRUE, create = FALSE)
+camr_path(
+  prefix = c("input", "output"),
+  root = NULL,
+  path = NULL,
+  real = TRUE,
+  create = FALSE
+)
 }
 \arguments{
 \item{prefix}{'input' or 'output' corresponding to the prefix of the
