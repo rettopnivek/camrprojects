@@ -579,7 +579,8 @@ camr_list_idx <- function(df_x) {
 #'
 #' By convention, columns beginning with the prefix IDX are index columns. This
 #' function will perform a `left_join`, mapping the IDX columns of `df_y` onto
-#' those matching in `df_x`.
+#' those matching in `df_x`. In the returned dataframe, the IDX columns will be
+#' in the leftmost position.
 #'
 #' @param df_x A dataframe, with columns following the CAM naming convention.
 #' @param df_y A dataframe, with columns following the CAM naming convention.
@@ -598,14 +599,14 @@ camr_list_idx <- function(df_x) {
 camr_join_on_idx <- function (df_x, df_y) {
   vchr_indicies <- camr_list_idx(df_y)
 
-  if(!all(vchr_indicies%in% colnames(df_x))) {
+  if(!all(vchr_indicies %in% colnames(df_x))) {
     stop(
       'camr_join_on_idx expects that the IDX columns of df_y will be present in df_x\n',
       '    df_y has indicies: ', paste(vchr_indicies, collapse=', ')
     )
   }
 
-  left_join(df_x, df_y, by=vchr_indicies)
+  left_join(df_x, df_y, by=vchr_indicies) |> relocate(starts_with('IDX'))
 }
 
 

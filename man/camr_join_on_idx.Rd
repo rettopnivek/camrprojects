@@ -20,7 +20,8 @@ left_join(df_x, df_y, by=camr_list_idx(df_y))
 \details{
 By convention, columns beginning with the prefix IDX are index columns. This
 function will perform a \code{left_join}, mapping the IDX columns of \code{df_y} onto
-those matching in \code{df_x}.
+those matching in \code{df_x}. In the returned dataframe, the IDX columns will be
+in the leftmost position.
 }
 \examples{
 \dontrun{

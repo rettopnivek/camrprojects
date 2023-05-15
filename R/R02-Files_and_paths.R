@@ -25,7 +25,7 @@
 
 #### 1) File paths and names ####
 
-#### 1.1) camr_file_name ####
+#### 1.1) camr_name_file ####
 #' Generate a Standardized File Name
 #'
 #' Function to generate a file name of the form
@@ -59,7 +59,7 @@
 #'
 #' @export
 
-camr_file_name <- function(
+camr_name_file <- function(
     description,
     extension = NULL,
     project = NULL,
@@ -240,10 +240,13 @@ camr_file_name <- function(
 
 #### 1.2) camr_name_file ####
 
-#' @rdname camr_file_name
+#' @rdname camr_name_file
 #' @export
 
-camr_name_file <- camr_file_name
+camr_file_name <- function(...) {
+  .Deprecated('camr_name_file')
+  camr_name_file(...)
+}
 
 #### 2.2) camr_file_path ####
 #' Determine Absolute Path to a File
@@ -622,6 +625,83 @@ camr_load_from_RData <- function(
 
   return( get( object_name ) )
 }
+
+#' Build a File/Directory Path
+#' Optionally create a directory or apply `camr_name_file` to the generated file
+#' path. Use shorthand "root" directories as specified in the project `config.yml`.
+#'
+#' @param ...         Arguments to be passed to file.path.
+#' @param chr_root    Directory named in `local-directories` of the project's `config.yml`.
+#' @param lgl_verify  Verify that the path already exists?
+#' @param lgl_create  Create a directory at the path if it does not exist?
+#' @param lgl_name    Apply `camr_name_file` on the last argument?
+#'
+#' @return (Character) A vector of paths.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' write.csv(iris, camr_build_path('data', 'Example.csv', lgl_name=T, lgl_verify=F))
+#'
+#' camr_build_path(root='dropbox', 'fNIRS', 'Source')
+#' }
+camr_build_path <-
+  function (..., root=NULL, lgl_verify=TRUE, lgl_create=FALSE, lgl_name=FALSE) {
+
+    # Validate inputs.
+    checkmate::assert_string(root, null.ok=TRUE)
+    checkmate::assert_logical(lgl_verify, len=1)
+    checkmate::assert_logical(lgl_create, len=1)
+    checkmate::assert_logical(lgl_name, len=1)
+
+    if (lgl_verify && lgl_create)
+      stop('Cannot specify both lgl_verify and lgl_create.')
+
+    if (lgl_create && lgl_name)
+      stop('Cannot specify both lgl_create and lgl_name.')
+
+    lst_dots <- list(...)
+    checkmate::assert_list(lst_dots, names='unnamed', types='character')
+
+    # Check the lengths of the dots arguments to avoid recycling issues.
+    vint_lens <- lengths(lst_dots)
+
+    if (length(lst_dots) > 1 && any(vint_lens != 1 & vint_lens != max(vint_lens)))
+      stop('Arguments must be of equal lengths (or of length 1).')
+
+    # If a directory is specified, look it up in the project-level config.
+    if (is.null(root)) {
+      root <- getwd()
+    } else {
+      root <- config::get('local-directories')[[root]]
+      if (is.null(root))
+        stop('Could not read local directory list from project-level config.')
+    }
+
+    # Optionally call camr_name_file on the last argument.
+    if (lgl_name) {
+      lst_dots[[length(lst_dots)]] <- camr_name_file(lst_dots[[length(lst_dots)]])
+    }
+
+    # Build the complete path.
+    vchr_paths <- normalizePath(do.call(file.path, c(root, lst_dots)), mustWork=FALSE)
+
+    # Verify that the path exists.
+    if (lgl_verify) {
+      for (path in vchr_paths) {
+        if (!file.exists(path))
+          stop('Path does not exist: ', path, '.')
+      }
+    }
+
+    # Create a new directory.
+    if (lgl_create) {
+      for (path in vchr_paths)
+        dir.create(path)
+    }
+
+    vchr_paths
+  }
 
 
 #' Sanitize a filename by removing directory paths and invalid characters.
