@@ -657,9 +657,6 @@ camr_build_path <-
     if (lgl_verify && lgl_create)
       stop('Cannot specify both lgl_verify and lgl_create.')
 
-    if (lgl_create && lgl_name)
-      stop('Cannot specify both lgl_create and lgl_name.')
-
     lst_dots <- list(...)
     checkmate::assert_list(lst_dots, names='unnamed', types='character')
 
@@ -689,6 +686,8 @@ camr_build_path <-
     # Verify that the path exists.
     if (lgl_verify) {
       for (path in vchr_paths) {
+        if (lgl_name)
+          path <- dirname(path)
         if (!file.exists(path))
           stop('Path does not exist: ', path, '.')
       }
