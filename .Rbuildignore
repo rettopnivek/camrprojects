@@ -1,3 +1,5 @@
+^renv$
+^renv\.lock$
 ^camrprojects\.Rproj$
 ^\.Rproj\.user$
 ^_pkgdown\.yml$

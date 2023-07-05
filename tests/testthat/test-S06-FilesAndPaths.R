@@ -1,69 +1,70 @@
+
+chr_temp <- tempfile('testthat-', tmpdir=normalizePath(tempdir(check=TRUE)))
+dir.create(chr_temp)
+
 dirs <- list(
-  project = fs::path_temp('project'),
-  a = fs::path_temp('example_dir_a'),
-  b = fs::path_temp('example_dir_b'),
-  c = fs::path_temp('example_dir_c'),
-  d = fs::path_temp('example_dir_d'),
-  e = fs::path_temp('example_dir_e'),
-  f = fs::path_temp('example_dir_f')
+  a = file.path(chr_temp, 'example_dir_a'),
+  b = file.path(chr_temp, 'example_dir_b'),
+  c = file.path(chr_temp, 'example_dir_c'),
+  d = file.path(chr_temp, 'example_dir_d'),
+  e = file.path(chr_temp, 'example_dir_e'),
+  f = file.path(chr_temp, 'example_dir_f')
 )
 
-unlink(unlist(dirs), recursive = TRUE)
-fs::dir_create(dirs[1:5]) # Do not create directories e or f.
+for (dir in dirs[c('a', 'b', 'c')]) {
+  dir.create(dir)
+}
 
-path_config <- fs::path_join(c(dirs$project, 'config.yml'))
+path_config <- file.path(chr_temp, 'config.yml')
 file_config <- file(path_config, 'wt')
 
 example_config <- stringr::str_glue('
 default:
-  input-root:
+  local-directories:
     a: {dirs$a}
     b: {dirs$b}
-  input-root-default: a
-  output-root:
     c: {dirs$c}
     d: {dirs$d}
     e: {dirs$e}
     f: {dirs$f}
-  output-root-default: d
 ')
 
 writeLines(example_config, file_config)
 close(file_config)
 
 # Set the path to the config.yml such that config::get() can find it.
-Sys.setenv('R_CONFIG_FILE'=path_config)
+# Sys.setenv('R_CONFIG_FILE'=path_config)
+setwd(chr_temp)
+
+test_that('camr_path defaults to the working directory.', {
+  expect_identical(camr_build_path(), getwd())
+  expect_identical(camr_build_path('config.yml'), file.path(getwd(), 'config.yml'))
+})
 
 test_that('camr_path constructs paths as given in config.', {
-  expect_identical(camr_path('input'), fs::path_real(dirs$a))
-  expect_identical(camr_path('input', 'a'), fs::path_real(dirs$a))
-  expect_identical(camr_path('input', 'b'), fs::path_real(dirs$b))
-
-  expect_identical(camr_path('output'), fs::path_real(dirs$d))
-  expect_identical(camr_path('output', 'c'), fs::path_real(dirs$c))
-  expect_identical(camr_path('output', 'd'), fs::path_real(dirs$d))
+  expect_identical(camr_build_path(root='a'), dirs$a)
+  expect_identical(camr_build_path(root='b'), dirs$b)
+  expect_identical(camr_build_path(root='c'), dirs$c)
+  expect_identical(camr_build_path(root='d', lgl_verify=F), dirs$d)
+  expect_identical(camr_build_path(root='e', lgl_verify=F), dirs$e)
+  expect_identical(camr_build_path(root='f', lgl_verify=F), dirs$f)
 })
-
-test_that('camr_path throws error on invalid prefix or invalid root.', {
-  expect_error(camr_path())
-  expect_error(camr_path(''))
-
-  expect_error(camr_path('input', 'c'))
-  expect_error(camr_path('input', 'd'))
-  expect_error(camr_path('input', ''))
-
-  expect_error(camr_path('output', 'a'))
-  expect_error(camr_path('output', 'b'))
-  expect_error(camr_path('output', ''))
-})
-
 
 test_that('camr_path handles nonexistant paths.', {
-  expect_error(camr_path('output', 'e'))
-  expect_error(camr_path('output', 'f'))
+  expect_error(camr_build_path(root='d'))
+  expect_error(camr_build_path(root='e'))
+  expect_error(camr_build_path(root='f'))
 
-  expect_identical(camr_path('output', 'e', real=FALSE), dirs$e)
-  expect_identical(camr_path('output', 'f', real=FALSE, create=TRUE), dirs$f)
-  expect_true(fs::dir_exists(dirs$f))
+  expect_identical(camr_build_path(root='d', lgl_verify=F, lgl_create=T), dirs$d)
+  expect_identical(camr_build_path(root='e', lgl_verify=F, lgl_create=T), dirs$e)
+  expect_identical(camr_build_path(root='f', lgl_verify=F, lgl_create=T), dirs$f)
+
+  expect_identical(camr_build_path(root='d'), dirs$d)
+  expect_identical(camr_build_path(root='e'), dirs$e)
+  expect_identical(camr_build_path(root='f'), dirs$f)
+
+  expect_true(dir.exists(dirs$d))
+  expect_true(dir.exists(dirs$e))
+  expect_true(dir.exists(dirs$f))
 })
 

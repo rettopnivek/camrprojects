@@ -1,0 +1,25 @@
+---
+title: "Conventional Filenames"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MGH CAM Programming Standards - Filenames}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+To facilitate file sorting and searching, the following format is the standard convention `camrprojects` functions will expect filenames to adhere to. You can generate such a filename with `camr_name_file`. Other functions such as `camr_find_file` will search specifically for files that match this format.
+
+    [project]-[description]-[yyyy_mm_dd]-[hh_mm_ss]-[commit].[extension]
+
+Where `[project]` is the project name defined in the configuration file, `[description]` is a short description of the file contents, `[yyyy_mm_dd]-[hh_mm_ss]` is the date and time in [**UTC**]{.underline}, `[commit]` is the git commit hash of the code that generated the file (optional; only if the code is git tracked), and `[extension]` is the file extension. For example:
+
+    MMJ-REDCapData-2021_12_09-15_52_33-e7bba8d.Rdata
+
+This particular file name would be generated with the call `camr_name_file('REDCapData.Rdata')`.

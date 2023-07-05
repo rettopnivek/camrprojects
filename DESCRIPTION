@@ -1,20 +1,19 @@
 Package: camrprojects
 Title: Portable Functions for R Projects at CAM-MGH
-Version: 1.2.6
+Version: 2.0.6
 Authors@R: 
     person(given = "Kevin",
            family = "Potter",
            role = c("aut", "cre"),
-           email = "kevin.w.potter@gmail.com")
+           email = "kpotter5@mgh.harvard.edu")
 Description: A set of portable functions commonly 
   used in R projects for the Center for Addiction 
   Medicine - CAM - at the Massachusetts General Hospital - MGH.
 Depends:
-    R (>= 3.0)
+    R (>= 4.1)
 Imports:
     devtools,
     dplyr,
-    fs,
     furrr,
     git2r,
     httr,
@@ -29,18 +28,17 @@ Imports:
     stringr,
     testthat,
     tidyr,
-    checkmate,
+    checkmate (>= 2.1.0),
     config
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Suggests:
     knitr,
-    covr,
-    goodpractice,
+    rmarkdown,
     testthat (>= 3.0.0),
-    rmarkdown
+    lifecycle
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

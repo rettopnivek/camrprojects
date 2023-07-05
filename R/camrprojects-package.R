@@ -5,11 +5,11 @@
 #   Kevin Potter
 #   William Schmitt
 # Email:
-#   kevin.w.potter@gmail.com
-# Please email me directly if you
-#   have any questions or comments
-# Last updated:
-#   2021-08-27
+#   mppascale@mgh.harvard.edu
+#   kpotter5@mgh.harvard.edu
+# Please email us directly if you
+# have any questions or comments
+# Last updated: 2022-10-14
 
 # Package development
 # library( devtools )
@@ -39,6 +39,6 @@
 #' @import stringr
 #' @import tidyr
 #' @import checkmate
-#' @import fs
+#' @import rlang
 
 NULL
