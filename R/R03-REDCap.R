@@ -1204,6 +1204,62 @@ camr_pivot_redcap_eav <- function (
 
 
 
+#' Combine REDCap Checkbox Fields into one Column
+#'
+#' Use this function within `dplyr::mutate`.
+#'
+#' @param cols          Tidyselect expression.
+#' @param fn_rename     Function with which to rename collapsed columns. Default removes the '___' prefix.
+#' @param fn_predicate  Function which transforms each checkbox field value to TRUE/FALSE. Default is x == 1.
+#' @param collapse      Character to separate collapsed values. Defaut is '|'.
+#' @param as.factor     Create a factor where the levels are all the possible combinations of values. Default is FALSE.
+#'
+#' @return Character or factor vector of collapsed checkbox values.
+#' @export
+camr_combine_redcap_checkboxes <-
+  function (
+    cols,
+    fn_rename=\(x) str_remove(x, '^.*___'),
+    fn_predicate=\(x) {
+      if (!all(x %in% 0:1))
+        stop('Specified columns are not all 0 or 1.')
+      x == '1'
+    },
+    collapse='|',
+    as.factor=FALSE
+  ) {
+    # Use this function within mutate(). cols is a tidyselect specification.
+    df_subset <- across(cols)
 
+    # Function to be applied to each row. Get the names of columns that have a 1.
+    acc <- \(x) names(df_subset)[which(fn_predicate(x))]
 
+    # Rename the values if the user does not want to keep the original column names.
+    if (!is.null(fn_rename))
+      acc <- compose(fn_rename, acc)
+
+    # Combine the values into a single string.
+    acc <- compose(\(x) paste(x, collapse=collapse), acc)
+
+    # Apply the function and return, unless the user wants a factor.
+    if (isFALSE(as.factor))
+      return(apply(df_subset, 1, acc))
+
+    # The user wants a factor, so define a function to extract the factor levels.
+    combinedlevels <- function(labels) {
+      n <- length(labels)
+      l <- (2^n) -1
+      if (l >= 1023)
+        stop('Combination factor would be too large. Set as.factor=FALSE.')
+      m <- apply(matrix(1:l, l), 1, \(x) as.integer(intToBits(x)))[1:n,]
+      f <- apply(m, 2, \(x) paste(labels[!!x], collapse=collapse))
+      f[order(colSums(m))]
+    }
+
+    # Extract all the possible combinations to produce levels for the factor.
+    fl <- combinedlevels(fn_rename(names(df_subset)))
+
+    # Apply the function and convert to factor.
+    factor(apply(df_subset, 1, acc), fl)
+  }
 
