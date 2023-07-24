@@ -9,7 +9,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-10-07
+# Last updated: 2023-07-24
 
 #### 1) example_CAM_data_set ####
 #' A Fake Example CAM Data Set
@@ -58,3 +58,108 @@
 #' data(example_CAM_data_set)
 #'
 "example_CAM_data_set"
+
+#### 2) Read in TLFB Data ####
+#' Read in TLFB V1/V2 JSON Data
+#'
+#' @param chr_path_to_json_dir Directory path containing JSON files.
+#' @param recursive Whether to search subfolders of the directory for data files.
+#'
+#' @import lubridate
+#' @importFrom purrr map
+#' @importFrom tibble tibble_row
+#' @importFrom jsonlite read_json
+#'
+#' @return A dataframe.
+#' @export
+camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
+  dir(chr_path_to_json_dir, pattern='\\.json$', full.names = TRUE, recursive=recursive) |>
+    map(\(chr_path){
+
+      lst_data <- read_json(chr_path)
+
+      # Empty data files will have a filename but NA for all other columns.
+      if (length(lst_data) < 1)
+        return(tibble::tibble_row(cal_filename=basename(chr_path), cal_path=chr_path))
+
+      if (!is.null(lst_data$from) || !is.null(lst_data$id) || !is.null(lst_data$substances))
+        warning('Intermediate format detected in ', chr_path, .immediate=TRUE)
+
+      # Check JSON structure to determine format version.
+      if (is.null(lst_data$start)) {
+
+        if (length(names(lst_data)) > 0)
+          warning('Intermediate format detected in ', chr_path, .immediate=TRUE)
+
+        # Read V1 JSON.
+        # Version 1 was in use until May 2021. Some information was recorded
+        # in REDCap or in the JSON filename. This was not a robust method.
+        from_name <- str_match(basename(chr_path), '^(?<id>\\w+)-(?<record>\\d+)-(?<timepoint>\\w+)-(?<date>\\d{4}-\\d{2}-\\d{2}).json')
+        tibble_row(
+          cal_app_version = 1L,
+          cal_filename=basename(chr_path),
+          cal_subject=lst_data$id %||% from_name[1, 'id'],
+          cal_pid=NA,
+          cal_record=lst_data$record %||% from_name[1, 'record'],
+          cal_timepoint=from_name[1, 'timepoint'],
+
+          cal_start=ymd(str_sub(lst_data$from  %||% NA, 1, 10)),
+          cal_end=ymd(str_sub(lst_data$to %||% NA, 1, 10)),
+          cal_days=interval(cal_start, cal_end) |> time_length('days'),
+
+          cal_staff=NA,
+          cal_datetime=ymd(from_name[1, 'date']),
+
+          # Let cal_events be a nested dataframe containing the substance use
+          # and key date calendar events.
+          cal_events=lst_data |>
+            map(\(evt) data.frame(
+              event_title     = evt$title      %||% NA,
+              event_type      = evt$type       %||% NA,
+              event_start     = str_sub(evt$start, 1, 10) %||% NA,
+              event_category  = evt$category   %||% NA,
+              event_substance = evt$substance  %||% NA,
+              event_occasions = evt$occasions  %||% NA,
+              event_amount    = evt$amount     %||% NA,
+              event_units     = evt$units      %||% NA,
+              event_unitsOther= evt$unitsOther %||% NA
+            )) |>
+            bind_rows() |>
+            list(),
+
+          cal_path = chr_path
+        )
+
+      } else {
+        # Read V2 JSON.
+        # Version 2 was in use beginning in May 2021. More information is
+        # recorded directly in the file.
+        tibble_row(
+          cal_app_version = 2L,
+          cal_filename=basename(chr_path),
+          cal_subject=lst_data$subject,
+          cal_pid=lst_data$pid,
+          cal_record=lst_data$record,
+          cal_timepoint=lst_data$event,
+
+          cal_start=ymd(lst_data$start),
+          cal_end=ymd(lst_data$end),
+          cal_days=interval(cal_start, cal_end) |> time_length('days'),
+
+          cal_staff=lst_data$staff,
+          cal_datetime=as_datetime(lst_data$datetime %||% NA),
+
+          # Let cal_events be a nested dataframe containing the substance use
+          # and key date calendar events.
+          cal_events=lst_data$events |>
+            bind_rows() |>
+            (\(x) {if (length(names(x)) > 0) names(x) <- paste0('event_', names(x)); x})() |>
+            list(),
+
+          cal_path = chr_path
+        )
+      }
+
+    }, .progress=list(format='Reading TLFB V1/V2 JSON Data {cli::pb_bar} {cli::pb_current}/{cli::pb_total} {cli::pb_eta_str}')) |>
+    bind_rows()
+}
