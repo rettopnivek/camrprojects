@@ -82,53 +82,90 @@ camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
       if (length(lst_data) < 1)
         return(tibble::tibble_row(cal_filename=basename(chr_path), cal_path=chr_path))
 
-      if (!is.null(lst_data$from) || !is.null(lst_data$id) || !is.null(lst_data$substances))
-        warning('Intermediate format detected in ', chr_path, .immediate=TRUE)
-
       # Check JSON structure to determine format version.
       if (is.null(lst_data$start)) {
 
-        if (length(names(lst_data)) > 0)
-          warning('Intermediate format detected in ', chr_path, .immediate=TRUE)
+        if (length(names(lst_data)) < 1) {
 
-        # Read V1 JSON.
-        # Version 1 was in use until May 2021. Some information was recorded
-        # in REDCap or in the JSON filename. This was not a robust method.
-        from_name <- str_match(basename(chr_path), '^(?<id>\\w+)-(?<record>\\d+)-(?<timepoint>\\w+)-(?<date>\\d{4}-\\d{2}-\\d{2}).json')
-        tibble_row(
-          cal_app_version = 1L,
-          cal_filename=basename(chr_path),
-          cal_subject=lst_data$id %||% from_name[1, 'id'],
-          cal_pid=NA,
-          cal_record=lst_data$record %||% from_name[1, 'record'],
-          cal_timepoint=from_name[1, 'timepoint'],
+          # Read V0 JSON.
+          # Some information was recorded in REDCap or in the JSON filename. This was not a robust method.
+          from_name <- str_match(basename(chr_path), '^(?<id>\\w+)-(?<record>\\d+)-(?<timepoint>\\w+)-(?<date>\\d{4}-\\d{2}-\\d{2}).json')
+          tibble_row(
+            cal_app_version = 0L,
+            cal_filename=basename(chr_path),
+            cal_subject=from_name[1, 'id'],
+            cal_pid=NA,
+            cal_record=from_name[1, 'record'],
+            cal_timepoint=from_name[1, 'timepoint'],
 
-          cal_start=ymd(str_sub(lst_data$from  %||% NA, 1, 10)),
-          cal_end=ymd(str_sub(lst_data$to %||% NA, 1, 10)),
-          cal_days=interval(cal_start, cal_end) |> time_length('days'),
+            cal_start=NA,
+            cal_end=NA,
+            cal_days=NA,
 
-          cal_staff=NA,
-          cal_datetime=ymd(from_name[1, 'date']),
+            cal_staff=NA,
+            cal_datetime=ymd(from_name[1, 'date']),
 
-          # Let cal_events be a nested dataframe containing the substance use
-          # and key date calendar events.
-          cal_events=lst_data |>
-            map(\(evt) data.frame(
-              event_title     = evt$title      %||% NA,
-              event_type      = evt$type       %||% NA,
-              event_start     = str_sub(evt$start, 1, 10) %||% NA,
-              event_category  = evt$category   %||% NA,
-              event_substance = evt$substance  %||% NA,
-              event_occasions = evt$occasions  %||% NA,
-              event_amount    = evt$amount     %||% NA,
-              event_units     = evt$units      %||% NA,
-              event_unitsOther= evt$unitsOther %||% NA
-            )) |>
-            bind_rows() |>
-            list(),
+            # Let cal_events be a nested dataframe containing the substance use
+            # and key date calendar events.
+            cal_events=lst_data |>
+              map(\(evt) data.frame(
+                event_title     = evt$title      %||% NA,
+                event_type      = evt$type       %||% NA,
+                event_start     = ymd(str_sub(evt$start %||% NA, 1, 10)),
+                event_category  = evt$category   %||% NA,
+                event_substance = evt$substance  %||% NA,
+                event_occasions = evt$occasions  %||% NA,
+                event_amount    = evt$amount     %||% NA,
+                event_units     = evt$units      %||% NA,
+                event_unitsOther= evt$unitsOther %||% NA
+              )) |>
+              bind_rows() |>
+              list(),
 
-          cal_path = chr_path
-        )
+            cal_path = chr_path
+          )
+        } else {
+          if (is.null(lst_data$from)) {
+            warning('Skipping file where unknown format detected: ', chr_path, .immediate=TRUE)
+            return(NULL)
+          }
+
+          from_name <- str_match(basename(chr_path), '^(?<id>\\w+)-(?<record>\\d+)-(?<timepoint>\\w+)-(?<date>\\d{4}-\\d{2}-\\d{2}).json')
+          tibble_row(
+            cal_app_version = 1L,
+            cal_filename=basename(chr_path),
+            cal_subject=lst_data$id %||% from_name[1, 'id'],
+            cal_pid=NA,
+            cal_record=lst_data$record %||% from_name[1, 'record'],
+            cal_timepoint=from_name[1, 'timepoint'],
+
+            cal_start=ymd(str_sub(lst_data$from  %||% NA, 1, 10)),
+            cal_end=ymd(str_sub(lst_data$to %||% NA, 1, 10)),
+            cal_days=interval(cal_start, cal_end) |> time_length('days'),
+
+            cal_staff=NA,
+            cal_datetime=ymd(from_name[1, 'date']),
+
+            # Let cal_events be a nested dataframe containing the substance use
+            # and key date calendar events.
+            cal_events=lst_data$events |>
+              map(\(evt) data.frame(
+                event_title     = evt$title      %||% NA,
+                event_type      = evt$extendedProps$type       %||% NA,
+                event_start     = ymd(str_sub(evt$start, 1, 10)) %||% NA,
+                event_category  = evt$extendedProps$category   %||% NA,
+                event_substance = evt$extendedProps$substance  %||% NA,
+                event_occasions = evt$extendedProps$occasions  %||% NA,
+                event_amount    = evt$extendedProps$amount     %||% NA,
+                event_units     = evt$extendedProps$units      %||% NA,
+                event_notes     = evt$extendedProps$notes %||% NA
+              )) |>
+              bind_rows() |>
+              list(),
+
+            cal_path = chr_path
+          )
+        }
 
       } else {
         # Read V2 JSON.
