@@ -5,11 +5,10 @@
 #   Kevin Potter
 #   William Schmitt
 # Email:
-#   mppascale@mgh.harvard.edu
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-10-14
+# Last updated: 2023-11-15
 
 # Package development
 # library( devtools )

@@ -1,15 +1,17 @@
-# Tools to template function documentation
+# Assorted templates
 # Written by...
 #   Kevin Potter
 # Maintained by...
-#   Michael Pascale
 #   Kevin Potter
 # email:
-#   mppascale@mgh.harvard.edu
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-09-01
+# Last updated 2023-11-15
+
+# Table of contents
+# 1) camr_document_function
+# 2) camr_file_templates
 
 #### 1) camr_document_function ####
 #' Create a Template for a Function's Documentation
@@ -540,3 +542,225 @@ camr_document_function <- function(
 
 }
 
+#### 2) camr_file_templates ####
+#' Create File Template
+#'
+#' Function to create a template
+#' for various type of files.
+#'
+#' @param chr_template A character string specifying
+#'   the type of template to create, either...
+#'   \itemize{
+#'     \item renviron = A .renviron file.
+#'     \item targets = A _targets.R file.
+#'   }
+#' @param chr_file_name An optional character
+#'   string, the name for the new file.
+#'
+#' @returns As a side effect, a new file.
+#'
+#' @export
+
+camr_file_templates <- function(
+    chr_template,
+    chr_file_name = '' ) {
+
+  #### 2.1) Setup ####
+
+  # Inputs for possible templates
+  lst_templates <- list(
+
+    renviron = c(
+      ".renviron",
+      "renviron",
+      "env"
+    ),
+
+    targets = c(
+      '_targets.R',
+      '_targets',
+      'targets',
+      'create targets',
+      'initialize targets'
+    )
+
+  )
+
+  chr_proj_abbr <- Sys.getenv( "PROJECT_ABBR" )
+  # Placeholder for project abbreviation
+  if ( chr_proj_abbr == "" ) {
+
+    chr_proj_abbr <- "PROJECT"
+
+    # Close 'Placeholder for project abbreviation'
+  }
+
+  chr_user_name <- Sys.getenv( "USER_NAME" )
+  # Placeholder for user name
+  if ( chr_user_name == "" ) {
+
+    chr_user_name <- "<Your name>"
+
+    # Close 'Placeholder for user name'
+  }
+
+  chr_user_email <- Sys.getenv( "USER_EMAIL" )
+  # Placeholder for email
+  if ( chr_user_email == "" ) {
+
+    chr_user_email <- "<Your email>"
+
+    # Close 'Placeholder for email'
+  }
+
+  #### 2.2) Create template files ####
+
+  #### 2.2.1) renviron ###
+
+  # Create .renviron file
+  if ( chr_template %in% lst_templates$renviron ) {
+
+    chr_text <- c(
+      paste0( "PROJECT_ABBR='", chr_proj_abbr, "'" ),
+      "",
+      paste0( "USER_NAME='", chr_user_name, "'" ),
+      paste0( "USER_EMAIL='", chr_user_email, "'" ),
+      "",
+      "FOLDER_SOURCE='<Path to source folder>'",
+      "FOLDER_OUTPUT='<Path to output folder>'",
+      "",
+      "API_REDCAP_URI='https://redcap.partners.org/redcap/api/'",
+      "API_REDCAP_TOKEN='<Your token>'"
+    )
+
+    # Default file name
+    if ( chr_file_name == '' ) {
+
+      chr_file_name <- '.renviron'
+
+      # Close 'Default file name'
+    }
+
+    write(
+      paste0( paste( chr_text, collapse = '\n' ), '\n' ),
+      file = chr_file_name
+    )
+
+    # Close 'Create .renviron file'
+  }
+
+  #### 2.2.2) targets ###
+
+  # Create _targets.R file
+  if ( chr_template %in% lst_templates$targets ) {
+
+    chr_text <- c(
+
+      "# Script to generate targets",
+      paste0( "# Written by ", chr_user_name ),
+      paste0( "# email: ", chr_user_email ),
+      "# Please email me directly if you ",
+      "# have any questions or comments",
+      paste0( "# Last updated ", format( Sys.Date(), "%Y-%m-%d" ) ),
+      "",
+      "# Table of contents",
+      "# 1) Initial setup",
+      "#   1.1) Download source data",
+      "#   1.2) R scripts and packages",
+      "# 2) Generate targets",
+      "",
+      "### To generate targets ###",
+      "# 1. Click on 'Session' and in pull-down menu for ",
+      "#    'Set Working Directory' select 'To Project Directory'",
+      "# 2. <Optional>",
+      "#    - Clear workspace (click broom icon)",
+      "#    - Restart R (Click on 'Session' and select 'Restart R')",
+      "# 3. Type in console: targets::tar_make()",
+      "",
+      "#### 0) Template for function documentation ####",
+      "# Title ",
+      "# ",
+      "# ... ",
+      "# ",
+      "# @param 'obj_x' An R object (see target output ",
+      paste0(
+        "#   from the '",
+        chr_proj_abbr,
+        ".RXX.example' function)."
+      ),
+      "# ",
+      "# @details ",
+      "# Prerequisites:",
+      "#   * The R package '?' (version ?)",
+      paste0(
+        "#   * The '",
+        chr_proj_abbr,
+        ".RXX.example' function"
+      ),
+      "# ",
+      "# @returns ...",
+      "",
+      "#### 1) Initial setup ####",
+      "",
+      "#### 1.1) Download source data ####",
+      "",
+      "if ( FALSE ) {",
+      "  ",
+      "  camrprojects::camr_copy_from_source()",
+      "  ",
+      "}",
+      "",
+      "#### 1.2) R scripts and packages ####",
+      "",
+      "# Load in package to manage generation of target outputs",
+      "# install.packages( 'targets' )",
+      "library(targets)",
+      "",
+      "# Source in all R scripts with functions",
+      "camrprojects::camr_source_scripts( path = 'R' )",
+      "",
+      "# Load in packages",
+      "tar_option_set(",
+      "  packages = c(",
+      "    # Data frame manipulation and '%>%' operator",
+      "    #   To install:",
+      "    #   install.packages( 'dplyr' )",
+      "    'dplyr',",
+      "    # R functions for CAM",
+      "    #   To install:",
+      "    #   devtools::install_github( 'rettopnivek/camrprojects')",
+      "  )",
+      ")",
+      "",
+      "#### 2) Generate targets ####",
+      "",
+      "list(",
+      "  ",
+      "  # - Example target",
+      "  #   targets::tar_load( chr_example )",
+      "  tar_target(",
+      "    chr_example, ",
+      "    paste( 'Hello', 'world' )",
+      "  )",
+      "",
+      ")",
+      ""
+    )
+
+    # Default file name
+    if ( chr_file_name == '' ) {
+
+      chr_file_name <- '_targets.R'
+
+      # Close 'Default file name'
+    }
+
+    write(
+      paste0( paste( chr_text, collapse = '\n' ), '\n' ),
+      file = chr_file_name
+    )
+
+    # Close 'Create _targets.R file'
+  }
+
+}

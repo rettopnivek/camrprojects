@@ -4,10 +4,8 @@
 #   Kevin Potter
 #   Jakob Weiss
 # Maintained by...
-#   Michael Pascale
 #   Kevin Potter
 # Email:
-#   mppascale@mgh.harvard.edu
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments

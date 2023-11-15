@@ -27,7 +27,8 @@ This function is taken directly from \code{fs::path_sanitize} to avoid dependenc
 \item Windows reserved filenames (\code{CON}, \code{PRN}, \code{AUX}, \code{NUL}, \code{COM1}, \code{COM2},
 \code{COM3}, COM4, \code{COM5}, \code{COM6}, \code{COM7}, \code{COM8}, \code{COM9}, \code{LPT1}, \code{LPT2},
 \code{LPT3}, \code{LPT4}, \code{LPT5}, \code{LPT6}, LPT7, \code{LPT8}, and \code{LPT9})
-The resulting string is then truncated to \href{https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits}{255 bytes in length}
+The resulting string is then truncated to
+\href{https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits}{255 bytes in length}
 }
 }
 \examples{

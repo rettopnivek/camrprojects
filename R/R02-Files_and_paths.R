@@ -3,14 +3,12 @@
 #   Michael Pascale
 #   Kevin Potter
 # Maintained by...
-#   Michael Pascale
 #   Kevin Potter
 # email:
-#   mppascale@mgh.harvard.edu
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-10-14
+# Last updated 2023-11-15
 
 # Table of contents
 # 1) File paths and names
@@ -22,6 +20,7 @@
 #   2.2) camr_popd
 # 3) camr_source_scripts
 # 4) camr_load_from_RData
+# 5) camr_copy_from_source
 
 #### 1) File paths and names ####
 
@@ -100,7 +99,9 @@ camr_name_file <- function(
   if ( is.null( project ) ) {
 
     # Attempt to find via environmental variable, then project config file
-    project <- Sys.getenv('CAMR_PROJECT', NA) %??% tryCatch(config::get('project'), error=camr_pass) %??% ''
+    project <- Sys.getenv(
+      'CAMR_PROJECT', NA
+    ) %??% tryCatch(config::get('project'), error=camr_pass) %??% ''
 
     # Close 'If label for project is not provided'
   }
@@ -111,7 +112,9 @@ camr_name_file <- function(
 
     project <- paste0(project, '-')
   } else {
-    warning('Project name not specified nor present in project-level configuration.')
+    warning(
+      'Project name not specified nor present in project-level configuration.'
+    )
   }
 
   # If a date and time is not provided
@@ -238,7 +241,7 @@ camr_name_file <- function(
   camr_sanitize_path(file_name)
 }
 
-#### 1.2) camr_name_file ####
+#### 1.2) camr_file_name ####
 
 #' @rdname camr_name_file
 #' @export
@@ -627,11 +630,13 @@ camr_load_from_RData <- function(
 }
 
 #' Build a File/Directory Path
-#' Optionally create a directory or apply `camr_name_file` to the generated file
-#' path. Use shorthand "root" directories as specified in the project `config.yml`.
+#' Optionally create a directory or apply `camr_name_file` to
+#' the generated file path. Use shorthand "root" directories as
+#' specified in the project `config.yml`.
 #'
 #' @param ...         Arguments to be passed to file.path.
-#' @param chr_root    Directory named in `local-directories` of the project's `config.yml`.
+#' @param chr_root    Directory named in `local-directories` of the
+#'   project's `config.yml`.
 #' @param lgl_verify  Verify that the path already exists?
 #' @param lgl_create  Create a directory at the path if it does not exist?
 #' @param lgl_name    Apply `camr_name_file` on the last argument?
@@ -641,12 +646,18 @@ camr_load_from_RData <- function(
 #'
 #' @examples
 #' \dontrun{
-#' write.csv(iris, camr_build_path('data', 'Example.csv', lgl_name=T, lgl_verify=F))
+#' write.csv(
+#'   iris, camr_build_path('data', 'Example.csv', lgl_name=T, lgl_verify=F)
+#' )
 #'
 #' camr_build_path(root='dropbox', 'fNIRS', 'Source')
 #' }
-camr_build_path <-
-  function (..., root=NULL, lgl_verify=TRUE, lgl_create=FALSE, lgl_name=FALSE) {
+camr_build_path <- function (
+    ...,
+    root=NULL,
+    lgl_verify=TRUE,
+    lgl_create=FALSE,
+    lgl_name=FALSE) {
 
     # Validate inputs.
     checkmate::assert_string(root, null.ok=TRUE)
@@ -663,7 +674,8 @@ camr_build_path <-
     # Check the lengths of the dots arguments to avoid recycling issues.
     vint_lens <- lengths(lst_dots)
 
-    if (length(lst_dots) > 1 && any(vint_lens != 1 & vint_lens != max(vint_lens)))
+    if (length(lst_dots) > 1 &&
+        any(vint_lens != 1 & vint_lens != max(vint_lens)))
       stop('Arguments must be of equal lengths (or of length 1).')
 
     # If a directory is specified, look it up in the project-level config.
@@ -677,11 +689,13 @@ camr_build_path <-
 
     # Optionally call camr_name_file on the last argument.
     if (lgl_name) {
-      lst_dots[[length(lst_dots)]] <- camr_name_file(lst_dots[[length(lst_dots)]])
+      lst_dots[[length(lst_dots)]] <-
+        camr_name_file(lst_dots[[length(lst_dots)]])
     }
 
     # Build the complete path.
-    vchr_paths <- normalizePath(do.call(file.path, c(root, lst_dots)), mustWork=FALSE)
+    vchr_paths <-
+      normalizePath(do.call(file.path, c(root, lst_dots)), mustWork=FALSE)
 
     # Verify that the path exists.
     if (lgl_verify) {
@@ -715,7 +729,8 @@ camr_build_path <-
 #' - Windows reserved filenames (`CON`, `PRN`, `AUX`, `NUL`, `COM1`, `COM2`,
 #'   `COM3`, COM4, `COM5`, `COM6`, `COM7`, `COM8`, `COM9`, `LPT1`, `LPT2`,
 #'   `LPT3`, `LPT4`, `LPT5`, `LPT6`, LPT7, `LPT8`, and `LPT9`)
-#' The resulting string is then truncated to [255 bytes in length](https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits)
+#' The resulting string is then truncated to
+#' [255 bytes in length](https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits)
 #'
 #' @param chr_filename A character vector to be sanitized.
 #' @param chr_replacement A character vector used to replace invalid characters.
@@ -732,8 +747,9 @@ camr_build_path <-
 #' path_sanitize(str)
 #'
 #' path_sanitize("..")
-camr_sanitize_path <- function (chr_filename, chr_replacement = "")
-{
+camr_sanitize_path <- function (
+    chr_filename,
+    chr_replacement = "") {
 
   illegal <- "[/\\?<>\\:*|\":]"
   control <- "[[:cntrl:]]"
@@ -753,3 +769,95 @@ camr_sanitize_path <- function (chr_filename, chr_replacement = "")
 
   camr_sanitize_path(chr_filename, "")
 }
+
+#### 5) camr_copy_from_source ####
+#' Copy Files From Source Folder
+#'
+#' Function to copy files from a subfolder
+#' in a source folder to a new subfolder in
+#' a user-defined source folder in the current
+#' directory.
+#'
+#' @param chr_path_to_folder A character string,
+#'   the absolute path to the source folder.
+#' @param chr_environment An optional character
+#'   string, the environmental variable with
+#'   the path to the source folder.
+#' @param chr_match_subfolder An optional character
+#'   string, a pattern to match against for selecting
+#'   a desired subfolder. Otherwise, function takes
+#'   most recent subfolder.
+#' @param chr_new_folder A character string, the
+#'   name of the folder in which to store the
+#'   copied files for the current directory.
+#'
+#' @returns As a side effect copies files to a
+#' new subfolder in the current directory.
+#'
+#' @export
+
+camr_copy_from_source <- function(
+    chr_path_to_source_folder = '',
+    chr_environment = 'FOLDER_SOURCE',
+    chr_match_subfolder = '',
+    chr_new_folder = 'Source' ) {
+
+  # Path to source folder from .renviron file
+  if ( chr_path_to_source_folder == '' ) {
+
+    chr_path_to_source <- Sys.getenv(
+      chr_environment
+    )
+
+    # Close 'Path to source folder from .renviron file'
+  }
+
+  # Subfolders
+  chr_subfolders <- dir(
+    path = chr_path_to_source
+  )
+
+  # Select specific subfolder
+  if ( chr_match_subfolder != '' ) {
+
+    chr_subfolder <- chr_subfolders[
+      grepl(
+        chr_match_subfolder,
+        chr_subfolders,
+        fixed = TRUE
+      )
+    ][1]
+
+    # Close 'Select specific subfolder'
+  } else {
+
+    # Take most recent subfolder
+    chr_subfolder <- tail( sort( chr_subfolders ), n = 1 )
+
+    # Close else for 'Select specific subfolder'
+  }
+
+  # Paths to original files
+  chr_path_to_files <- paste0(
+    chr_path_to_source, '/', chr_subfolder, '/',
+    dir( path = paste0( chr_path_to_source, '/', chr_subfolder ) )
+  )
+  # Paths for copied files
+  chr_path_to_copies <- paste0(
+    getwd(), '/',
+    chr_new_folder, '/',
+    dir( path = paste0( chr_path_to_source, '/', chr_subfolder ) )
+  )
+
+  # Copy files to local machine
+  lgc_success <- file.copy(
+    from = chr_path_to_files, to = chr_path_to_copies
+  )
+
+  # Error message
+  if ( !lgc_success ) {
+    stop( 'Failed to copy files' )
+  }
+
+}
+

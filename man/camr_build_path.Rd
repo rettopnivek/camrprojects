@@ -3,8 +3,9 @@
 \name{camr_build_path}
 \alias{camr_build_path}
 \title{Build a File/Directory Path
-Optionally create a directory or apply \code{camr_name_file} to the generated file
-path. Use shorthand "root" directories as specified in the project \code{config.yml}.}
+Optionally create a directory or apply \code{camr_name_file} to
+the generated file path. Use shorthand "root" directories as
+specified in the project \code{config.yml}.}
 \usage{
 camr_build_path(
   ...,
@@ -23,19 +24,23 @@ camr_build_path(
 
 \item{lgl_name}{Apply \code{camr_name_file} on the last argument?}
 
-\item{chr_root}{Directory named in \code{local-directories} of the project's \code{config.yml}.}
+\item{chr_root}{Directory named in \code{local-directories} of the
+project's \code{config.yml}.}
 }
 \value{
 (Character) A vector of paths.
 }
 \description{
 Build a File/Directory Path
-Optionally create a directory or apply \code{camr_name_file} to the generated file
-path. Use shorthand "root" directories as specified in the project \code{config.yml}.
+Optionally create a directory or apply \code{camr_name_file} to
+the generated file path. Use shorthand "root" directories as
+specified in the project \code{config.yml}.
 }
 \examples{
 \dontrun{
-write.csv(iris, camr_build_path('data', 'Example.csv', lgl_name=T, lgl_verify=F))
+write.csv(
+  iris, camr_build_path('data', 'Example.csv', lgl_name=T, lgl_verify=F)
+)
 
 camr_build_path(root='dropbox', 'fNIRS', 'Source')
 }

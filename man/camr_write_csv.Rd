@@ -15,7 +15,8 @@ camr_write_csv(
 \arguments{
 \item{df_x}{A dataframe to be written.}
 
-\item{chr_filename}{A dataframe, with columns following the CAM naming convention.}
+\item{chr_filename}{A dataframe, with columns
+following the CAM naming convention.}
 
 \item{...}{Additional arguments to write.csv(),}
 }

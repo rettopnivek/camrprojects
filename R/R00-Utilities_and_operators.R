@@ -1,15 +1,14 @@
 # Utilities
 # Written by...
 #   Michael Pascale
+#   Kevin Potter
 # Maintained by...
-#   Michael Pascale
 #   Kevin Potter
 # Email:
-#   mppascale@mgh.harvard.edu
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2022-11-03
+# Last updated: 2023-11-15
 
 # Table of contents
 # 1) Operators
@@ -558,8 +557,8 @@ camr_pass <- function(
 }
 
 #### 3.4) Naming Convention Utilities ####
-##### 3.4.1) camr_list_idx #####
 
+##### 3.4.1) camr_list_idx #####
 #' List CAM index columns of a dataframe.
 #'
 #' By convention, columns beginning with the prefix IDX are index columns.
@@ -568,6 +567,7 @@ camr_pass <- function(
 #'
 #' @return A character vector of the names in df_x prfixed by IDX.
 #' @export
+
 camr_list_idx <- function(df_x) {
   df_x |> colnames() |> keep(str_detect, '^IDX\\.')
 }
@@ -601,8 +601,11 @@ camr_join_on_idx <- function (df_x, df_y) {
 
   if(!all(vchr_indicies %in% colnames(df_x))) {
     stop(
-      'camr_join_on_idx expects that the IDX columns of df_y will be present in df_x\n',
-      '    df_y has indicies: ', paste(vchr_indicies, collapse=', ')
+      paste0(
+        'camr_join_on_idx expects that the ',
+        'IDX columns of df_y will be present in df_x\n',
+        '    df_y has indicies: ', paste(vchr_indicies, collapse=', ')
+      )
     )
   }
 
@@ -618,12 +621,19 @@ camr_join_on_idx <- function (df_x, df_y) {
 #' The provided filename will be expanded with `camr_name_file`.
 #'
 #' @param df_x A dataframe to be written.
-#' @param chr_filename A dataframe, with columns following the CAM naming convention.
+#' @param chr_filename A dataframe, with columns
+#'   following the CAM naming convention.
 #' @param ... Additional arguments to write.csv(),
 #'
 #' @keywords internal
 #' @export
-camr_write_csv <- function(df_x, chr_filename, row.names=FALSE, na='', lgl_literal=FALSE) {
+camr_write_csv <- function(
+    df_x,
+    chr_filename,
+    row.names=FALSE,
+    na='',
+    lgl_literal=FALSE ) {
+
   assert_data_frame(df_x)
   assert_string(chr_filename, pattern='\\.csv$')
   assert_logical(lgl_literal, len=1, any.missing=FALSE)
@@ -632,7 +642,10 @@ camr_write_csv <- function(df_x, chr_filename, row.names=FALSE, na='', lgl_liter
     chr_filename <- camr_name_file(chr_filename)
 
 
-  write.csv(df_x, chr_filename, row.names=row.names, na=na, eol='\r\n', fileEncoding='UTF-8')
+  write.csv(
+    df_x, chr_filename, row.names=row.names,
+    na=na, eol='\r\n', fileEncoding='UTF-8'
+  )
   message('Wrote ', deparse(substitute(df_x)), ' to ', chr_filename, '.')
 }
 
