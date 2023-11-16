@@ -659,62 +659,62 @@ camr_build_path <- function (
     lgl_create=FALSE,
     lgl_name=FALSE) {
 
-    # Validate inputs.
-    checkmate::assert_string(root, null.ok=TRUE)
-    checkmate::assert_logical(lgl_verify, len=1)
-    checkmate::assert_logical(lgl_create, len=1)
-    checkmate::assert_logical(lgl_name, len=1)
+  # Validate inputs.
+  checkmate::assert_string(root, null.ok=TRUE)
+  checkmate::assert_logical(lgl_verify, len=1)
+  checkmate::assert_logical(lgl_create, len=1)
+  checkmate::assert_logical(lgl_name, len=1)
 
-    if (lgl_verify && lgl_create)
-      stop('Cannot specify both lgl_verify and lgl_create.')
+  if (lgl_verify && lgl_create)
+    stop('Cannot specify both lgl_verify and lgl_create.')
 
-    lst_dots <- list(...)
-    checkmate::assert_list(lst_dots, names='unnamed', types='character')
+  lst_dots <- list(...)
+  checkmate::assert_list(lst_dots, names='unnamed', types='character')
 
-    # Check the lengths of the dots arguments to avoid recycling issues.
-    vint_lens <- lengths(lst_dots)
+  # Check the lengths of the dots arguments to avoid recycling issues.
+  vint_lens <- lengths(lst_dots)
 
-    if (length(lst_dots) > 1 &&
-        any(vint_lens != 1 & vint_lens != max(vint_lens)))
-      stop('Arguments must be of equal lengths (or of length 1).')
+  if (length(lst_dots) > 1 &&
+      any(vint_lens != 1 & vint_lens != max(vint_lens)))
+    stop('Arguments must be of equal lengths (or of length 1).')
 
-    # If a directory is specified, look it up in the project-level config.
-    if (is.null(root)) {
-      root <- getwd()
-    } else {
-      root <- config::get('local-directories')[[root]]
-      if (is.null(root))
-        stop('Could not read local directory list from project-level config.')
-    }
-
-    # Optionally call camr_name_file on the last argument.
-    if (lgl_name) {
-      lst_dots[[length(lst_dots)]] <-
-        camr_name_file(lst_dots[[length(lst_dots)]])
-    }
-
-    # Build the complete path.
-    vchr_paths <-
-      normalizePath(do.call(file.path, c(root, lst_dots)), mustWork=FALSE)
-
-    # Verify that the path exists.
-    if (lgl_verify) {
-      for (path in vchr_paths) {
-        if (lgl_name)
-          path <- dirname(path)
-        if (!file.exists(path))
-          stop('Path does not exist: ', path, '.')
-      }
-    }
-
-    # Create a new directory.
-    if (lgl_create) {
-      for (path in vchr_paths)
-        dir.create(path)
-    }
-
-    vchr_paths
+  # If a directory is specified, look it up in the project-level config.
+  if (is.null(root)) {
+    root <- getwd()
+  } else {
+    root <- config::get('local-directories')[[root]]
+    if (is.null(root))
+      stop('Could not read local directory list from project-level config.')
   }
+
+  # Optionally call camr_name_file on the last argument.
+  if (lgl_name) {
+    lst_dots[[length(lst_dots)]] <-
+      camr_name_file(lst_dots[[length(lst_dots)]])
+  }
+
+  # Build the complete path.
+  vchr_paths <-
+    normalizePath(do.call(file.path, c(root, lst_dots)), mustWork=FALSE)
+
+  # Verify that the path exists.
+  if (lgl_verify) {
+    for (path in vchr_paths) {
+      if (lgl_name)
+        path <- dirname(path)
+      if (!file.exists(path))
+        stop('Path does not exist: ', path, '.')
+    }
+  }
+
+  # Create a new directory.
+  if (lgl_create) {
+    for (path in vchr_paths)
+      dir.create(path)
+  }
+
+  vchr_paths
+}
 
 
 #' Sanitize a filename by removing directory paths and invalid characters.
@@ -760,7 +760,7 @@ camr_sanitize_path <- function (
   chr_filename <- gsub(control, chr_replacement, chr_filename)
   chr_filename <- gsub(reserved, chr_replacement, chr_filename)
   chr_filename <- gsub(windows_reserved, chr_replacement, chr_filename,
-                   ignore.case = TRUE)
+                       ignore.case = TRUE)
   chr_filename <- gsub(windows_trailing, chr_replacement, chr_filename)
   chr_filename <- substr(chr_filename, 1, 255)
   if (chr_replacement == "") {
@@ -778,85 +778,132 @@ camr_sanitize_path <- function (
 #' a user-defined source folder in the current
 #' directory.
 #'
-#' @param chr_path_to_folder A character string,
+#' @param chr_source_path A character string,
 #'   the absolute path to the source folder.
+#' @param chr_destination_path A character string,
+#'   the path to the folder to which files should
+#'   be copied - if blank, uses the current working
+#'   directory.
+#' @param chr_source_subfolder An optional character
+#'   string, the full or partial name of a subfolder
+#'   in source location with the files to copy.
 #' @param chr_environment An optional character
 #'   string, the environmental variable with
 #'   the path to the source folder.
-#' @param chr_match_subfolder An optional character
-#'   string, a pattern to match against for selecting
-#'   a desired subfolder. Otherwise, function takes
-#'   most recent subfolder.
-#' @param chr_new_folder A character string, the
-#'   name of the folder in which to store the
-#'   copied files for the current directory.
+#' @param chr_config An optional character string,
+#'   the input for [config::get()] to extract the
+#'   path to the source folder from a config.yml file.
 #'
 #' @returns As a side effect copies files to a
-#' new subfolder in the current directory.
+#' to the specified destination folder.
 #'
 #' @export
 
 camr_copy_from_source <- function(
-    chr_path_to_source_folder = '',
+    chr_source_path = '',
+    chr_destination_path = '',
+    chr_source_subfolder = '',
     chr_environment = 'FOLDER_SOURCE',
-    chr_match_subfolder = '',
-    chr_new_folder = 'Source' ) {
+    chr_config = 'input-root-default' ) {
 
-  # Path to source folder from .renviron file
-  if ( chr_path_to_source_folder == '' ) {
+  # Path to source folder from environmental variable
+  if ( chr_source_path == '' ) {
 
-    chr_path_to_source <- Sys.getenv(
+    chr_source_path <- Sys.getenv(
       chr_environment
     )
 
-    # Close 'Path to source folder from .renviron file'
+    # Close 'Path to source folder from environmental variable'
   }
 
-  # Subfolders
-  chr_subfolders <- dir(
-    path = chr_path_to_source
-  )
+  # Path to source folder from config variable
+  if ( chr_source_path == '' ) {
 
-  # Select specific subfolder
-  if ( chr_match_subfolder != '' ) {
+    chr_source_path <- config::get(
+      chr_config
+    )
 
-    chr_subfolder <- chr_subfolders[
+    # Close 'Path to source folder from config variable'
+  }
+
+  # If a subfolder is specified
+  if ( chr_source_subfolder != '' ) {
+
+    chr_subfolders <- dir(
+      path = chr_source_path
+    )
+    chr_source_subfolder <- chr_subfolders[
       grepl(
-        chr_match_subfolder,
+        chr_source_subfolder,
         chr_subfolders,
         fixed = TRUE
       )
     ][1]
 
-    # Close 'Select specific subfolder'
-  } else {
+    chr_source_path <- paste0(
+      chr_source_path, '/', chr_source_subfolder
+    )
 
-    # Take most recent subfolder
-    chr_subfolder <- tail( sort( chr_subfolders ), n = 1 )
-
-    # Close else for 'Select specific subfolder'
+    # Close 'If a subfolder is specified'
   }
 
-  # Paths to original files
-  chr_path_to_files <- paste0(
-    chr_path_to_source, '/', chr_subfolder, '/',
-    dir( path = paste0( chr_path_to_source, '/', chr_subfolder ) )
+  # List files in source folder
+  chr_files_and_folders_to_copy <- list.files(
+    path = chr_source_path,
+    recursive = TRUE,
+    include.dirs = TRUE
   )
-  # Paths for copied files
-  chr_path_to_copies <- paste0(
-    getwd(), '/',
-    chr_new_folder, '/',
-    dir( path = paste0( chr_path_to_source, '/', chr_subfolder ) )
+
+  # By default use current working directory
+  if ( chr_destination_path == '' ) {
+
+    chr_destination_path <- getwd()
+
+    # Close 'By default use current working directory'
+  }
+
+  chr_new_path_for_copied_files_and_folders <- paste0(
+    chr_destination_path, '/', chr_files_and_folders_to_copy
   )
+
+  # Check if a subfolder is present
+  lgc_is_directory <- !grepl(
+    '.', chr_files_and_folders_to_copy, fixed = TRUE
+  )
+
+  # If subfolder is present
+  if ( any( lgc_is_directory ) ) {
+
+    # Create subfolder in new location
+    dir.create(
+      chr_new_path_for_copied_files_and_folders[lgc_is_directory]
+    )
+
+    # Close 'If subfolder is present'
+  }
 
   # Copy files to local machine
   lgc_success <- file.copy(
-    from = chr_path_to_files, to = chr_path_to_copies
+    from = paste0(
+      chr_source_path, '/',
+      chr_files_and_folders_to_copy[!lgc_is_directory]
+    ),
+    to = chr_new_path_for_copied_files_and_folders[!lgc_is_directory]
   )
 
-  # Error message
-  if ( !lgc_success ) {
+  # Error and warning messages
+  if ( any(lgc_success) ) {
+
+    if ( !all(lgc_success) ) {
+      warning( 'Some files or folders were not copied' )
+    }
+
+    # Close 'Error and warning messages'
+  } else {
+
     stop( 'Failed to copy files' )
+
+    # Close else for 'Error and warning messages'
   }
 
 }

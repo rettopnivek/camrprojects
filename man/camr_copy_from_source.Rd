@@ -5,32 +5,37 @@
 \title{Copy Files From Source Folder}
 \usage{
 camr_copy_from_source(
-  chr_path_to_source_folder = "",
+  chr_source_path = "",
+  chr_destination_path = "",
+  chr_source_subfolder = "",
   chr_environment = "FOLDER_SOURCE",
-  chr_match_subfolder = "",
-  chr_new_folder = "Source"
+  chr_config = "input-root-default"
 )
 }
 \arguments{
+\item{chr_source_path}{A character string,
+the absolute path to the source folder.}
+
+\item{chr_destination_path}{A character string,
+the path to the folder to which files should
+be copied - if blank, uses the current working
+directory.}
+
+\item{chr_source_subfolder}{An optional character
+string, the full or partial name of a subfolder
+in source location with the files to copy.}
+
 \item{chr_environment}{An optional character
 string, the environmental variable with
 the path to the source folder.}
 
-\item{chr_match_subfolder}{An optional character
-string, a pattern to match against for selecting
-a desired subfolder. Otherwise, function takes
-most recent subfolder.}
-
-\item{chr_new_folder}{A character string, the
-name of the folder in which to store the
-copied files for the current directory.}
-
-\item{chr_path_to_folder}{A character string,
-the absolute path to the source folder.}
+\item{chr_config}{An optional character string,
+the input for \code{\link[config:get]{config::get()}} to extract the
+path to the source folder from a config.yml file.}
 }
 \value{
 As a side effect copies files to a
-new subfolder in the current directory.
+to the specified destination folder.
 }
 \description{
 Function to copy files from a subfolder
