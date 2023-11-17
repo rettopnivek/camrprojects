@@ -875,8 +875,14 @@ camr_copy_from_source <- function(
   if ( any( lgc_is_directory ) ) {
 
     # Create subfolder in new location
-    dir.create(
-      chr_new_path_for_copied_files_and_folders[lgc_is_directory]
+    lgc_success <- sapply(
+      new_path_for_copied_files_and_folders[lgc_is_directory],
+      function( chr_folder ) {
+        dir.create(
+          chr_folder,
+          recursive = TRUE
+        )
+      }
     )
 
     # Close 'If subfolder is present'
