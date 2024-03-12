@@ -99,11 +99,12 @@ Forthcoming.
 * Michael Pascale
 * Kevin Potter
 * William Schmitt
+* Bryn Evohr
 
 ### Current maintainers
 
-* Michael Pascale
 * Kevin Potter
+* Bryn Evohr
 
 ## License
 

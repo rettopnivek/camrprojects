@@ -8,13 +8,14 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2023-11-15
+# Last updated 2024-03-12
 
 # Table of contents
 # 1) File paths and names
 #   1.1) camr_file_name
 #   1.2) camr_filename
 #   2.2) camr_file_path
+#   2.3) camr_find_file
 # 2) Folders and directories
 #   2.1) camr_pushd
 #   2.2) camr_popd
@@ -451,6 +452,105 @@ camr_file_path <- function(
   full_path <- paste0( path_to_source_folder, '/', current_file )
 
   return( full_path )
+}
+
+#### 2.2) camr_find_file ####
+#' Find Path to Most Recent File
+#'
+#' Function to find the absolute path to the most
+#' up-to-date version of a file given a
+#' partial match to its name and the file location.
+#'
+#' @param nm_desc A character string, the file name
+#'   or part of the file name that can uniquely identify
+#'   it from other files.
+#' @param chr_path A character string, the name of the
+#'   file path to search in.
+#' @param chr_project An optional character string, the
+#'   name of the project.
+#' @param chr_date An optional character string, the
+#'   date of the file.
+#' @param chr_commit An optional character string, the
+#'   commit number of the file.
+#' @param chr_date_tolerance An optional character string,
+#'   margin of error for the date of the file
+#'   ('s', 'm', 'h', 'd').
+#' @param lgl_recurse Logical; if TRUE, the function
+#'   will recurse fully.
+#'
+#' @import fs
+#'
+#' @author Michael Pascale
+#'
+#' @return A character string, an absolute path to a file.
+#'
+#' @export
+#' @md
+
+camr_find_file <- function(
+    nm_desc,
+    chr_path,
+    chr_project=NULL,
+    chr_date=NULL,
+    chr_commit=NULL,
+    chr_date_tolerance='s',
+    lgl_recurse=TRUE
+) {
+  chr_desc <- deparse(substitute(nm_desc))
+  assert_string(chr_desc, pattern='^\\w+(\\.\\w{1,5})?$')
+  assert_string(chr_path)
+  assert_string(chr_project, pattern='^\\w+$', null.ok=TRUE)
+  assert_string(chr_date, pattern='^(\\d|\\.|-|_)+$', null.ok=TRUE)
+  assert_choice(chr_date_tolerance, c('s', 'm', 'h', 'd'))
+  assert_logical(lgl_recurse, len=1, any.missing=FALSE)
+
+  chr_name <- chr_desc |> str_extract('^\\w+')
+  chr_ext <- chr_desc |> str_extract('\\.\\w+$')
+
+  dtm_date <- ymd_hms(chr_date, quiet=TRUE, tz='UTC', truncated=3)
+
+  dir_ls(
+    path=chr_path,
+    type='file',
+    recurse=lgl_recurse,
+    regexp=ifelse(is.na(chr_ext), '', str_glue('\\{chr_ext}$'))
+  ) |>
+    map_dfr(~ data.frame(
+      filename=basename(.),
+      fullpath=.
+    )) |>
+    extract(
+      filename,
+      c('project', 'description', 'timestamp', NA, NA, 'commit', 'extension'),
+      '^(\\w+)-(\\w+)-(\\d{4}[\\.\\-_]?(\\d{2}[\\.\\-_]?){2,5})(-([a-z\\d]{8,9}))?(\\.\\w{1,5})?$',
+      FALSE,
+      TRUE
+    ) |>
+    drop_na(project, description, timestamp) |>
+    mutate(
+      project = str_to_lower(project),
+      datetime = ymd_hms(timestamp, quiet=TRUE, tz='UTC', truncated=3),
+      datediff = if (is.null(chr_date)) NA else difftime(datetime, dtm_date, units=chr_date_tolerance) |> abs() |> floor()
+    ) |>
+    filter(
+      str_to_lower(description) == str_to_lower(chr_name),
+      if (is.null(chr_project)) TRUE else str_to_lower(project) == str_to_lower(chr_project),
+      if (is.null(chr_date)) TRUE else (startsWith(timestamp, chr_date) | datediff < 1),
+      if (is.null(chr_commit)) TRUE else commit == chr_commit
+    ) |>
+    arrange(datetime) ->
+    df_files_matching
+
+  if (nrow(df_files_matching) > 1) {
+    warning(
+      'Matching file is ambiguous:\n    ', paste(df_files_matching$filename, collapse=',\n    '),
+      '\n  Using the latest:\n    ', last(df_files_matching$filename)
+    )
+  } else if (nrow(df_files_matching) < 1) {
+    stop('No files matching ', chr_name, ' in ', chr_path)
+  }
+
+  last(df_files_matching$fullpath)
 }
 
 #### 2) Folders and directories ####

@@ -8,7 +8,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated 2022-10-14
+# Last updated 2023-03-12
 
 # Table of contents
 # 1) Functions to read from REDCap
@@ -29,12 +29,13 @@
 #     2.3.4) Check Field Type Against VARNAME
 #     2.3.5) Check Quality Control Fields
 #     2.3.6) Construct New VARNAME
+#   2.4) camr_check_name_conventions
 # 3) Functions to Process REDCap Data
 #  3.1) camr_pivot_redcap_eav
 
 #### 1) Functions to read from REDCap ####
 
-#### 1.1) camr_redcap_read ####
+##### 1.1) camr_redcap_read #####
 #' Read All Records From a REDCap Project
 #'
 #' This function seeks to mimic the `redcap_read()`
@@ -227,7 +228,7 @@ camr_redcap_read = function(
   return(out)
 }
 
-#### 1.2) camr_download_redcap ####
+##### 1.2) camr_download_redcap #####
 #' Download Data From a REDCap Project
 #'
 #' Function to download data from a REDCap
@@ -411,7 +412,7 @@ camr_redcap_download <- function(...) {
 
 #### 2) Functions for Naming Conventions ####
 
-#### 2.1) validate_var_name ####
+##### 2.1) validate_var_name #####
 #' Validate That a String Conforms to Naming Standards
 #'
 #' Validate a string conforms to the Center for Addiction Medicine (CAM) R
@@ -595,7 +596,7 @@ validate_var_name <- function(str, type = "R") {
   return(out1 & out2 & outMid & outLast)
 }
 
-#### 2.2) rename_redcap_vars ####
+##### 2.2) rename_redcap_vars #####
 #' Rename a REDCap Data Frame to Follow CAM Naming Standards
 #'
 #' Rename a data frame downloaded from REDCap using the field annotation
@@ -710,7 +711,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
   return(dtf)
 }
 
-#### 2.3) camr_ckdict ####
+##### 2.3) camr_ckdict #####
 #' Verify REDCap data dictionary.
 #'
 #' @param dict REDCap metadata table as downloaded by [redcap_read()].
@@ -1143,7 +1144,63 @@ camr_ckdict <- function (
   return( issue_list )
 }
 
+##### 2.4) camr_check_name_conventions #####
+#' Check Naming Conventions
+#'
+#' Checks naming conventions of a processed dataframe,
+#' following standards set on the CAM Wiki.
+#'
+#' @param df_any A dataframe.
+#'
+#' @author Michael Pascale
+#'
+#' @returns Prints invalid column names to the console.
+#'
+#' @export
+#' @md
 
+camr_check_name_conventions <- function(df_any) {
+
+  for (chr_name in names(df_any)) {
+    m_match <- str_match(chr_name, '(?<group>\\w{3})\\.(?<type>\\w{3})\\.(?<topic>\\w+)\\.?(?<tail>.+)?')
+
+    if (any(is.na(m_match[1, c('group', 'type', 'topic')]))) {
+      warning('Variable name is of invalid format: ', chr_name)
+      next
+    }
+
+    if (!(m_match[[1, 'group']] %in% c(
+      'IDX', 'IDS', 'SBJ', 'SSS',
+      'BIO', 'INV', 'QCC', 'VST'
+    ))) {
+      warning('Variable name contains invalid group: ', chr_name)
+      next
+    }
+
+    if (!switch(
+      m_match[[1, 'type']],
+      INT = is.integer,
+      DBL = is.numeric,
+      CHR = is.character,
+      FCT = is.factor,
+      DAT = is.Date,
+      DTM = is.POSIXt,
+      DUR = is.duration,
+      TIM = is.period,
+      LGL = is.logical,
+      {
+        warning('Variable name contains invalid type: ', chr_name)
+        next
+      }
+    )(df_any[[chr_name]])) {
+      warning(
+        'Variable name does not reflect type: ', chr_name,
+        ' (', class(df_any[[chr_name]]), ': ', mode(df_any[[chr_name]]), ')'
+      )
+    }
+  }
+
+}
 
 #### 3) Functions to Process REDCap Data ####
 #####  3.1) camr_pivot_redcap_eav #####

@@ -1,107 +1,20 @@
 # Miscellaneous functions
 # Written by...
 #   Kevin Potter
+#   Bryn Evohr
 # Maintained by...
-#   Kevin Potter
+#   Bryn Evohr
 # Email:
-#   kpotter5@mgh.harvard.edu
+#   bevohr@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
 # Last updated: 2024-03-12
 
-#### 1) example_CAM_data_set ####
-#' A Fake Example CAM Data Set
-#'
-#' A data set formatted like typical CAM data. Provides
-#' fake data for a hypothetical study with 8 screened individuals
-#' and six enrolled participants who each completed two visits
-#' in which they were dosed with a placebo or active drug and
-#' completed the Brief Pain Inventory (BPI) severity subscale
-#' prior to and after being dosed.
-#'
-#' @docType data
-#'
-#' @usage data(example_CAM_data_set)
-#'
-#' @format A data frame with 32 rows and 18 variables:
-#' \describe{
-#'   \item{IDS.INT.Screening}{Identifier for screened individuals}
-#'   \item{SSS.DAT.Date_of_visit}{The date of the study session}
-#'   \item{IDS.CHR.Participant}{Identifier for the enrolled individual}
-#'   \item{SSS.CHR.Session}{Label for the study session}
-#'   \item{SSS.CHR.Event}{Label for time points within a study session}
-#'   \item{IDX.INT.Person}{Index for individuals}
-#'   \item{IDX.INT.Session}{Index for study sessions}
-#'   \item{IDX.INT.Event}{Index for time points within a study session}
-#'   \item{SSS.CHR.Condition}{Whether dosed with active drug or placebo}
-#'   \item{SBJ.INT.Age}{Age of individual in years}
-#'   \item{SBJ.INT.Age_at_visit_1}{Alternative measure of age}
-#'   \item{SBJ.INT.Biological_sex}{Biological sex of participant where
-#'     1 = male and 2 = female}
-#'   \item{SBJ.CHR.Race}{Racial identify of individual}
-#'   \item{SBJ.CHR.Ethnicity}{Ethnicity of individual}
-#'   \item{INV.INT.HADS_anxiety}{Scores on the anxiety subscale of the
-#'     Hospital Anxiety and Depression Scale}
-#'   \item{INV.INT.HADS_depression}{Scores on the depression subscale of the
-#'     Hospital Anxiety and Depression Scale}
-#'   \item{INV.INT.AIS}{Scores on the Athens Insomnia Scale}
-#'   \item{INV.DBL.BPI_severity}{Scores on the severity subscale of the
-#'     Brief Pain Inventory}
-#' }
-#'
-#' @keywords datasets
-#'
-#' @examples
-#'
-#' data(example_CAM_data_set)
-#'
-"example_CAM_data_set"
+# Table of contents
+# 1) camr_read_tlfb_v2
+# 2) camr_meddra_join
 
-#### 2) lst_meddra ####
-#' MedDRA Database
-#'
-#' A list containing three dataframes of the MedDRA database.
-#' Allows individuals to take downloaded MedDRA codes from
-#' REDCap and pull corresponding terms and MedDRA categories.
-#'
-#' @docType data
-#'
-#' @usage data(lst_meddra)
-#'
-#' @format A list with 3 dataframes:
-#' \describe{
-#'   \item{codes}{All MedDRA codes and the corresponding level}
-#'   \item{codes$levels}{MedDRA level}
-#'   \item{codes$code}{MedDRA code}
-#'   \item{terms}{All level MedDRA terms and codes}
-#'   \item{terms$llt_code}{MedDRA code to identify the Lowest Level Term}
-#'   \item{terms$pt_code}{MedDRA code to identify the Preferred Term}
-#'   \item{terms$hlt_code}{MedDRA code to identify the High Level Term}
-#'   \item{terms$hlgt_code}{MedDRA code to identify the High Level Group Term}
-#'   \item{terms$soc_code}{MedDRA code to identify the System Organ Class}
-#'   \item{terms$llt_name}{Full name of the Lowest Level Term}
-#'   \item{terms$pt_name}{Full name of the Preferred Term}
-#'   \item{terms$hlt_name}{Full name of the High Level Term}
-#'   \item{terms$hlgt_name}{Full name of the High Level Group Term}
-#'   \item{terms$soc_name}{Full name of the System Organ Class}
-#'   \item{terms$soc_abbrev}{System Organ Class abbreviation}
-#'   \item{terms$pt_soc_code}{The primary System Organ Class to which the Preferred Term is linked}
-#'   \item{terms$primary_soc_fg}{Flag to indicate primary System Organ Class}
-#'   \item{codebook}{Data codebook for MedDRA terms}
-#'   \item{codebook$varname}{Variable name for terms dataframe}
-#'   \item{codebook$datatype}{Variable data type for terms dataframe}
-#'   \item{codebook$description}{Variable description for terms dataframe}
-#' }
-#'
-#' @keywords datasets
-#'
-#' @examples
-#'
-#' data(lst_meddra)
-#'
-"lst_meddra"
-
-#### 3) Read in TLFB Data ####
+#### 1) camr_read_tlfb_v2 ####
 #' Read in TLFB V1/V2 JSON Data
 #'
 #' @param chr_path_to_json_dir Directory path containing JSON files.
@@ -114,6 +27,7 @@
 #'
 #' @return A dataframe.
 #' @export
+
 camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
   dir(chr_path_to_json_dir, pattern='\\.json$', full.names = TRUE, recursive=recursive) |>
     map(\(chr_path){
@@ -241,4 +155,147 @@ camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
 
     }, .progress=list(format='Reading TLFB V1/V2 JSON Data {cli::pb_bar} {cli::pb_current}/{cli::pb_total} {cli::pb_eta_str}')) |>
     bind_rows()
+}
+
+#### 2) camr_meddra_join ####
+#' Join MedDRA Terms
+#'
+#' Function to add MedDRA terms and levels
+#' based on the corresponding MedDRA code
+#' in a dataframe.
+#'
+#' @param df The dataframe.
+#' @param code_col The column name with MedDRA codes.
+#' @param lst_meddra The MedDRA database list.
+#'
+#' @author Bryn Evohr
+#'
+#' @returns Dataframe joined with MedDRA terms and levels.
+#'
+#' @examples
+#' data(lst_meddra)
+#'
+#' camr_meddra_join(df_medhx, INV.INT.MedHx.MedDRA.Code,
+#'   lst_meddra) |>
+#'   mutate(
+#'     INV.CHR.MedHx.MedDRA.Term = code_name,
+#'     INV.CHR.MedHx.MedDRA.HLT.Term = hlt_name,
+#'     INV.CHR.MedHx.MedDRA.HLGT.Term = hlgt_name,
+#'     INV.CHR.MedHx.MedDRA.SOC.Term = soc_name,
+#'     INV.FCT.MedHx.MedDRA.Level = level,
+#'     .after = INV.INT.MedHx.MedDRA.Code
+#'   ) |>
+#'   select(-c(level, code_name, hlt_name,
+#'     hlgt_name, soc_name)) -> df_medhx_meddra
+#'
+#' @export
+
+camr_meddra_join <- function (df, code_col, lst_meddra) {
+
+  lst_meddra$codes -> df_meddra_codes
+  lst_meddra$terms -> df_meddra_terms
+
+  eqCode <- rlang::enquo(code_col)
+
+  df |>
+    mutate(
+      code = !!eqCode
+    ) |>
+    left_join(df_meddra_codes, by = 'code') -> df_meddra_join
+
+  df_meddra_join |>
+    filter(level == 'llt') |>
+    left_join(df_meddra_terms |> filter(primary_soc_fg != 'N') |> select(
+      llt_code, llt_name, pt_code, pt_name, hlt_code, hlt_name, hlgt_code, hlgt_name, soc_code, soc_name
+    ) |> distinct(), by = c('code' = 'llt_code')) |>
+    mutate(
+      code_name = llt_name,
+      llt_code = code,
+      llt_name,
+      pt_code,
+      pt_name,
+      hlt_code,
+      hlt_name,
+      hlgt_code,
+      hlgt_name,
+      soc_code,
+      soc_name,
+      .after = level
+    )-> df_llt
+
+  df_meddra_join |>
+    filter(level == 'pt') |>
+    left_join(df_meddra_terms |> filter(primary_soc_fg != 'N') |> select(
+      pt_code, pt_name, hlt_code, hlt_name, hlgt_code, hlgt_name, soc_code, soc_name
+    ) |> distinct(), by = c('code' = 'pt_code')) |>
+    mutate(
+      code_name = pt_name,
+      llt_code = NA,
+      llt_name = NA,
+      pt_code = code,
+      pt_name,
+      hlt_code,
+      hlt_name,
+      hlgt_code,
+      hlgt_name,
+      soc_code,
+      soc_name,
+      .after = level
+    ) -> df_pt
+
+  df_meddra_join |>
+    filter(level == 'hlt') |>
+    left_join(df_meddra_terms |> filter(primary_soc_fg != 'N') |> select(
+      hlt_code, hlt_name, hlgt_code, hlgt_name, soc_code, soc_name
+    ) |> distinct(), by = c('code' = 'hlt_code')) |>
+    mutate(
+      code_name = hlt_name,
+      llt_code = NA,
+      llt_name = NA,
+      pt_code = NA,
+      pt_name = NA,
+      hlt_code = code,
+      hlt_name,
+      hlgt_code,
+      hlgt_name,
+      soc_code,
+      soc_name,
+      .after = level
+    )  -> df_hlt
+
+  df_meddra_join |>
+    filter(level == 'hlgt') |>
+    left_join(df_meddra_terms |> filter(primary_soc_fg != 'N') |> select(
+      hlgt_code, hlgt_name, soc_code, soc_name
+    ) |> distinct(), by = c('code' = 'hlgt_code')) |>
+    mutate(
+      code_name = hlgt_name,
+      llt_code = NA,
+      llt_name = NA,
+      pt_code = NA,
+      pt_name = NA,
+      hlt_code = NA,
+      hlt_name = NA,
+      hlgt_code = code,
+      hlgt_name,
+      soc_code,
+      soc_name,
+      .after = level
+    )  -> df_hlgt
+
+  df_meddra_join |>
+    filter(is.na(level)) |>
+    mutate(
+      level = NA,
+      code_name = NA,
+      hlt_name = NA,
+      hlgt_name = NA,
+      soc_name = NA
+    ) |>
+    select(-code) -> df_no_code
+
+  rbind(df_llt, df_pt, df_hlt, df_hlgt) |>
+    select(-c(code, llt_code, llt_name, pt_code, pt_name, hlt_code, hlgt_code, soc_code)) |>
+    rbind(df_no_code) -> df_all_codes
+
 }

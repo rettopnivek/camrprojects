@@ -8,7 +8,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2023-11-15
+# Last updated: 2024-03-12
 
 # Table of contents
 # 1) Operators
@@ -36,6 +36,7 @@
 #     3.4.2) camr_join_on_idx
 #   3.5) camr_write_csv
 #   3.6) camr_assert
+#   3.7) camr_util_collapse
 
 #### 1) Operators ####
 
@@ -692,4 +693,29 @@ camr_assert <- function (any_x, lgl_expr, chr_message) {
   )) stop(chr_message)
 
   any_x
+}
+
+##### 3.7) camr_util_collapse #####
+#' Collapse Checkbox Values
+#'
+#' Collapse checkbox values when pivoting
+#' REDCap raw data.
+#'
+#' @param x An object containing the values to collapse.
+#'
+#' @author Michael Pascale
+#'
+#' @keywords internal
+#' @export
+#'
+#' @examples
+#' pivot_wider(
+#'   df_redcap_raw,
+#'   names_from=field_name,
+#'   values_from=value,
+#'   values_fn=camr_util_collapse
+#' )
+
+camr_util_collapse <- function (x) {
+  paste(x, collapse='|')
 }
