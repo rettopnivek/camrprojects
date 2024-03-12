@@ -582,6 +582,20 @@ camr_file_templates <- function(
       'targets',
       'create targets',
       'initialize targets'
+    ),
+
+    folders_for_analysis_project = c(
+      "folders for analysis project",
+      "analysis project folders",
+      "analysis project directories",
+      "folders for analyses",
+      "directories for analyses"
+    ),
+
+    analysis_script = c(
+      "analysis script",
+      "analysis R script",
+      "analysis r script"
     )
 
   )
@@ -729,6 +743,7 @@ camr_file_templates <- function(
       "    # R functions for CAM",
       "    #   To install:",
       "    #   devtools::install_github( 'rettopnivek/camrprojects')",
+      "    'camrprojects'",
       "  )",
       ")",
       "",
@@ -761,6 +776,43 @@ camr_file_templates <- function(
     )
 
     # Close 'Create _targets.R file'
+  }
+
+  # Create folders for analysis project
+  if ( chr_template %in% lst_templates$folders_for_analysis_project ) {
+
+    mkdir( "Source" )
+
+    chr_README <- paste0(
+      "This directory contains local copies of source files. ",
+      "Source files can be found on the Dropbox folder 'CAM Analyses'",
+      " in 'PROJ-YYYY/PROJ-AZZZ-Name/Source'. ",
+      "\n\n",
+      "Patient data is not allowed on the MGB GitLab server. ",
+      "The contents of this directory shall therefore be excluded from git.",
+      "\n"
+    )
+
+    write(
+      chr_README,
+      file = "Source/README.txt"
+    )
+
+    mkdir( "Output" )
+
+    chr_README <- paste0(
+      "Output files should be uploaded to the Dropbox folder ",
+      "'CAM Analyses in 'PROJ-YYYY/PROJ-AZZZ-Name/Output'.",
+      "\n"
+    )
+
+    write(
+      chr_README,
+      file = "Output/README.txt"
+    )
+
+    mkdir( "R" )
+
   }
 
 }
