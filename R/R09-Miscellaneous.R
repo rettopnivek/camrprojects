@@ -57,6 +57,33 @@
 #'
 "example_CAM_data_set"
 
+#### 2) lst_meddra ####
+#' MedDRA Database
+#'
+#' A list containing three dataframes of the MedDRA database.
+#' Allows individuals to take downloaded MedDRA codes from
+#' REDCap and pull corresponding terms and MedDRA categories.
+#'
+#' @docType data
+#'
+#' @usage data(lst_meddra)
+#'
+#' @format A list with 3 dataframes:
+#' \describe{
+#'   \item{codes}{All MedDRA codes and the corresponding level}
+#'   \item{terms}{All level MedDRA terms and codes}
+#'   \item{codebook}{Data codebook for MedDRA terms}
+#
+#' }
+#'
+#' @keywords datasets
+#'
+#' @examples
+#'
+#' data(lst_meddra)
+#'
+"lst_meddra"
+
 #### 2) Read in TLFB Data ####
 #' Read in TLFB V1/V2 JSON Data
 #'
