@@ -7,7 +7,7 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2023-07-24
+# Last updated: 2024-03-12
 
 #### 1) example_CAM_data_set ####
 #' A Fake Example CAM Data Set
@@ -71,9 +71,26 @@
 #' @format A list with 3 dataframes:
 #' \describe{
 #'   \item{codes}{All MedDRA codes and the corresponding level}
+#'   \item{codes$levels}{MedDRA level}
+#'   \item{codes$code}{MedDRA code}
 #'   \item{terms}{All level MedDRA terms and codes}
+#'   \item{terms$llt_code}{MedDRA code to identify the Lowest Level Term}
+#'   \item{terms$pt_code}{MedDRA code to identify the Preferred Term}
+#'   \item{terms$hlt_code}{MedDRA code to identify the High Level Term}
+#'   \item{terms$hlgt_code}{MedDRA code to identify the High Level Group Term}
+#'   \item{terms$soc_code}{MedDRA code to identify the System Organ Class}
+#'   \item{terms$llt_name}{Full name of the Lowest Level Term}
+#'   \item{terms$pt_name}{Full name of the Preferred Term}
+#'   \item{terms$hlt_name}{Full name of the High Level Term}
+#'   \item{terms$hlgt_name}{Full name of the High Level Group Term}
+#'   \item{terms$soc_name}{Full name of the System Organ Class}
+#'   \item{terms$soc_abbrev}{System Organ Class abbreviation}
+#'   \item{terms$pt_soc_code}{The primary System Organ Class to which the Preferred Term is linked}
+#'   \item{terms$primary_soc_fg}{Flag to indicate primary System Organ Class}
 #'   \item{codebook}{Data codebook for MedDRA terms}
-#
+#'   \item{codebook$varname}{Variable name for terms dataframe}
+#'   \item{codebook$datatype}{Variable data type for terms dataframe}
+#'   \item{codebook$description}{Variable description for terms dataframe}
 #' }
 #'
 #' @keywords datasets
@@ -84,7 +101,7 @@
 #'
 "lst_meddra"
 
-#### 2) Read in TLFB Data ####
+#### 3) Read in TLFB Data ####
 #' Read in TLFB V1/V2 JSON Data
 #'
 #' @param chr_path_to_json_dir Directory path containing JSON files.
