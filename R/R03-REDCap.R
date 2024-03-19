@@ -380,7 +380,8 @@ camr_download_redcap <- function(
   chr_description <- stringr::str_glue(
     paste0(
       'MGH Center for Addiction Medicine\n',
-      'Title (IRB No. XXXXXXXXXXX)\n',
+      '{ lst_database$project_title }\n',
+      'IRB No. { lst_database$project_irb_number }\n',
       '\n',
       'Unprocessed REDCap dataset.\n',
       '\n',
