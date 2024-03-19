@@ -41,7 +41,7 @@ camr_path <- function(
     real = TRUE,
     create = FALSE ) {
 
-  .Deprecated('camr_build_path')
+  #.Deprecated('camr_build_path')
 
   prefix <- match.arg(prefix)
 
