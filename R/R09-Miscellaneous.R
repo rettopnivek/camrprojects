@@ -8,7 +8,7 @@
 #   bevohr@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2024-03-12
+# Last updated: 2024-09-24
 
 # Table of contents
 # 1) camr_read_tlfb_v2
@@ -284,6 +284,26 @@ camr_meddra_join <- function (df, code_col, lst_meddra) {
     )  -> df_hlgt
 
   df_meddra_join |>
+    filter(level == 'soc') |>
+    left_join(df_meddra_terms |> filter(primary_soc_fg != 'N') |> select(
+      soc_code, soc_name
+    ) |> distinct(), by = c('code' = 'soc_code')) |>
+    mutate(
+      code_name = soc_name,
+      llt_code = NA,
+      llt_name = NA,
+      pt_code = NA,
+      pt_name = NA,
+      hlt_code = NA,
+      hlt_name = NA,
+      hlgt_code = NA,
+      hlgt_name = NA,
+      soc_code = code,
+      soc_name,
+      .after = level
+    )  -> df_soc
+
+  df_meddra_join |>
     filter(is.na(level)) |>
     mutate(
       level = NA,
@@ -294,7 +314,7 @@ camr_meddra_join <- function (df, code_col, lst_meddra) {
     ) |>
     select(-code) -> df_no_code
 
-  rbind(df_llt, df_pt, df_hlt, df_hlgt) |>
+  rbind(df_llt, df_pt, df_hlt, df_hlgt, df_soc) |>
     select(-c(code, llt_code, llt_name, pt_code, pt_name, hlt_code, hlgt_code, soc_code)) |>
     rbind(df_no_code) -> df_all_codes
 
