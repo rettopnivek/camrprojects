@@ -8,7 +8,7 @@
 #   bevohr@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2024-09-24
+# Last updated: 2024-10-07
 
 # Table of contents
 # 1) camr_read_tlfb_v2
@@ -122,6 +122,34 @@ camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
             cal_path = chr_path
           )
         }
+
+      } else if (!is.null(lst_data$appversion)) {
+        # Read V3 JSON.
+        # Version 3 was in use beginning October 2024.
+        tibble_row(
+          cal_app_version = 3L,
+          cal_filename=basename(chr_path),
+          cal_subject=lst_data$subject,
+          cal_pid=lst_data$pid,
+          cal_record=lst_data$record,
+          cal_timepoint=lst_data$event,
+
+          cal_start=ymd(lst_data$start),
+          cal_end=ymd(lst_data$end),
+          cal_days=interval(cal_start, cal_end) |> time_length('days'),
+
+          cal_staff=lst_data$staff,
+          cal_datetime=as_datetime(lst_data$datetime %||% NA),
+
+          # Let cal_events be a nested dataframe containing the substance use
+          # and key date calendar events.
+          cal_events=lst_data$events |>
+            bind_rows() |>
+            (\(x) {if (length(names(x)) > 0) names(x) <- paste0('event', names(x)); x})() |>
+            list(),
+
+          cal_path = chr_path
+        )
 
       } else {
         # Read V2 JSON.
