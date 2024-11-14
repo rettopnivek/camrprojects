@@ -14,8 +14,8 @@
 # 1) camr_read_tlfb_v2
 # 2) camr_meddra_join
 
-#### 1) camr_read_tlfb_v2 ####
-#' Read in TLFB V1/V2 JSON Data
+#### 1) camr_read_tlfb ####
+#' Read in TLFB V1/V2/V3 JSON Data
 #'
 #' @param chr_path_to_json_dir Directory path containing JSON files.
 #' @param recursive Whether to search subfolders of the directory for data files.
@@ -28,7 +28,8 @@
 #' @return A dataframe.
 #' @export
 
-camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
+camr_read_tlfb <- function (chr_path_to_json_dir, recursive=FALSE) {
+
   dir(chr_path_to_json_dir, pattern='\\.json$', full.names = TRUE, recursive=recursive) |>
     map(\(chr_path){
 
@@ -144,6 +145,21 @@ camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
           # Let cal_events be a nested dataframe containing the substance use
           # and key date calendar events.
           cal_events=lst_data$events |>
+            map(\(evt) data.frame(
+              event_title     = evt$`_title`      %||% NA,
+              event_type      = evt$`_type`       %||% NA,
+              event_start     = ymd(str_sub(evt$`_date` %||% NA, 1, 10)),
+              event_category  = evt$`_category`   %||% NA,
+              event_substance = evt$`_substance`  %||% NA,
+              event_method    = evt$`_method`     %||% NA,
+              event_methodOther= evt$`_methodOther` %||% NA,
+              event_methodType= evt$`_methodType` %||% NA,
+              event_methodTypeOther= evt$`_methodTypeOther` %||% NA,
+              event_occasions = evt$`_times`  %||% NA,
+              event_amount    = as.character(evt$`_amount`     %||% NA),
+              event_units     = evt$`_units`      %||% NA,
+              event_unitsOther= evt$`_unitsOther` %||% NA
+            )) |>
             bind_rows() |>
             (\(x) {if (length(names(x)) > 0) names(x) <- paste0('event', names(x)); x})() |>
             list(),
@@ -181,7 +197,7 @@ camr_read_tlfb_v2 <- function (chr_path_to_json_dir, recursive=FALSE) {
         )
       }
 
-    }, .progress=list(format='Reading TLFB V1/V2 JSON Data {cli::pb_bar} {cli::pb_current}/{cli::pb_total} {cli::pb_eta_str}')) |>
+    }, .progress=list(format='Reading TLFB V1/V2/V3 JSON Data {cli::pb_bar} {cli::pb_current}/{cli::pb_total} {cli::pb_eta_str}')) |>
     bind_rows()
 }
 
