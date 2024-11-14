@@ -15,3 +15,7 @@ obtained via the command
 \code{ls(pos = "package:camrprojects")} after
 loading in the package via a call to \code{library}.
 }
+\author{
+\strong{Maintainer}: Kevin Potter \email{kpotter5@mgh.harvard.edu}
+
+}
