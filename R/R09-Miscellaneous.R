@@ -161,7 +161,6 @@ camr_read_tlfb <- function (chr_path_to_json_dir, recursive=FALSE) {
               event_unitsOther= evt$`_unitsOther` %||% NA
             )) |>
             bind_rows() |>
-            (\(x) {if (length(names(x)) > 0) names(x) <- paste0('event', names(x)); x})() |>
             list(),
 
           cal_path = chr_path
