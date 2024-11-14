@@ -201,6 +201,11 @@ camr_read_tlfb <- function (chr_path_to_json_dir, recursive=FALSE) {
     bind_rows()
 }
 
+#' @rdname camr_read_tlfb
+#' @export
+camr_read_tlfb_v2 <- function(...) {
+  camr_read_tlfb(...)
+}
 #### 2) camr_meddra_join ####
 #' Join MedDRA Terms
 #'
