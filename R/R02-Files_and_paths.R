@@ -543,8 +543,8 @@ camr_find_file <- function(
 
   if (nrow(df_files_matching) > 1) {
     warning(
-      'Matching file is ambiguous:\n    ', paste(df_files_matching$filename, collapse=',\n    '),
-      '\n  Using the latest:\n    ', last(df_files_matching$filename)
+      'Matching file is ambiguous. Using the latest:\n    ',
+      last(df_files_matching$filename)
     )
   } else if (nrow(df_files_matching) < 1) {
     stop('No files matching ', chr_name, ' in ', chr_path)
