@@ -2568,6 +2568,36 @@ camr_SWA_linking_code <- function(
 }
 
 #### 4) camr_SWA_linking_code_performance ####
+#' Summary of Linking of Records
+#'
+#' Function to summarize the performance of
+#' the linking code for the school-wide
+#' assessment. Provides summary statistics
+#' for what records were linked, and if
+#' columns with the 'true' IDs are detected,
+#' provides details on hits and correct
+#' rejections.
+#'
+#' @param dtf_linked A data frame, the output
+#'   from [camrprojects::camr_SWA_linking_code].
+#' @param lst_groups A named list of column names,
+#'   the grouping factors to consider when summarizing
+#'   the number of records linked.
+#' @param lgc_display A logical value; if \code{TRUE}
+#'   prints the results to the console in addition
+#'   to returning output as a list.
+#'
+#' @returns A list of data frames.
+#'
+#' @examples
+#' # Linking across time points
+#' dtf_long <- camr_SWA_linking_code_simulate('demo')
+#' dtf_linked <- camr_SWA_linking_code(dtf_long)
+#' lst_summary <- camr_SWA_linking_code_performance(
+#'   dtf_linked, lgc_display = FALSE
+#' )
+#'
+#' @export
 
 camr_SWA_linking_code_performance <- function(
     dtf_linked,
