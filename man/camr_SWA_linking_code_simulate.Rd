@@ -10,6 +10,8 @@ camr_SWA_linking_code_simulate(chr_type = "debug")
 \item{chr_type}{A character string, the type of
 data set to generate, where \code{'debug'}
 generates data for debugging purposes,
+\code{'demo'} generates a small data set for
+demonstration purposes,
 \code{'accuracy'} generates data for accuracy
 assessment, \code{'duplicate'} generates data
 for a single time point with duplicate records,

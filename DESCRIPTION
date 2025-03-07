@@ -1,6 +1,6 @@
 Package: camrprojects
 Title: Portable Functions for R Projects at CAM-MGH
-Version: 2.0.9
+Version: 2.0.10
 Authors@R: 
     person(given = "Kevin",
            family = "Potter",
@@ -12,6 +12,8 @@ Description: A set of portable functions commonly
 Depends:
     R (>= 4.1)
 Imports:
+    checkmate (>= 2.1.0),
+    config,
     devtools,
     dplyr,
     furrr,
@@ -19,6 +21,7 @@ Imports:
     httr,
     jsonlite,
     keyring,
+    lubridate,
     magrittr,
     pkgdown,
     progress,
@@ -27,9 +30,7 @@ Imports:
     rlang,
     stringr,
     testthat,
-    tidyr,
-    checkmate (>= 2.1.0),
-    config
+    tidyr
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true

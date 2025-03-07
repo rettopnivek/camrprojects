@@ -9,8 +9,9 @@ camr_SWA_linking_code(
   lst_link_across = NULL,
   obj_link_using = NULL,
   lst_link_combo = NULL,
-  lst_link_threshold = NULL,
-  lgc_progress = TRUE
+  lst_ignore_nonmissing = NULL,
+  chr_progress = "bar",
+  lgc_matches_only = TRUE
 )
 }
 \arguments{
@@ -31,7 +32,7 @@ instead.}
 \item{obj_link_using}{Either a character vector with the column
 names for the linking items, or a list of character vectors,
 one vector for each set defined in \code{lst_link_across}.
-Pass a list with separate vectors allows using different
+Passing a list with separate vectors allows using different
 linking items for different sets when necessary. If
 \code{NULL} assumes the standard set of linking items:
 \code{SSS.INT.School.Code}, \code{IDX.INT.Origin.LASID},
@@ -50,14 +51,22 @@ for the relevant set in \code{obj_link_using}, meaning that if
 character vectors differ across sets, indices should be defined
 accordingly.}
 
-\item{lst_link_threshold}{A list of lists, where each sublist consists
-of integer vectors for each combination of linking items defined in
-\code{lst_link_combo}. Integer vectors consist of 4 values, the
-minimum dissimilarity score and unique count of that score for the
-base set and linking set, respectively.}
+\item{lst_ignore_nonmissing}{A list of lists, similar to
+\code{lst_link_combo}, indicating items to ignore even if they
+are not missing when computing a dissimilarity score over a
+given combination (thereby allowing records to be linked even if
+some items do not match). If \code{c()} (the default) the function
+will not ignore non-missing mismatches.}
 
-\item{lgc_progress}{A logical value; if \code{TRUE} displays
-progress of the function call.}
+\item{chr_progress}{A character string, used to specify how progress
+of the function is tracked. If \code{'section'}, prints the completed
+sections for the different parts of the linking process to the
+console window; if \code{'bar'}, a simple progress bar is shown
+on the console window (default); if \code{''} no progress is displayed.}
+
+\item{lgc_matches_only}{A logical value; if TRUE only computes
+returns dissimilarity scores for confirmed matches (results in
+faster computation).}
 }
 \value{
 A data frame.
