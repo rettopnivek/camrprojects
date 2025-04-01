@@ -4,7 +4,7 @@
 \alias{camr_SWA_linking_code_simulate}
 \title{Simulate Data to Link}
 \usage{
-camr_SWA_linking_code_simulate(chr_type = "debug")
+camr_SWA_linking_code_simulate(chr_type = "debug", int_RNG_seed = 20250314)
 }
 \arguments{
 \item{chr_type}{A character string, the type of
@@ -17,6 +17,10 @@ assessment, \code{'duplicate'} generates data
 for a single time point with duplicate records,
 and \code{'demo'} generates a small data set
 for demonstration purposes.}
+
+\item{int_RNG_seed}{A integer value, passed to
+\link[base:Random]{base::set.seed} to ensure reproducible
+results when simulating values.}
 }
 \value{
 A data frame.

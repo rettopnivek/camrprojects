@@ -6,8 +6,7 @@
 \usage{
 camr_SWA_linking_code_performance(
   dtf_linked,
-  lst_groups = list(Time = "SSS.INT.Time_point"),
-  lgc_display = TRUE
+  lst_groups = list(Time = "SSS.INT.Time_point")
 )
 }
 \arguments{

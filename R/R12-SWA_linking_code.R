@@ -8,13 +8,51 @@
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2025-03-06
+# Last updated: 2025-04-01
 
 # Table of contents
 # 1) camr_SWA_linking_code_simulate
+#   1.1) Setup
+#   1.2) Linking questions
+#   1.3) Generate data
+#     1.3.1) Testing/debugging
+#       1.3.1.1) Initialize data frame
+#       1.3.1.2) Standard linking + no links
+#       1.3.1.3) Dissimilarity = 1 [Base]
+#       1.3.1.4) Dissimilarity = 1 [Add]
+#       1.3.1.5) Duplicate records [Base]
+#       1.3.1.6) Duplicate records [Add]
+#       1.3.1.7) Subset dissimilarity = 0
+#       1.3.1.8) Dissimilarity off by 1
+#       1.3.1.9) Duplicate records w/ NA [Base]
+#       1.3.1.10) Duplicate records w/ NA [Add]
+#       1.3.1.11) Test of priority [School ID over questions]
+#       1.3.1.12) Link using different items by time point
+#       1.3.1._) Final processing
+#     1.3.2) Accuracy testing
+#     1.3.3) Duplicate records
+#       1.3.3.1) Initialize data frame
+#       1.3.3.2) Define linking items
+#     1.3.4) Demonstration
+#       1.3.4.1) Initialize data frame
+#       1.3.4.2) Standard linking + no links
 # 2) camr_SWA_linking_code_inputs
+#   2.1) Setup
+#   2.2) lst_link_across
+#   2.3) obj_link_using
+#   2.4) lst_link_combo
+#   2.5) lst_ignore_nonmissing
 # 3) camr_SWA_linking_code
+#   3.1) Setup
+#     3.1.1) Initialize variables for linking
+#   3.2) Link over sets
+#     3.2.1) Compute dissimilarity scores
+#   3.3) Create linked IDs
 # 4) camr_SWA_linking_code_performance
+# 5) Helper functions
+#   5.1) camr_SWA_linking_code_items
+#   5.2) camr_SWA_linking_code_rows
+#   5.3) camr_SWA_linking_code_select
 
 #### 1) camr_SWA_linking_code_simulate ####
 #' Simulate Data to Link
@@ -37,6 +75,9 @@
 #'   for a single time point with duplicate records,
 #'   and \code{'demo'} generates a small data set
 #'   for demonstration purposes.
+#' @param int_RNG_seed A integer value, passed to
+#'   [base::set.seed] to ensure reproducible
+#'   results when simulating values.
 #'
 #' @author Kevin Potter
 #'
@@ -48,9 +89,13 @@
 #' @export
 
 camr_SWA_linking_code_simulate <- function(
-    chr_type = 'debug' ) {
+    chr_type = 'debug',
+    int_RNG_seed = 20250314 ) {
 
   #### 1.1) Setup ####
+
+  # Set RNG seed
+  set.seed( int_RNG_seed )
 
   lst_types <- list(
     Accuracy = c(
@@ -672,7 +717,17 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         rep( NA, 3 ),
         # + Subset dissimilarity = 0
-        rep( NA, 7 ) |> rep(2)
+        rep( NA, 7 ) |> rep(2),
+        # + Dissimilarity off by 1
+        rep( NA, 7 ) |> rep(2),
+        # + Duplicate records w/ NA [Base]
+        rep( NA, 3 ),
+        # + Duplicate records w/ NA [Add]
+        rep( NA, 3 ),
+        # + Test of priority [School ID over questions]
+        c( 5, 5 ),
+        # + Link using different items by time point
+        c( 6, NA, 6 )
       ),
       SSS.INT.School.Code = c(
         # Standard linking
@@ -689,26 +744,46 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         rep( 1, 3 ),
         # + Subset dissimilarity = 0
-        rep( 1, 7 ) |> rep(2)
+        rep( 1, 7 ) |> rep(2),
+        # + Dissimilarity off by 1
+        rep( 1, 7 ) |> rep(2),
+        # + Duplicate records w/ NA [Base]
+        rep( 1, 3 ),
+        # + Duplicate records w/ NA [Add]
+        rep( 1, 3 ),
+        # + Test of priority [School ID over questions]
+        c( 1, 1 ),
+        # + Link using different items by time point
+        c( 1, 1, 1 )
       ),
       SSS.INT.SurveyYear = c(
         # Standard linking
-        rep( 2023, 18 ),
-        rep( 2024, 9 ),
+        rep( 2023, 9 ),
+        rep( 2024, 18 ),
         # No links
-        rep( 2023, 18 ),
-        rep( 2024, 9 ),
+        rep( 2023, 9 ),
+        rep( 2024, 18 ),
         # Specific tests
         # + Dissimilarity = 1 [Base]
-        c(2023, 2023, 2023) |> rep(7),
+        c(2023, 2023, 2024) |> rep(7),
         # + Dissimilarity = 1 [Add]
-        c(2023, 2023, 2023) |> rep(7),
+        c(2023, 2024, 2024) |> rep(7),
         # + Duplicate records [Base]
-        c(2023, 2023, 2023),
+        c(2023, 2023, 2024),
         # + Duplicate records [Add]
-        c(2023, 2023, 2023),
+        c(2023, 2024, 2024),
         # + Subset dissimilarity = 0
-        rep( c( 2023 ), 2 ) |> rep(7)
+        c( 2023, 2024 ) |> rep(7),
+        # + Dissimilarity off by 1
+        c( 2023, 2024 ) |> rep(7),
+        # + Duplicate records w/ NA [Base]
+        c(2023, 2023, 2024),
+        # + Duplicate records w/ NA [Add]
+        c(2023, 2024, 2024),
+        # + Test of priority [School ID over questions]
+        c( 2023, 2024 ),
+        # + Link using different items by time point
+        c(2023, 2024, 2024)
       ),
       SSS.CHR.Semester = c(
         # Standard linking
@@ -729,29 +804,19 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         c('Fall', 'Spring', 'Spring'),
         # + Subset dissimilarity = 0
-        c( 'Fall', 'Spring' ) |> rep(7)
+        c( 'Fall', 'Spring' ) |> rep(7),
+        # + Dissimilarity off by 1
+        c( 'Fall', 'Spring' ) |> rep(7),
+        # + Duplicate records w/ NA [Base]
+        c('Fall', 'Fall', 'Spring'),
+        # + Duplicate records w/ NA [Add]
+        c('Fall', 'Spring', 'Spring'),
+        # + Test of priority [School ID over questions]
+        c( 'Fall', 'Spring' ),
+        # + Link using different items by time point
+        c( 'Fall', 'Spring', 'Fall' )
       ),
-      SSS.CHR.Time_point = c(
-        # Standard linking
-        rep( '2023 Fall', 9 ),
-        rep( '2023 Spring', 9 ),
-        rep( '2024 Fall', 9 ),
-        # No links
-        rep( 'Fall', 9 ),
-        rep( 'Spring', 9 ),
-        rep( 'Fall', 9 ),
-        # Specific tests
-        # + Dissimilarity = 1 [Base]
-        c('2023 Fall', '2023 Fall', '2023 Spring') |> rep(7),
-        # + Dissimilarity = 1 [Add]
-        c('2023 Fall', '2023 Spring', '2023 Spring') |> rep(7),
-        # + Duplicate records [Base]
-        c('2023 Fall', '2023 Fall', '2023 Spring'),
-        # + Duplicate records [Add]
-        c('2023 Fall', '2023 Spring', '2023 Spring'),
-        # + Subset dissimilarity = 0
-        c( '2023 Fall', '2023 Spring' ) |> rep(7)
-      ),
+      SSS.CHR.Time_point = '',
       SSS.INT.Time_point = c(
         # Standard linking
         rep( 0, 9 ),
@@ -771,7 +836,17 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         c(0, 1, 1),
         # + Subset dissimilarity = 0
-        c( 0, 1 ) |> rep(7)
+        c( 0, 1 ) |> rep(7),
+        # + Dissimilarity off by 1
+        c( 0, 1 ) |> rep(7),
+        # + Duplicate records w/ NA [Base]
+        c(0, 0, 1),
+        # + Duplicate records w/ NA [Add]
+        c(0, 1, 1),
+        # + Test of priority [School ID over questions]
+        c( 0, 1 ),
+        # + Link using different items by time point
+        c( 0, 1, 2 )
       ),
       SSS.INT.Grade = c(
         # Standard linking
@@ -790,7 +865,17 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         c(9, 10, 10),
         # + Subset dissimilarity = 0
-        c( 9, 9 ) |> rep(7)
+        c( 9, 9 ) |> rep(7),
+        # + Dissimilarity off by 1
+        c( 9, 9 ) |> rep(7),
+        # + Duplicate records w/ NA [Base]
+        c(9, 9, 10),
+        # + Duplicate records w/ NA [Add]
+        c(9, 10, 10),
+        # + Test of priority [School ID over questions]
+        c( 9, 9 ),
+        # + Link using different items by time point
+        c( 9, 9, 10 )
       ),
       # Linking questions
       SBJ.FCT.Sex = NA,
@@ -816,10 +901,24 @@ camr_SWA_linking_code_simulate <- function(
         # + Duplicate records [Add]
         rep( TRUE, 3 ),
         # + Subset dissimilarity = 0
-        c( FALSE, FALSE ) |> rep(7)
+        c( FALSE, FALSE ) |> rep(7),
+        # + Off-by-one error
+        c( TRUE, TRUE ) |> rep(7),
+        # + Duplicate records w/ NA [Base]
+        rep( TRUE, 3 ),
+        # + Duplicate records w/ NA [Add]
+        rep( TRUE, 3 ),
+        # + Test of priority [School ID over questions]
+        c( TRUE, TRUE ),
+        # + Link using different items by time point
+        rep( TRUE, 3 )
       ),
       IDX.INT.Linked.True = 0,
       SSS.CHR.Linked.Test_type = ''
+    )
+    dtf_long$SSS.CHR.Time_point <- paste0(
+      dtf_long$SSS.CHR.Semester, ' ',
+      dtf_long$SSS.INT.SurveyYear
     )
 
     dtf_long$IDX.CHR.Origin.ID <-
@@ -1087,13 +1186,11 @@ camr_SWA_linking_code_simulate <- function(
 
     # Label test type
     dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
-      'Duplicate records [Base]'
+      'Duplicate records [Add]'
 
     # Update indices
     int_old <- int_old + max(int_new)
     int_ID_old <- int_ID_old + max(int_ID)
-
-    # + Ignore school code
 
     #### 1.3.1.7) Subset dissimilarity = 0 ####
 
@@ -1118,7 +1215,7 @@ camr_SWA_linking_code_simulate <- function(
           paste0( 'dtf_possible.', chr_linking_questions[l] )
         )
 
-        # Item to equate
+        # Item to differ
         if ( l == v ) {
 
           dtf_long[[ chr_linking_questions[l] ]][
@@ -1130,7 +1227,7 @@ camr_SWA_linking_code_simulate <- function(
             prob = dtf_possible[[2]]
           )
 
-          # Close 'Item to equate'
+          # Close 'Item to differ'
         } else {
 
           dtf_long[[ chr_linking_questions[l] ]][
@@ -1166,6 +1263,244 @@ camr_SWA_linking_code_simulate <- function(
 
     #### 1.3.1.8) Dissimilarity off by 1 ####
 
+    int_ID <- rep( 1:7, each = 2 )
+    lst_new <- list(
+      1:2,
+      3:4,
+      5:6,
+      7:8,
+      9:10,
+      11:12,
+      13:14
+    )
+
+    # Loop over variables to differ
+    for ( v in 1:7 ) {
+
+      # Loop over linking items
+      for (l in 1:7) {
+
+        dtf_possible <- get(
+          paste0( 'dtf_possible.', chr_linking_questions[l] )
+        )
+
+        # Item to differ
+        if ( l == v ) {
+
+          dtf_long[[ chr_linking_questions[l] ]][
+            int_old + lst_new[[v]]
+          ] <- sample(
+            dtf_possible[[1]],
+            size = 2,
+            replace = FALSE,
+            prob = dtf_possible[[2]]
+          )
+
+          # Close 'Item to differ'
+        } else {
+
+          dtf_long[[ chr_linking_questions[l] ]][
+            int_old + lst_new[[v]]
+          ] <- sample(
+            dtf_possible[[1]],
+            size = 1,
+            replace = FALSE,
+            prob = dtf_possible[[2]]
+          )
+
+          # Close else for 'Item to differ'
+        }
+
+        # Close 'Loop over linking items'
+      }
+
+      # Close 'Loop over variables to equate'
+    }
+
+    # Update ID
+    int_new <- unlist(lst_new)
+    dtf_long$IDX.INT.Linked.True[int_old + int_new] <-
+      int_ID_old + int_ID
+
+    # Label test type
+    dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
+      'Dissimilarity off by 1'
+
+    # Update indices
+    int_old <- int_old + max(int_new)
+    int_ID_old <- int_ID_old + max(int_ID)
+
+    #### 1.3.1.9) Duplicate records w/ NA [Base] ####
+
+    int_ID <- 1
+    int_new <- 1:3
+
+    # Select variable to be missing
+    int_missing <- sample( 1:7, size = 1 )
+
+    # Loop over linking items
+    for (l in 1:7) {
+
+      dtf_possible <- get(
+        paste0( 'dtf_possible.', chr_linking_questions[l] )
+      )
+
+      dtf_long[[ chr_linking_questions[l] ]][
+        int_old + int_new
+      ] <- sample(
+        dtf_possible[[1]],
+        size = 1,
+        replace = FALSE,
+        prob = dtf_possible[[2]]
+      )
+
+      # Set missing value in 2nd base record
+      if ( l == int_missing ) {
+
+        dtf_long[[ chr_linking_questions[l] ]][
+          int_old + int_new
+        ][2] <- NA
+
+        # Close 'Set missing value in 2nd base record'
+      }
+
+      # Close 'Loop over linking items'
+    }
+
+    # Update ID
+    dtf_long$IDX.INT.Linked.True[int_old + int_new] <-
+      int_ID_old + int_ID
+
+    # Label test type
+    dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
+      'Duplicate records w/ NA [Base]'
+
+    # Update indices
+    int_old <- int_old + max(int_new)
+    int_ID_old <- int_ID_old + max(int_ID)
+
+    #### 1.3.1.10) Duplicate records w/ NA [Add] ####
+
+    int_ID <- 1
+    int_new <- 1:3
+
+    # Select variable to be missing
+    int_missing <- sample( 1:7, size = 1 )
+
+    # Loop over linking items
+    for (l in 1:7) {
+
+      dtf_possible <- get(
+        paste0( 'dtf_possible.', chr_linking_questions[l] )
+      )
+
+      dtf_long[[ chr_linking_questions[l] ]][
+        int_old + int_new
+      ] <- sample(
+        dtf_possible[[1]],
+        size = 1,
+        replace = FALSE,
+        prob = dtf_possible[[2]]
+      )
+
+      # Set missing value in 1st add record
+      if ( l == int_missing ) {
+
+        dtf_long[[ chr_linking_questions[l] ]][
+          int_old + int_new
+        ][2] <- NA
+
+        # Close 'Set missing value in 1st add record'
+      }
+
+      # Close 'Loop over linking items'
+    }
+
+    # Update ID
+    dtf_long$IDX.INT.Linked.True[int_old + int_new] <-
+      int_ID_old + int_ID
+
+    # Label test type
+    dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
+      'Duplicate records w/ NA [Add]'
+
+    # Update indices
+    int_old <- int_old + max(int_new)
+    int_ID_old <- int_ID_old + max(int_ID)
+
+    #### 1.3.1.11) Test of priority [School ID over questions] ####
+
+    int_ID <- 1
+    int_new <- 1:2
+
+    # Loop over linking items
+    for (l in 1:7) {
+
+      dtf_possible <- get(
+        paste0( 'dtf_possible.', chr_linking_questions[l] )
+      )
+
+      dtf_long[[ chr_linking_questions[l] ]][
+        int_old + int_new
+      ] <- sample(
+        dtf_possible[[1]],
+        size = 2,
+        replace = FALSE,
+        prob = dtf_possible[[2]]
+      )
+
+      # Close 'Loop over linking items'
+    }
+
+    # Update ID
+    dtf_long$IDX.INT.Linked.True[int_old + int_new] <-
+      int_ID_old + int_ID
+
+    # Label test type
+    dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
+      'Test of priority [School ID over questions]'
+
+    # Update indices
+    int_old <- int_old + max(int_new)
+    int_ID_old <- int_ID_old + max(int_ID)
+
+    #### 1.3.1.12) Link using different items by time point ####
+
+    int_ID <- 1
+    int_new <- 1:3
+
+    # Loop over linking items
+    for (l in 1:7) {
+
+      dtf_possible <- get(
+        paste0( 'dtf_possible.', chr_linking_questions[l] )
+      )
+
+      dtf_long[[ chr_linking_questions[l] ]][
+        int_old + int_new[-1]
+      ] <- sample(
+        dtf_possible[[1]],
+        size = 1,
+        replace = FALSE,
+        prob = dtf_possible[[2]]
+      )
+
+      # Close 'Loop over linking items'
+    }
+
+    # Update ID
+    dtf_long$IDX.INT.Linked.True[int_old + int_new] <-
+      int_ID_old + int_ID
+
+    # Label test type
+    dtf_long$SSS.CHR.Linked.Test_type[int_old + int_new] <-
+      'Link using different items by time point'
+
+    # Update indices
+    int_old <- int_old + max(int_new)
+    int_ID_old <- int_ID_old + max(int_ID)
+
+    #### 1.3.1._) Final processing ####
 
     # Ensure unlinkable true ID is 0
     dtf_long$IDX.INT.Linked.True[
@@ -1187,6 +1522,11 @@ camr_SWA_linking_code_simulate <- function(
 
       # Close 'Loop over IDs'
     }
+
+    # Index for easy filtering
+    dtf_long$SSS.INT.Linked.Test_type <- as.numeric(
+      as.factor( dtf_long$SSS.CHR.Linked.Test_type )
+    )
 
     return(dtf_long)
 
@@ -1848,7 +2188,7 @@ camr_SWA_linking_code <- function(
 
   # Progress bar
   lgc_progress <- FALSE
-  if ( chr_progress %in% c( 'labels', 'section' ) )
+  if ( chr_progress %in% c( 'label', 'labels', 'section', 'sections' ) )
     lgc_progress <- TRUE
   if ( chr_progress == 'bar' )
     lgc_progress_bar <- TRUE else lgc_progress_bar <- FALSE
@@ -1918,6 +2258,8 @@ camr_SWA_linking_code <- function(
 
     lst_perf <- camr_SWA_linking_code_performance( dtf_linked )
 
+
+
     # Close 'Debugging'
   }
 
@@ -1931,13 +2273,15 @@ camr_SWA_linking_code <- function(
     ) %in% colnames(dtf_long)
   )
 
-  # Make sure row index exists
-  if ( is.null( dtf_long$IDX.INT.Row) ) {
+  # Make sure row index corresponds to actual rows
+  if ( !is.null( dtf_long$IDX.INT.Row) ) {
 
-    dtf_long$IDX.INT.Row <- 1:nrow(dtf_long)
+    dtf_long$IDX.INT.Row.Old <- dtf_long$IDX.INT.Row
 
     # Close 'Make sure row index exists'
   }
+
+  dtf_long$IDX.INT.Row <- 1:nrow(dtf_long)
 
   if (lgc_progress)
     message( '  Default options' )
@@ -1990,24 +2334,56 @@ camr_SWA_linking_code <- function(
 
       }
     )
+    names(lst_link_across) <- paste0(
+      'TP', mat_base_add[, 1],
+      't',
+      'TP', mat_base_add[, 2]
+    )
 
     # Close 'Default sets to link across'
   }
 
+  # Default definitions
+  chr_default_items <- c(
+    'SSS.INT.School.Code',
+    'IDX.INT.Origin.LASID',
+    'SBJ.FCT.Sex',
+    'SBJ.FCT.Link.BirthMonth',
+    'SBJ.FCT.Link.OlderSiblings',
+    'SBJ.FCT.Link.EyeColor',
+    'SBJ.FCT.Link.MiddleInitial',
+    'SBJ.CHR.Link.Streetname',
+    'SBJ.INT.Link.KindergartenYearEst'
+  )
+  lst_standard_combos <- list(
+    c( 1:2 ),
+    c( 1, 3:9 ), # All
+    c( 1, 4:9 ), # -1
+    c( 1, 3, 5:9 ), # -2
+    c( 1, 3:4, 6:9 ), # -3
+    c( 1, 3:5, 7:9 ), # -4
+    c( 1, 3:6, 8:9 ), # -5
+    c( 1, 3:7, 9 ), # -6
+    c( 1, 3:8 ) # -7
+  )
+  lst_standard_ignore <- list(
+    c( 1:2 ),
+    c( 1, 3:9 ), # All
+    c( 1, 3:9 ), # -1
+    c( 1, 3:9 ), # -2
+    c( 1, 3:9 ), # -3
+    c( 1, 3:9 ), # -4
+    c( 1, 3:9 ), # -5
+    c( 1, 3:9 ), # -6
+    c( 1, 3:9 ) # -7
+  )
+
   # Default items to use to link
   if ( is.null(obj_link_using) ) {
 
-    obj_link_using <- c(
-      'SSS.INT.School.Code',
-      'IDX.INT.Origin.LASID',
-      'SBJ.FCT.Sex',
-      'SBJ.FCT.Link.BirthMonth',
-      'SBJ.FCT.Link.OlderSiblings',
-      'SBJ.FCT.Link.EyeColor',
-      'SBJ.FCT.Link.MiddleInitial',
-      'SBJ.CHR.Link.Streetname',
-      'SBJ.INT.Link.KindergartenYearEst'
-    )
+    obj_link_using <- chr_default_items[
+      chr_default_items %in% colnames(dtf_long)
+    ]
 
     # Close 'Default linking questions'
   }
@@ -2069,21 +2445,53 @@ camr_SWA_linking_code <- function(
     lst_link_combo <- lapply(
       seq_along(lst_link_across), function(s) {
 
+        chr_items <- obj_link_using[[s]]
 
+        # Using subset of default items
+        if ( all( chr_items %in% chr_default_items) ) {
 
-        return(
-          list(
-            SLQ_______ = c( 1:2 ),
-            S_Q1234567 = c( 1, 3:9 ),
-            S_Q_234567 = c( 1, 4:9 ),
-            S_Q1_34567 = c( 1, 3, 5:9 ),
-            S_Q12_4567 = c( 1, 3:4, 6:9 ),
-            S_Q123_567 = c( 1, 3:5, 7:9 ),
-            S_Q1234_67 = c( 1, 3:6, 8:9 ),
-            S_Q12345_7 = c( 1, 3:7, 9 ),
-            S_Q123456_ = c( 1, 3:8 )
+          lst_combo <- c()
+
+          # Loop over combos
+          for ( j in seq_along(lst_standard_combos) ) {
+
+            chr_check_items <-
+              chr_default_items[ lst_standard_combos[[j]] ]
+
+            # Subset of items present
+            if ( all( chr_check_items %in% chr_items ) ) {
+
+              lst_combo <- c(
+                lst_combo,
+                list( which( chr_items %in% chr_check_items ) )
+              )
+
+              # Close 'Subset of items present'
+            }
+
+            # Close 'Loop over combos'
+          }
+
+          names(lst_combo) <- sapply(
+            seq_along(lst_combo), function(j) {
+              paste0(
+                'I', paste( lst_combo[[j]], collapse = '' )
+              )
+            }
           )
-        )
+
+          # Close 'Using subset of default items'
+          } else {
+
+            # Just use all items
+            lst_combo <- list(
+              ALL = seq_along(chr_items)
+            )
+
+            # Close else for 'Using subset of default items'
+          }
+
+        return(lst_combo)
 
       }
     )
@@ -2096,52 +2504,72 @@ camr_SWA_linking_code <- function(
   if ( is.null(lst_ignore_nonmissing) ) {
 
     lst_ignore_nonmissing <- lapply(
-      seq_along(lst_link_across), function(l) {
+      seq_along(lst_link_across), function(s) {
 
-        return(
-          list(
-            SLQ_______ = c( 1:2 ),
-            S_Q1234567 = c( 1, 3:9 ),
-            S_Q_234567 = c( 1, 3:9 ),
-            S_Q1_34567 = c( 1, 3:9 ),
-            S_Q12_4567 = c( 1, 3:9 ),
-            S_Q123_567 = c( 1, 3:9 ),
-            S_Q1234_67 = c( 1, 3:9 ),
-            S_Q12345_7 = c( 1, 3:9 ),
-            S_Q123456_ = c( 1, 3:9 )
+        chr_items <- obj_link_using[[s]]
+
+        # Using subset of default items
+        if ( all( chr_items %in% chr_default_items) ) {
+
+          lst_combo <- rep(
+            list( c() ), length(lst_link_combo[[s]])
           )
-        )
+
+          # Loop over combos
+          for ( j in seq_along(lst_standard_combos) ) {
+
+            chr_check_items <-
+              chr_default_items[ lst_standard_combos[[j]] ]
+
+            # Subset of items present
+            if ( all( chr_check_items %in% chr_items ) ) {
+
+              lst_combo[[j]] <- lst_standard_ignore[[j]]
+
+              # Close 'Subset of items present'
+            }
+
+            # Close 'Loop over combos'
+          }
+
+          names(lst_combo) <- names(lst_link_combo[[s]])
+
+          # Close 'Using subset of default items'
+        } else {
+
+          # Ignore all
+          lst_combo <- list(
+            ALL = c()
+          )
+
+          # Close else for 'Using subset of default items'
+        }
+
+        return(lst_combo)
 
       }
     )
     names(lst_ignore_nonmissing) <- names(lst_link_across)
 
-    # Close 'Default combinations of linking items'
+    # Close 'Default missingness conditions to skip linking'
   }
 
-  #### 3.1.1) fun_match_matrices ####
-  fun_match_matrices <- function(
-    dtf_data,
-    chr_column,
-    lgc_base,
-    lgc_add ) {
+  #### 3.1.1) Initialize variables for linking ####
 
-    mat_base <- matrix(
-      dtf_data[[ chr_column ]][lgc_base],
-      sum( lgc_add ), sum( lgc_base ), byrow = TRUE
-    )
-    mat_add <- matrix(
-      dtf_data[[ chr_column ]][lgc_add],
-      sum( lgc_add ), sum( lgc_base ), byrow = FALSE
-    )
-    mat_comparison <-
-      mat_base == mat_add
-    # mat_comparison[ is.na(mat_comparison) ] <- FALSE
-
-    return( mat_comparison )
-  }
-
-  #### 3.1.2) Initialize variables for linking ####
+  chr_linking_columns <- c(
+    "IDX.CHR.Linked.ID",
+    "QCC.LGC.Linked.Attempted",
+    "QCC.LGC.Linked",
+    "QCC.LGC.Linked.No_issues",
+    "QCC.CHR.Linked.Rows",
+    "QCC.CHR.Linked.Set_and_combo",
+    "QCC.CHR.Linked.Duplicates",
+    "QCC.LGC.Linked.Duplicates",
+    "QCC.CHR.Linked.Dissimilarity",
+    "QCC.CHR.Linked.Parameters"
+  )
+  int_set_start <- 0
+  int_set_end <- length(lst_link_across)
 
   dtf_long$IDX.CHR.Linked.ID <- paste0(
     'NL TP',
@@ -2149,6 +2577,7 @@ camr_SWA_linking_code <- function(
     ' ',
     1:nrow(dtf_long)
   )
+  dtf_long$QCC.CHR.Linked.Sets <- ''
   dtf_long$QCC.LGC.Linked.Attempted <- FALSE
   dtf_long$QCC.LGC.Linked <- FALSE
   dtf_long$QCC.LGC.Linked.No_issues <- FALSE
@@ -2215,6 +2644,12 @@ camr_SWA_linking_code <- function(
       lgc_base | lgc_add
     ] <- TRUE
 
+    # Indicate that linkage was attempted
+    dtf_long$QCC.CHR.Linked.Sets[ lgc_base | lgc_add ] <- paste0(
+      dtf_long$QCC.CHR.Linked.Sets[ lgc_base | lgc_add ],
+      '|', s
+    )
+
     # All possible linking items
     chr_all_items <-
       obj_link_using |> unlist() |> unique() |> sort()
@@ -2252,6 +2687,9 @@ camr_SWA_linking_code <- function(
     # Loop over items
     for ( i in seq_along(chr_all_items) ) {
 
+      if ( lgc_progress )
+        message( paste0( '      + Copying (', i, ')' ) )
+
       mat_items_base[, i] <- rep(
         dtf_long[[ chr_all_items[i] ]][lgc_base],
         each = sum(lgc_add)
@@ -2264,6 +2702,9 @@ camr_SWA_linking_code <- function(
 
       # Close 'Loop over items'
     }
+
+    if ( lgc_progress )
+      message( paste0( '      + Matching' ) )
 
     mat_matches <-
       mat_items_base == mat_items_add
@@ -2292,6 +2733,8 @@ camr_SWA_linking_code <- function(
 
     # Clean up workspace
     rm( mat_items_base, mat_items_add)
+    # Force garbage collection
+    gc()
 
     mat_diss_scores <- matrix(
       NA,
@@ -2301,6 +2744,9 @@ camr_SWA_linking_code <- function(
 
     # Loop over combos
     for ( j in seq_along(lst_link_combo[[s]] ) ) {
+
+      if ( lgc_progress )
+        message( paste0( '      + Dissimilarity scores (', j, ')' ) )
 
       chr_current_items <- obj_link_using[[s]][
         lst_link_combo[[s]][[j]]
@@ -2430,12 +2876,20 @@ camr_SWA_linking_code <- function(
     }
     int_prog <- int_prog + length(lst_link_combo[[s]])
 
-
     # Compute dissimilarity scores for non-matches
     if (!lgc_matches_only) {
 
       # Close 'Compute dissimilarity scores for non-matches'
     }
+
+    # Clean up workspace
+    rm(
+      mat_matches,
+      mat_missing, lgc_already,
+      mat_diss_scores, lgc_zero
+    )
+    # Force garbage collection to reduce memory load
+    gc()
 
     # Close 'Loop over sets'
   }
@@ -2543,12 +2997,98 @@ camr_SWA_linking_code <- function(
     # Close 'Loop over possible links'
   }
 
+  # Check for duplicate records post-hoc
+  lgc_linked <- dtf_long$QCC.LGC.Linked.No_issues
+  dtf_IDs <- aggregate(
+    dtf_long$SSS.INT.Time_point[lgc_linked],
+    list(
+      dtf_long$IDX.CHR.Linked.ID[lgc_linked]
+    ),
+    function(x) any( table(x) > 1 )
+  )
+
+  # Undo linkage for post-hoc duplicates
+  lgc_posthoc_dup <-
+    dtf_long$IDX.CHR.Linked.ID %in% dtf_IDs[[1]][ dtf_IDs[[2]] ]
+  dtf_long$QCC.LGC.Linked.Duplicates[
+    lgc_posthoc_dup
+  ] <- TRUE
+  dtf_long$QCC.LGC.Linked.No_issues[
+    lgc_posthoc_dup
+  ] <- FALSE
+  dtf_long$IDX.CHR.Linked.ID[ lgc_posthoc_dup ] <-
+    gsub(
+      "YL", "NL",
+      dtf_long$IDX.CHR.Linked.ID[ lgc_posthoc_dup ], fixed = TRUE
+    )
+
+  fun_gsub <- function(
+    chr_string,
+    chr_pattern,
+    chr_with ) {
+
+    return(
+      gsub( chr_pattern, chr_with, chr_string, fixed = TRUE )
+    )
+
+  }
+
+  # Match IDs but do not mark as no issues for remaining duplicates
+  lgc_dup <-
+    dtf_long$QCC.LGC.Linked.Duplicates
+  int_freq <-
+    table( dtf_long$IDX.CHR.Linked.ID[lgc_dup] )
+  chr_ID_dup <- names( int_freq )
+  chr_ID_dup <- chr_ID_dup[ int_freq == 1 ]
+
+  # Loop over IDs
+  for ( i in seq_along(chr_ID_dup) ) {
+
+    lgc_ID <- dtf_long$IDX.CHR.Linked.ID %in% chr_ID_dup[i]
+
+    if ( any( lgc_ID ) ) {
+
+      int_rows <- as.numeric(
+        strsplit(
+          dtf_long$QCC.CHR.Linked.Duplicates[lgc_ID] |>
+            fun_gsub( ',', ' ' ) |>
+            fun_gsub( ';', ' ' ),
+          split = ' ', fixed = TRUE
+        )[[1]]
+      )
+
+      lgc_poss_dup <-
+        dtf_long$IDX.INT.Row %in% int_rows &
+        dtf_long$QCC.LGC.Linked.Duplicates
+
+      # Update duplicate IDs for later checking
+      if ( sum(lgc_poss_dup) > 1 ) {
+
+        int_most <- table(
+          dtf_long$IDX.CHR.Linked.ID[
+            lgc_poss_dup
+          ]
+        )
+
+        dtf_long$IDX.CHR.Linked.ID[
+          lgc_poss_dup
+        ] <- rev( names( int_most ) )[1]
+
+        # Close 'Update duplicate IDs for later checking'
+      }
+
+    }
+
+    # Close 'Loop over IDs'
+  }
+
   # Add details about linking parameters as attributes
   attributes(dtf_long$QCC.CHR.Linked.Parameters) <- list(
     camr_SWA_linking_code = list(
       lst_link_across = lst_link_across,
       obj_link_using = obj_link_using,
-      lst_link_combo = lst_link_combo
+      lst_link_combo = lst_link_combo,
+      lst_ignore_nonmissing = lst_ignore_nonmissing
     )
   )
 
@@ -2567,7 +3107,287 @@ camr_SWA_linking_code <- function(
   return( dtf_long )
 }
 
-#### 4) camr_SWA_linking_code_performance ####
+#### 4) Helper functions ####
+
+#### 4.1) camr_SWA_linking_code_items ####
+#' Extract Linking Item Column Names
+#'
+#' Function to extract column names for all
+#' variables used as linking items.
+#'
+#' @param dtf_linked A data frame, output from
+#'   the [camrprojects::camr_SWA_linking_code]
+#'   function.
+#'
+#' @returns A character vector, the variables used
+#' as linking items.
+#'
+#' @export
+
+camr_SWA_linking_code_items <- function(
+    dtf_linked ) {
+
+  chr_linking_items <- attributes(
+    dtf_linked$QCC.CHR.Linked.Parameters
+  )$camr_SWA_linking_code$obj_link_using |>
+    unlist() |> unique()
+
+  return( chr_linking_items )
+}
+
+#### 4.2) camr_SWA_linking_code_rows ####
+#' Extract Rows Identified as Possible Links
+#'
+#' Extract rows identified as possible links for a
+#' given record.
+#'
+#' @param dtf_linked A data frame, output from
+#'   the [camrprojects::camr_SWA_linking_code]
+#'   function.
+#' @param int_row The row from \code{dtf_linked} to
+#'   process.
+#' @param lgc_filter A logical value; if \code{TRUE}
+#'   returns the data frame rows, otherwise
+#'   returns the extract rows.
+#'
+#' @returns Either a data frame or a vector of row indices.
+#'
+#' @export
+
+camr_SWA_linking_code_rows <- function(
+    dtf_linked,
+    int_row = 1,
+    lgc_filter = TRUE ) {
+
+  dtf_current <- dtf_linked
+
+  # Subset to specified row
+  if ( nrow(dtf_linked) > 1 ) {
+
+    dtf_current <- dtf_linked[int_row, ]
+
+    # Close 'Subset to specified row'
+  }
+
+  fun_gsub <- function(
+    chr_string,
+    chr_pattern,
+    chr_with ) {
+
+    return(
+      gsub( chr_pattern, chr_with, chr_string, fixed = TRUE )
+    )
+
+  }
+
+  int_rows <- as.numeric(
+    strsplit(
+      dtf_current$QCC.CHR.Linked.Rows |>
+        fun_gsub( ',', ' ' ) |>
+        fun_gsub( ';', ' ' ),
+      split = ' ', fixed = TRUE
+    )[[1]]
+  )
+
+  # Return data frame
+  if (lgc_filter) {
+
+    lgc_rows <-
+      dtf_linked$IDX.INT.Row %in% c(
+        int_rows,
+        dtf_current$IDX.INT.Row
+      )
+
+    dtf_output <- dtf_linked[lgc_rows, ]
+
+    # Pass on attributes
+    if ( !is.null( dtf_linked$QCC.CHR.Linked.Parameters ) ) {
+
+      lst_attr <- attributes(
+        dtf_linked$QCC.CHR.Linked.Parameters
+      )
+
+      # If attribute exists
+      if ( !is.null(lst_attr$camr_SWA_linking_code) ) {
+
+        attributes(dtf_output$QCC.CHR.Linked.Parameters) <-
+          lst_attr
+
+        # Close 'If attribute exists'
+      }
+
+      # Close 'Pass on attributes'
+    }
+
+    return(
+      dtf_output
+    )
+
+    # Close 'Return data frame'
+  }
+
+  return( int_rows )
+}
+
+#### 4.3) camr_SWA_linking_code_select ####
+#' Select Columns for Linking Items and Useful Information
+#'
+#' Extracts columns with row indices, time points,
+#' linked IDs, and potential linkable rows, along
+#' with linking item variables (assuming standard
+#' column names).
+#'
+#' @param dtf_linked A data frame, output from
+#'   the [camrprojects::camr_SWA_linking_code]
+#'   function.
+#' @param chr_extra An optional character vector,
+#'   additional columns to include.
+#'
+#' @returns A data frame,
+#'
+#' @export
+
+camr_SWA_linking_code_select <- function(
+    dtf_linked,
+    chr_extra = '' ) {
+
+  chr_linking_items <- camrprojects::camr_SWA_linking_code_items(
+    dtf_linked
+  )
+
+  chr_useful <- c(
+    'IDX.INT.Row',
+    'SSS.INT.Time_point',
+    'IDX.CHR.Linked.ID',
+    'QCC.CHR.Linked.Rows'
+  )
+
+  chr_final <- c( chr_useful, chr_extra, chr_linking_items )
+
+  chr_final <- chr_final[
+    chr_final %in% colnames(dtf_linked)
+  ]
+
+  return( dtf_linked[, chr_final] )
+}
+
+#### 4.4) camr_SWA_linking_code_by_ID ####
+#' Linkage Patterns by Linked Identifier
+#'
+#' Function to determine the pattern of
+#' linked time points for each linked ID.
+#'
+#' @param dtf_linked A data frame, output from
+#'   the [camrprojects::camr_SWA_linking_code]
+#'   function. Must have the columns
+#'   \code{IDX.CHR.Linked.ID} and
+#'   \code{SSS.INT.Time_point}.
+#'
+#' @returns A wide-form data frame with one row
+#' per linked ID along with the pattern of linked
+#' time points (e.g., \code{'0-1'} means a link
+#' from the baseline to first time point).
+#'
+#' @export
+
+camr_SWA_linking_code_by_ID <- function(
+    dtf_linked,
+    lgc_update = FALSE ) {
+
+  dtf_IDs <- aggregate(
+    dtf_linked$SSS.INT.Time_point,
+    list( dtf_linked$IDX.CHR.Linked.ID ),
+    function(x) {
+      paste( sort(x), collapse = '-' )
+    }
+  )
+  colnames(dtf_IDs) <- c(
+    'IDX.CHR.Linked.ID', 'SSS.CHR.Linked.Linkage_patterns'
+  )
+
+  # If indicator for duplicates found
+  if ( 'QCC.LGC.Linked.Duplicates' %in% colnames(dtf_linked) ) {
+
+    # Add indicator for duplicates
+    dtf_IDs$QCC.LGC.Duplicates <- sapply(
+      1:nrow( dtf_IDs ), function(r) {
+
+        lgc_rows <-
+          dtf_linked$IDX.CHR.Linked.ID %in% dtf_IDs$ID[r]
+
+        return( all( dtf_linked$QCC.LGC.Linked.Duplicates[lgc_rows] ) )
+
+      }
+    )
+
+    # Close 'If indicator for duplicates found'
+  }
+
+  # Linkage status per time point
+  chr_TP <- sort( unique( dtf_linked$SSS.INT.Time_point) )
+
+  mat_TP <- matrix(
+    0, nrow(dtf_IDs), length( chr_TP )
+  )
+  colnames( mat_TP ) <- paste0(
+    'SSS.INT.Linked.Records.TP.', chr_TP
+  )
+
+  # Loop over each time point
+  for ( j in 1:ncol(mat_TP) ) {
+
+    lgc_any <- grepl(
+      chr_TP[j], dtf_IDs$SSS.CHR.Linked.Linkage_patterns,
+      fixed = TRUE
+    )
+
+    mat_TP[lgc_any, j] <-
+      dtf_IDs$SSS.CHR.Linked.Linkage_patterns[
+        lgc_any
+      ] |> sapply(
+        function(x) {
+          grepl( '-', strsplit( x, '' )[[1]], fixed = TRUE ) |> sum()
+        }
+      ) + 1
+
+    # Close 'Loop over each time point'
+  }
+
+  dtf_IDs <- cbind( dtf_IDs, mat_TP )
+
+  # Update original data set with linkage patterns
+  if ( lgc_update ) {
+
+    dtf_linked$SSS.CHR.Linked.Linkage_patterns <- sapply(
+      1:nrow(dtf_linked), function(r) {
+
+        chr_out <- ''
+
+        lgc_rows <-
+          dtf_IDs$IDX.CHR.Linked.ID %in%
+            dtf_linked$IDX.CHR.Linked.ID[r]
+
+        # Return pattern
+        if ( any(lgc_rows) ) {
+
+          chr_out <- dtf_IDs$SSS.CHR.Linked.Linkage_patterns[
+            lgc_rows
+          ]
+
+          # Close 'Return pattern'
+        }
+
+        return( chr_out )
+      }
+    )
+
+    # Close 'Update original data set with linkage patterns'
+  }
+
+  return( dtf_IDs )
+}
+
+#### 5) camr_SWA_linking_code_performance ####
 #' Summary of Linking of Records
 #'
 #' Function to summarize the performance of
@@ -2603,59 +3423,99 @@ camr_SWA_linking_code_performance <- function(
     dtf_linked,
     lst_groups = list(
       Time = 'SSS.INT.Time_point'
-    ),
-    lgc_display = TRUE ) {
+    ) ) {
 
-  dtf_summary.n_linked <- aggregate(
-    dtf_linked$QCC.LGC.Linked.No_issues,
-    lapply(
-      seq_along(lst_groups),
-      function(g) return( dtf_linked[[ lst_groups[[g]] ]] )
-    ),
-    function(x) {
-      paste0(
-        sum(x), '/', length(x),
-        ' (',
-        format(
-          round( 100*mean(x), 1 ),
-          nsmall = 1
-        ), '%)'
-      )
+  #### 5.1) Setup ####
+
+  fun_count_percent <- function(
+    lgc_x,
+    int_num = NULL,
+    int_denom = NULL ) {
+
+    # Numerator/Denominator
+    if ( !is.null(lgc_x) ) {
+
+      int_num <- sum(lgc_x)
+      int_denom <- length(x)
+
+      # Close 'Numerator/Denominator'
     }
-  )
-  colnames(dtf_summary.n_linked) <- c(
-    names(lst_groups), 'Statistic'
-  )
-  if (lgc_display) print( dtf_summary.n_linked)
 
-  lgc_linked_NI <- dtf_linked$QCC.LGC.Linked.No_issues
+    chr_out <- paste0(
+      int_num, '/', int_denom,
+      ' (',
+      format(
+        round( 100*int_num/int_denom, 1 ),
+        nsmall = 1
+      ), '%)'
+    )
 
-  dtf_IDs <- aggregate(
-    dtf_linked$SSS.INT.Time_point[lgc_linked_NI],
-    list(
-      dtf_linked$IDX.CHR.Linked.ID[lgc_linked_NI]
-    ),
-    function(x) {
-      paste(
-        sort(x), collapse = '-'
-      )
-    }
+    return(chr_out)
+  }
+
+  # Wide-form data with linkage patterns
+  dtf_IDs <- camrprojects::camr_SWA_linking_code_by_ID(
+    dtf_linked
   )
 
-  dtf_summary.freq_time <- aggregate(
+  # Initialize output
+  lst_output <- list()
+
+  #### 5.2) Linkage patterns [Overall] ####
+
+  dtf_summary.linkage_patterns <- aggregate(
     rep( TRUE, nrow(dtf_IDs) ),
-    list( dtf_IDs[[2]] ),
+    list( Patterns = dtf_IDs$SSS.CHR.Linked.Linkage_patterns,
+          Duplicates = dtf_IDs$QCC.LGC.Duplicates ),
     function(x) sum(x)
   )
-  colnames(dtf_summary.freq_time) <- c(
-    'Combo_time_points',
-    'Count'
-  )
-  if (lgc_display) print( dtf_summary.freq_time)
+  colnames(dtf_summary.linkage_patterns)[3] <- 'N'
+  dtf_summary.linkage_patterns$CP <- sapply(
+    1:nrow(dtf_summary.linkage_patterns), function(r) {
 
-  lst_output <- list(
-    n_linked = dtf_summary.n_linked,
-    freq_time = dtf_summary.freq_time
+      fun_count_percent(
+        NULL,
+        dtf_summary.linkage_patterns$N[r],
+        dtf_summary.linkage_patterns$N |> sum()
+      )
+
+    }
+  )
+
+  lst_output$linkage_patterns <- list(
+    overall = dtf_summary.linkage_patterns
+  )
+
+  #### 5.3) Linkage patterns [Groups] ####
+
+  #### 5.4) Any linked [Overall] ####
+
+  dtf_IDs$Current <- dtf_IDs$SSS.INT.Linked.Records.TP.0
+  dtf_IDs$Current[
+    dtf_IDs$Current > 1
+  ] <- '2+'
+
+  dtf_summary.linked_with <- aggregate(
+    rep( TRUE, nrow(dtf_IDs) ),
+    list( Linked_with = dtf_IDs$Current ),
+    function(x) sum(x)
+  )
+
+  colnames(dtf_summary.linked_with)[2] <- 'N'
+  dtf_summary.linked_with$CP <- sapply(
+    1:nrow(dtf_summary.linked_with), function(r) {
+
+      fun_count_percent(
+        NULL,
+        dtf_summary.linked_with$N[r],
+        dtf_summary.linked_with$N |> sum()
+      )
+
+    }
+  )
+
+  lst_output$linked_with <- list(
+    overall = dtf_summary.linked_with
   )
 
   # If column with true IDs detected
@@ -2679,7 +3539,7 @@ camr_SWA_linking_code_performance <- function(
 
       lgc_rows <-
         dtf_linked$SSS.CHR.Linked.Test_type %in%
-          dtf_summary.true_ID$Type[r]
+        dtf_summary.true_ID$Type[r]
 
       int_ID <- dtf_linked$IDX.INT.Linked.True[lgc_rows]
       lgc_zero <- int_ID == 0
@@ -2748,8 +3608,6 @@ camr_SWA_linking_code_performance <- function(
       # Close 'Loop over types'
     }
 
-    if (lgc_display) print(dtf_summary.true_ID)
-
     lst_output$true_ID <- dtf_summary.true_ID
 
     # Close 'If column with true IDs detected'
@@ -2757,4 +3615,3 @@ camr_SWA_linking_code_performance <- function(
 
   return( lst_output )
 }
-
