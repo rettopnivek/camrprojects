@@ -37,8 +37,5 @@
 #' @import tidyr
 #' @import checkmate
 #' @import rlang
-<<<<<<< HEAD
 
-=======
->>>>>>> e30e9326afc9f7f20153bfb26f5e351b64a2be2e
 "_PACKAGE"
