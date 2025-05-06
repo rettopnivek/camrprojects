@@ -505,7 +505,7 @@ camr_find_file <- function(
   chr_desc <- deparse(substitute(nm_desc))
   if (stringr::str_detect(chr_desc, '"')) {chr_desc <- nm_desc}
 
-  assert_string(nm_desc, pattern='^\\w+(\\.\\w{1,5})?$')
+  assert_string(chr_desc, pattern='^\\w+(\\.\\w{1,5})?$')
   assert_string(chr_path)
   assert_string(chr_project, pattern='^\\w+$', null.ok=TRUE)
   assert_string(chr_date, pattern='^(\\d|\\.|-|_)+$', null.ok=TRUE)
@@ -513,8 +513,8 @@ camr_find_file <- function(
   assert_choice(chr_type, c('file', 'directory'))
   assert_logical(lgl_recurse, len=1, any.missing=FALSE)
 
-  chr_name <- nm_desc |> str_extract('^\\w+')
-  chr_ext <- nm_desc |> str_extract('\\.\\w+$')
+  chr_name <- chr_desc |> str_extract('^\\w+')
+  chr_ext <- chr_desc |> str_extract('\\.\\w+$')
 
   dtm_date <- ymd_hms(chr_date, quiet=TRUE, tz='UTC', truncated=3)
 
