@@ -1,10 +1,10 @@
 # Description for the 'camrprojects' package
 # Authors:
 #   Eylul Akman
+#   Bryn Evohr
 #   Michael Pascale
 #   Kevin Potter
 #   William Schmitt
-#   Bryn Evohr
 # Email:
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
@@ -12,10 +12,8 @@
 # Last updated: 2025-05-05
 
 # Package development
-# library( devtools )
-# library( roxygen2 )
-# library( dplyr )
-# library( stringr )
+# - To update man pages
+#   devtools::document()
 
 #' Portable Functions for R Projects at CAM-MGB
 #'
@@ -39,5 +37,8 @@
 #' @import tidyr
 #' @import checkmate
 #' @import rlang
+<<<<<<< HEAD
 
+=======
+>>>>>>> e30e9326afc9f7f20153bfb26f5e351b64a2be2e
 "_PACKAGE"
