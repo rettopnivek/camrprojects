@@ -11,6 +11,7 @@ camr_find_file(
   chr_date = NULL,
   chr_commit = NULL,
   chr_date_tolerance = "s",
+  chr_type = "file",
   lgl_recurse = TRUE
 )
 }
@@ -32,20 +33,24 @@ date of the file.}
 commit number of the file.}
 
 \item{chr_date_tolerance}{An optional character string,
-margin of error for the date of the file
+margin of error for the date of the file.
 ('s', 'm', 'h', 'd').}
+
+\item{chr_type}{An optional character string,
+file type to find.
+('file', 'directory').}
 
 \item{lgl_recurse}{Logical; if TRUE, the function
 will recurse fully.}
 }
 \value{
-A character string, an absolute path to a file.
+A character string, an absolute path to a file or directory.
 }
 \description{
 Function to find the absolute path to the most
-up-to-date version of a file given a
+up-to-date version of a file or directory given a
 partial match to its name and the file location.
 }
 \author{
-Michael Pascale
+Michael Pascale, Bryn Evohr
 }

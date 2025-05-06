@@ -4,11 +4,12 @@
 #   Michael Pascale
 #   Kevin Potter
 #   William Schmitt
+#   Bryn Evohr
 # Email:
 #   kpotter5@mgh.harvard.edu
 # Please email us directly if you
 # have any questions or comments
-# Last updated: 2023-11-15
+# Last updated: 2025-05-05
 
 # Package development
 # library( devtools )
@@ -18,7 +19,6 @@
 
 #' Portable Functions for R Projects at CAM-MGB
 #'
-#' @docType package
 #' @name camrprojects-package
 #' @aliases camrprojects
 #'
@@ -40,4 +40,4 @@
 #' @import checkmate
 #' @import rlang
 
-NULL
+"_PACKAGE"
