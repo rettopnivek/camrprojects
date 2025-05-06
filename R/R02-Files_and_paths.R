@@ -501,7 +501,9 @@ camr_find_file <- function(
     chr_type='file',
     lgl_recurse=TRUE
 ) {
-  chr_desc <- nm_desc
+
+  chr_desc <- deparse(substitute(nm_desc))
+  if (stringr::str_detect(chr_desc, '"')) {chr_desc <- nm_desc}
 
   assert_string(nm_desc, pattern='^\\w+(\\.\\w{1,5})?$')
   assert_string(chr_path)
