@@ -1178,7 +1178,7 @@ camr_add_codebook_entry <- function(
 
   # Check column exists in data frame
   if ( column_name %not_in% colnames( dtf ) ) {
-    err_msg <- "Variable not found in data frame"
+    err_msg <- paste0("Variable not found in data frame: ", column_name)
     stop( err_msg )
   }
 
