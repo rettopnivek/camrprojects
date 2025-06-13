@@ -100,7 +100,7 @@ init_redcap_project <- function(token_file,
   src_files <- fs::dir_ls(fs::path(dest_dir, "src"), recurse = TRUE, glob = "*.R")
   form_lookup <- purrr::map_chr(src_files, function(path) {
     lines <- readLines(path, warn = FALSE)
-    m <- stringr::str_match(lines, "REDCap.Form\s*==\s*['\"]([A-Za-z0-9_]+)['\"]")
+    m <- stringr::str_match(lines, "REDCap.Form\\s*==\\s*['\"]([A-Za-z0-9_]+)['\"]")
     found <- m[,2][!is.na(m[,2])]
     if (length(found)) found[1] else NA_character_
   })
@@ -109,7 +109,7 @@ init_redcap_project <- function(token_file,
   std_map <- src_files[has_std]
 
   # 4: rewrite /src ----
-  msg("Rewriting \src")
+  msg("Rewriting /src")
   purrr::iwalk(form_types, function(ftype, form) {
     subdir <- folder_map[[ftype]]
     dest_sub <- fs::path(dest_dir, "src", subdir)
