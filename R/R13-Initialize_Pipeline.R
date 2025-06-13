@@ -66,7 +66,7 @@ init_pipeline <- function(token_file,
   msg("Cloning Standard Pipeline from %s (branch = %s)", std_repo_url, std_repo_branch)
   parent_dir <- fs::path_dir(dest_dir)
   fs::dir_create(parent_dir)
-  git2r::clone(std_repo_url, dest_dir, branch = std_repo_branch)
+  gert::clone(std_repo_url, dest_dir, branch = std_repo_branch)
 
   # 2: connect to REDCap & pull metadata ----
   msg("Connecting to REDCap")
