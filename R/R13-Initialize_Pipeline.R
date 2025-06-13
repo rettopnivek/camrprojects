@@ -15,7 +15,7 @@
 #' @param dest_dir Directory in which the new project should be created. Must
 #' *not* exist (it will be created by this function)
 #' @param std_repo_url HTTPS or SSH URL of the standard pipeline repository
-#' @param std_repo_branch Branch to clone from std_repo_url (default "master")
+#' @param std_repo_branch Branch to clone from std_repo_url (default "main")
 #' @param redcap_url API endpoint. Defaults to Sys.getenv("REDCAP_API_URL") and
 #' aborts if still empty
 #'
@@ -38,7 +38,7 @@ init_pipeline <- function(token_file,
                                 nickname,
                                 dest_dir,
                                 std_repo_url,
-                                std_repo_branch = 'master',
+                                std_repo_branch = 'main',
                                 redcap_url      = Sys.getenv("REDCAP_API_URL")) {
   # Input Checks ----
   stopifnot(file.exists(token_file))
@@ -63,25 +63,27 @@ init_pipeline <- function(token_file,
   folder_map <- c(sl = 'subject', vl = 'visit', ml = 'measurement')
 
   # 1: git clone ----
-  msg("Cloning Standard Pipeline from %s (branch = %s)", std_repo_url, std_repo_branch)
+  msg("Cloning Standard Pipeline from %s (branch = %s) ...", std_repo_url, std_repo_branch)
   parent_dir <- fs::path_dir(dest_dir)
   fs::dir_create(parent_dir)
   gert::git_clone(std_repo_url, dest_dir, branch = std_repo_branch)
+  usethis::create_project(dest_dir)
 
   # 2: connect to REDCap & pull metadata ----
-  msg("Connecting to REDCap")
+  msg("Connecting to REDCap ...")
   token <- trimws(readLines(token_file, warn = FALSE))
   rc <- redcapAPI::redcapConnection(url = redcap_url, token = token)
 
   msg("Downloading project metadata")
   md <- redcapAPI::exportMetaData(rc)
-  mapping <- redcapAPI::exportFormEventMapping(rc)
+  mapping <- redcapAPI::exportMappings(rc)
   # Identify any repeating instruments
   repeating <- tryCatch(redcapAPI::exportRepeatingInstrumentsEvents(rc),
                         error = function(e) NULL)
   rep_forms <- if (!is.null(repeating)) repeating$instrument else character()
 
   instruments <- unique(md$form_name)
+  #print(instruments)
 
   # Categorize as subject- visit- or measurement- level
   classify_form <- function(form) {
@@ -94,9 +96,10 @@ init_pipeline <- function(token_file,
 
   form_types <- setNames(vapply(instruments, classify_form, character(1)),
                          instruments)
+  #print(form_types)
 
   # 3: index std_ functions ----
-  msg("Scanning standard pipeline for existing instrument functions")
+  msg("Scanning standard pipeline for existing instrument functions ...")
   src_files <- fs::dir_ls(fs::path(dest_dir, "src"), recurse = TRUE, glob = "*.R")
   form_lookup <- purrr::map_chr(src_files, function(path) {
     lines <- readLines(path, warn = FALSE)
@@ -107,17 +110,19 @@ init_pipeline <- function(token_file,
   names(src_files) <- form_lookup
   has_std <- !is.na(names(src_files))
   std_map <- src_files[has_std]
+  #print(names(std_map))
 
   # 4: rewrite /src ----
-  msg("Rewriting /src")
+  msg("Rewriting /src ...")
   purrr::iwalk(form_types, function(ftype, form) {
     subdir <- folder_map[[ftype]]
     dest_sub <- fs::path(dest_dir, "src", subdir)
     fs::dir_create(dest_sub)
 
-    if (!is.na(std_map[[form]])) {
+    if (!is.na(std_map[form])) {
       ## When there's an existing standard function, we copy and (if necessary) ----
       ## move it to the appropriate directory (subject, visit, or measure)
+      print(paste('Standard pipeline function available for', form))
       orig_path <- std_map[[form]]
       new_fname <- sprintf("%s_%s.R", nickname, slug(form))
       new_path <- fs::path(dest_sub, new_fname)
@@ -127,13 +132,14 @@ init_pipeline <- function(token_file,
       code <- gsub("std_", paste0(nickname, "_"), code, fixed = TRUE)
         # plus, there might be multiple functions in a file
       # Add comment with name of standard pipeline function and date copied
-      code <- c(sprintf("# Generated from %s on %s", basename(orig_path), Sys.Date()),
+      code <- c(sprintf("# Generated from %s in standard pipeline on %s", basename(orig_path), Sys.Date()),
                 code)
       writeLines(code, new_path)
       fs::file_delete(orig_path)
     } else {
       ## Create stub (for instruments without an existing standard pipeline function) ----
-      fun_name <- sprintf("%s_%s_%s", nickname, nickname, ftype, slug(form))
+      print(paste('Standard pipeline function NOT available for', form))
+      fun_name <- sprintf("%s_%s_%s", nickname, ftype, slug(form))
       stub <- c(
         sprintf("%s <- function(df_redcap_raw) {", fun_name),
         sprintf("  df_%s <- df_redcap_raw |>", slug(form)),
@@ -151,14 +157,14 @@ init_pipeline <- function(token_file,
   tf <- fs::path(dest_dir, "_targets.R")
   txt <- readLines(tf, warn = FALSE)
   open <- which(grepl("^\\s*list\\s*\\(", txt))[1]
-  close <- tail(which(grepl("^\\s*\\)\\s*$")))
+  close <- tail(which(grepl("^\\s*\\)\\s*$", txt)), n=1)
 
   # locate each target inside list
   blocks <- list()
   start <- NULL
   for (i in seq(open+1, close-1)) {
     if (grepl("^\\s*tar_target\\s*\\(", txt[i])) start <- i
-    if (!is.null(start) && grepl("\\), \\s*$")) {
+    if (!is.null(start) && grepl("\\), \\s*$", txt[i])) {
       blocks <- append(blocks, list(start:i))
       start <- NULL
     }

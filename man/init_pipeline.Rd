@@ -10,7 +10,7 @@ init_pipeline(
   nickname,
   dest_dir,
   std_repo_url,
-  std_repo_branch = "master",
+  std_repo_branch = "main",
   redcap_url = Sys.getenv("REDCAP_API_URL")
 )
 }
@@ -28,7 +28,7 @@ project name, but not necessarily)}
 
 \item{std_repo_url}{HTTPS or SSH URL of the standard pipeline repository}
 
-\item{std_repo_branch}{Branch to clone from std_repo_url (default "master")}
+\item{std_repo_branch}{Branch to clone from std_repo_url (default "main")}
 
 \item{redcap_url}{API endpoint. Defaults to Sys.getenv("REDCAP_API_URL") and
 aborts if still empty}
