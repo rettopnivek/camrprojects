@@ -15,7 +15,7 @@
 #' @param dest_dir Directory in which the new project should be created. Must
 #' *not* exist (it will be created by this function)
 #' @param std_repo_url HTTPS or SSH URL of the standard pipeline repository
-#' @param std_repo_branch Branch to clone from std_repo_url (default "main")
+#' @param std_repo_branch Branch to clone from std_repo_url (default "master")
 #' @param redcap_url API endpoint. Defaults to Sys.getenv("REDCAP_API_URL") and
 #' aborts if still empty
 #'
@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @examples
-#' init_recap_project(
+#' init_pipeline(
 #'   token_file      = "~/Documents/api_tokens/groundbreakingstudy.txt",
 #'   project_name.   = "Groundbreaking Substance Use Study"
 #'   nickname        = "gbsus"
@@ -33,12 +33,12 @@
 #'   std_repo_url    = "git@gitlab.ourOrg.org:our_team/standard-data-pipeline.git"
 #'   redcap_url.     = "https://redcap.ourOrg.org/redcap/api/"
 #' )
-init_redcap_project <- function(token_file,
+init_pipeline <- function(token_file,
                                 project_name,
                                 nickname,
                                 dest_dir,
                                 std_repo_url,
-                                std_repo_branch = 'main',
+                                std_repo_branch = 'master',
                                 redcap_url      = Sys.getenv("REDCAP_API_URL")) {
   # Input Checks ----
   stopifnot(file.exists(token_file))
@@ -71,7 +71,7 @@ init_redcap_project <- function(token_file,
   # 2: connect to REDCap & pull metadata ----
   msg("Connecting to REDCap")
   token <- trimws(readLines(token_file, warn = FALSE))
-  rc <- redcapAPI::redcapConnection(redcap_uri = redcap_url, token = token)
+  rc <- redcapAPI::redcapConnection(url = redcap_url, token = token)
 
   msg("Downloading project metadata")
   md <- redcapAPI::exportMetaData(rc)
