@@ -188,12 +188,12 @@ init_pipeline <- function(token_file,
   }
 
   # Keep only core target blocks
-  kept_body <- character()
-  for (idx in blocks) {
-    block <- txt[idx]
-    var_line <- sub(",.*$", "", trimws(block[which(nzchar(trimws(block)))[2]]))
-    if (var_line %in% core_targets) kept_body <- c(kept_body, block)
-  }
+  kept_body <-purrr::keep(blocks, \(idx) {
+    any(stringr::str_detect(
+      txt[idx],
+      paste0("^\\s*(", paste(core_targets, collapse = "|"), ")\\s*,")
+    ))
+  }) |> purrr:::map_chr(\(idx) paste(txt[idx], collapse = "\n"))
 
   # Make sure last kept block ends with a comma (so we can append)
   if (length(kept_body)) {
@@ -212,10 +212,10 @@ init_pipeline <- function(token_file,
     comma <- if (idx < length(inst_forms)) "," else ""
 
     glue::glue(
-      "\ttar_targets(\n",
+      "  tar_target(\n",
       "    {var},\n",
       "    {fun}(df_redcap_raw),\n",
-      "\t){comma}\n",
+      "  ){comma}\n",
       .open = "{", .close = "}", .trim = FALSE
     )
   })
@@ -224,7 +224,7 @@ init_pipeline <- function(token_file,
   body_txt <- c(kept_body, new_blocks, ")")
   body_txt <- gsub("std_", paste0(nickname, "_"), body_txt, fixed = TRUE)
 
-  writeLines(c(head_txt, body_txt, tail_txt))
+  writeLines(c(head_txt, body_txt, tail_txt), tf)
 
   # 6: Close
   msg("Project %s initialised at %s", project_name, dest_dir)
