@@ -175,25 +175,36 @@ init_pipeline <- function(token_file,
   # Split file into Head (pre-targets), Targets, and Tail (anything after targets)
   head_txt <- txt[1:open]
   tail_txt <- txt[(close + 1):length(txt)]
+  # There may be nothing in tail
+  if ((close + 1) > length(txt)) tail_txt <- ""
 
   # locate each target inside list
   blocks <- list()
   start <- NULL
   for (i in seq(open+1, close-1)) {
-    if (grepl("^\\s*tar_target\\s*\\(", txt[i])) start <- i
-    if (!is.null(start) && grepl("^\\),\\s*$", txt[i])) {
+    if (grepl("^\\s*tar_(target|file)\\s*\\(", txt[i])) start <- i
+    if (!is.null(start) && grepl("^\\s{0,2}\\),\\s*$", txt[i])) {
       blocks <- append(blocks, list(start:i))
       start <- NULL
     }
   }
 
+  #print("Printing Detected Targets:")
+  #sapply(blocks, function(idx) print(txt[idx]))
   # Keep only core target blocks
-  kept_body <-purrr::keep(blocks, \(idx) {
-    any(stringr::str_detect(
-      txt[idx],
-      paste0("^\\s*(", paste(core_targets, collapse = "|"), ")\\s*,")
-    ))
-  }) |> purrr:::map_chr(\(idx) paste(txt[idx], collapse = "\n"))
+  kept_body <-purrr::keep(blocks, function(idx) {
+    block <- txt[idx]
+
+    # Find target name and check against core targets
+    tar_line <- block[2] # This will break if comments are added...
+    in_core <- stringr::str_detect(tar_line, core_targets) |> any()
+    return(in_core)
+  })
+
+  kept_body <- sapply(kept_body, function(idx) paste(txt[idx], collapse = '\n')) |>
+    unlist()
+
+  print(kept_body)
 
   # Make sure last kept block ends with a comma (so we can append)
   if (length(kept_body)) {
@@ -202,6 +213,8 @@ init_pipeline <- function(token_file,
       kept_body[last] <- sub("\\)\\s*$", "),", kept_body[last])
     }
   }
+
+  kept_body <- paste(kept_body, collapse = '\n')
 
   # Create blocks for non-core instruments
   inst_forms <- names(form_types)
@@ -220,8 +233,18 @@ init_pipeline <- function(token_file,
     )
   })
 
+  ## Organize blocks into subject, visit, and measure targets
+  subject_blocks <- c("###### Subject Level Data ######",
+                      new_blocks[stringr::str_detect(new_blocks, '_sl_')])
+  visit_blocks <- c("###### Visit Level Data ######",
+                    new_blocks[stringr::str_detect(new_blocks, '_vl_')])
+  measure_blocks <- c("####### Measurement Level Data ######",
+                      new_blocks[stringr::str_detect(new_blocks, '_ml_')])
+
+  new_blocks <- c(subject_blocks, visit_blocks, measure_blocks)
+
   # Combine new targets with head and tail of file
-  body_txt <- c(kept_body, new_blocks, ")")
+  body_txt <- c("##### Core Targets #####", kept_body, new_blocks, ")")
   body_txt <- gsub("std_", paste0(nickname, "_"), body_txt, fixed = TRUE)
 
   writeLines(c(head_txt, body_txt, tail_txt), tf)
