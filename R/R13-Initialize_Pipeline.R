@@ -82,6 +82,8 @@ init_pipeline <- function(token_file,
   rep_forms <- if (!is.null(repeating)) repeating$instrument else character()
 
   instruments <- unique(md$form_name)
+  # Remove timeline followback (which we'll always keep by default)
+  instruments <- setdiff(instruments, "timeline_followback")
   #print(instruments)
 
   # Categorize as subject- visit- or measurement- level
@@ -99,7 +101,13 @@ init_pipeline <- function(token_file,
 
   # 3: index std_ functions ----
   msg("Scanning standard pipeline for existing instrument functions ...")
-  src_files <- fs::dir_ls(fs::path(dest_dir, "src"), recurse = TRUE, glob = "*.R")
+  # Scripts/functions (in src/process) that we want to keep no matter what
+  scripts_to_keep <- c('src/process/measurement/ME04-TLFB.R',
+                       'src/process/visit/VI22-TLFB.R')
+  src_files <- fs::dir_ls(fs::path(dest_dir, "src/process"), recurse = TRUE, glob = "*.R")
+  # Don't look in files with functions for core targets (e.g. TLFB)
+  src_files <- src_files[!stringr::str_detect(src_files, paste(scripts_to_keep, collapse = "|"))]
+  print(src_files)
   form_lookup <- purrr::map_chr(src_files, function(path) {
     lines <- readLines(path, warn = FALSE)
     m <- stringr::str_match(lines, "REDCap.Form\\s*==\\s*['\"]([A-Za-z0-9_]+)['\"]")
@@ -204,8 +212,6 @@ init_pipeline <- function(token_file,
   kept_body <- sapply(kept_body, function(idx) paste(txt[idx], collapse = '\n')) |>
     unlist()
 
-  print(kept_body)
-
   # Make sure last kept block ends with a comma (so we can append)
   if (length(kept_body)) {
     last <- length(kept_body)
@@ -249,7 +255,32 @@ init_pipeline <- function(token_file,
 
   writeLines(c(head_txt, body_txt, tail_txt), tf)
 
-  # 6: Close
+  # 6: Handle timeline_followback and reorganize scripts
+  msg("Reorganizing files ...")
+  # Make sure all subfolders exist
+  fs::dir_create(fs::path(dest_dir, 'src', c('subject', 'visit', 'measurement')))
+  for (script in scripts_to_keep) {
+    lvl <- stringr::str_extract(script,
+                                'src/process/(subject|visit|measurement)/.*R$',
+                                group = 1)
+    script_name <- fs::path_file(script)
+    new_script <- fs::path(dest_dir, sprintf('src/%s/%s', lvl, script_name))
+    fs::file_move(fs::path(dest_dir, script), new_script)
+
+    code <- readLines(new_script)
+    new_code <- c(sprintf("# Generated from %s in standard pipeline on %s", script, Sys.Date()),
+                  code)
+    new_code <- gsub('(\\s*)std_', paste0('\\1', nickname, "_"), new_code)
+    writeLines(new_code, new_script)
+  }
+
+  # Replace src/process subfolders with the directories we have built above
+  process_dirs <- fs::path(dest_dir, "src", "process", c("subject", "visit", "measurement"))
+  fs::dir_delete(process_dirs)
+  source_dirs <- fs::path(dest_dir, "src", c("subject", "visit", "measurement"))
+  fs::file_move(source_dirs, process_dirs)
+
+  # 7: Close ----
   msg("Project %s initialised at %s", project_name, dest_dir)
   usethis::create_project(dest_dir)
   invisible(dest_dir) # Return the new project folder string
