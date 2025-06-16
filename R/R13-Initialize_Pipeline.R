@@ -67,7 +67,6 @@ init_pipeline <- function(token_file,
   parent_dir <- fs::path_dir(dest_dir)
   fs::dir_create(parent_dir)
   gert::git_clone(std_repo_url, dest_dir, branch = std_repo_branch)
-  usethis::create_project(dest_dir)
 
   # 2: connect to REDCap & pull metadata ----
   msg("Connecting to REDCap ...")
@@ -83,6 +82,8 @@ init_pipeline <- function(token_file,
   rep_forms <- if (!is.null(repeating)) repeating$instrument else character()
 
   instruments <- unique(md$form_name)
+  # Remove timeline followback (which we'll always keep by default)
+  instruments <- setdiff(instruments, "timeline_followback")
   #print(instruments)
 
   # Categorize as subject- visit- or measurement- level
@@ -100,7 +101,13 @@ init_pipeline <- function(token_file,
 
   # 3: index std_ functions ----
   msg("Scanning standard pipeline for existing instrument functions ...")
-  src_files <- fs::dir_ls(fs::path(dest_dir, "src"), recurse = TRUE, glob = "*.R")
+  # Scripts/functions (in src/process) that we want to keep no matter what
+  scripts_to_keep <- c('src/process/measurement/ME04-TLFB.R',
+                       'src/process/visit/VI22-TLFB.R')
+  src_files <- fs::dir_ls(fs::path(dest_dir, "src/process"), recurse = TRUE, glob = "*.R")
+  # Don't look in files with functions for core targets (e.g. TLFB)
+  src_files <- src_files[!stringr::str_detect(src_files, paste(scripts_to_keep, collapse = "|"))]
+  print(src_files)
   form_lookup <- purrr::map_chr(src_files, function(path) {
     lines <- readLines(path, warn = FALSE)
     m <- stringr::str_match(lines, "REDCap.Form\\s*==\\s*['\"]([A-Za-z0-9_]+)['\"]")
@@ -155,67 +162,126 @@ init_pipeline <- function(token_file,
   # 5: rewrite _targets.R ----
   msg("Writing _targets.R ...")
   tf <- fs::path(dest_dir, "_targets.R")
+  # Set of targets that we ALWAYS want
+  core_targets <- c(
+    "rds_download",
+    "chr_path_redcap_data",
+    "chr_path_tlfb_data",
+    "lst_redcap_data",
+    "df_tlfb_raw",
+    "df_id_table",
+    "df_redcap_raw",
+    "df_vl_tlfb",
+    "df_ml_tlfb"
+  )
   txt <- readLines(tf, warn = FALSE)
+  # Find first line of targets list
   open <- which(grepl("^\\s*list\\s*\\(", txt))[1]
+  # Last line of targets list
   close <- tail(which(grepl("^\\s*\\)\\s*$", txt)), n=1)
+
+  # Split file into Head (pre-targets), Targets, and Tail (anything after targets)
+  head_txt <- txt[1:open]
+  tail_txt <- txt[(close + 1):length(txt)]
+  # There may be nothing in tail
+  if ((close + 1) > length(txt)) tail_txt <- ""
 
   # locate each target inside list
   blocks <- list()
   start <- NULL
   for (i in seq(open+1, close-1)) {
-    if (grepl("^\\s*tar_target\\s*\\(", txt[i])) start <- i
-    if (!is.null(start) && grepl("\\), \\s*$", txt[i])) {
+    if (grepl("^\\s*tar_(target|file)\\s*\\(", txt[i])) start <- i
+    if (!is.null(start) && grepl("^\\s{0,2}\\),\\s*$", txt[i])) {
       blocks <- append(blocks, list(start:i))
       start <- NULL
     }
   }
 
-  ## helper to remove or edit blocks ----
-  kill_idx <- integer()
-  for (idx in blocks) {
+  #print("Printing Detected Targets:")
+  #sapply(blocks, function(idx) print(txt[idx]))
+  # Keep only core target blocks
+  kept_body <-purrr::keep(blocks, function(idx) {
     block <- txt[idx]
-    # Extract target var (second line, before first comma)
-    var_line <- stringr::str_trim(block[2])
-    tgt_var <- sub(",.*$", "", var_line)
 
-    # extract std_ function
-    fun_line <- block[stringr::str_detect(block, "std_")][1]
-    fun_match <- stringr::str_match(fun_line, "std_(sl|vl|ml)_([A-Za-z0-9_]+)")
-    if (is.na(fun_match[1])) next
+    # Find target name and check against core targets
+    tar_line <- block[2] # This will break if comments are added...
+    in_core <- stringr::str_detect(tar_line, core_targets) |> any()
+    return(in_core)
+  })
 
-    old_lvl <- fun_match[2]
-    form <- fun_match[3]
+  kept_body <- sapply(kept_body, function(idx) paste(txt[idx], collapse = '\n')) |>
+    unlist()
 
-    if (!(form %in% names(form_types))) {
-      # remove this target entry
-      kill_idx <- c(kill_idx, idx)
-      next
+  # Make sure last kept block ends with a comma (so we can append)
+  if (length(kept_body)) {
+    last <- length(kept_body)
+    if (!grepl("\\),\\s*$", kept_body[last])) {
+      kept_body[last] <- sub("\\)\\s*$", "),", kept_body[last])
     }
-
-    # For targets we keep, changes nickname (and possibly level)
-    new_lvl <- form_types[[form]]
-    repl_fun <- paste0(nickname, "_", new_lvl, "_", form)
-    repl_var <- paste0("df_", new_lvl, "_", form)
-
-    # target output line update
-    block[2] <- sub(tgt_var, repl_var, block[2], fixed = TRUE)
-    # function name update
-    block <- gsub(fun_match[1], repl_fun, block, fixed = TRUE)
-    # change prefixes to project nickname
-    block <- gsub("std_", paste0(nickname, "_"), block, fixed = TRUE)
-
-    txt[idx] <- block
   }
 
-  # drop removed target blocks
-  if (length(kill_idx)) txt <- txt[-unlist(kill_idx)]
+  kept_body <- paste(kept_body, collapse = '\n')
 
-  # global replacement of std_ prefix (for core targets that were not checked)
-  block <- gsub("std_", paste0(nickname, "_"), txt, fixed = TRUE)
-  writeLines(txt, tf)
+  # Create blocks for non-core instruments
+  inst_forms <- names(form_types)
+  new_blocks <- purrr::imap_chr(inst_forms, function(form, idx) {
+    lvl <- form_types[[form]]
+    var <- sprintf("df_%s_%s", lvl, form)
+    fun <- sprintf("%s_%s_%s", nickname, lvl, form)
+    comma <- if (idx < length(inst_forms)) "," else ""
 
-  # 6: Close
+    glue::glue(
+      "  tar_target(\n",
+      "    {var},\n",
+      "    {fun}(df_redcap_raw),\n",
+      "  ){comma}\n",
+      .open = "{", .close = "}", .trim = FALSE
+    )
+  })
+
+  ## Organize blocks into subject, visit, and measure targets
+  subject_blocks <- c("###### Subject Level Data ######",
+                      new_blocks[stringr::str_detect(new_blocks, '_sl_')])
+  visit_blocks <- c("###### Visit Level Data ######",
+                    new_blocks[stringr::str_detect(new_blocks, '_vl_')])
+  measure_blocks <- c("####### Measurement Level Data ######",
+                      new_blocks[stringr::str_detect(new_blocks, '_ml_')])
+
+  new_blocks <- c(subject_blocks, visit_blocks, measure_blocks)
+
+  # Combine new targets with head and tail of file
+  body_txt <- c("##### Core Targets #####", kept_body, new_blocks, ")")
+  body_txt <- gsub("std_", paste0(nickname, "_"), body_txt, fixed = TRUE)
+
+  writeLines(c(head_txt, body_txt, tail_txt), tf)
+
+  # 6: Handle timeline_followback and reorganize scripts
+  msg("Reorganizing files ...")
+  # Make sure all subfolders exist
+  fs::dir_create(fs::path(dest_dir, 'src', c('subject', 'visit', 'measurement')))
+  for (script in scripts_to_keep) {
+    lvl <- stringr::str_extract(script,
+                                'src/process/(subject|visit|measurement)/.*R$',
+                                group = 1)
+    script_name <- fs::path_file(script)
+    new_script <- fs::path(dest_dir, sprintf('src/%s/%s', lvl, script_name))
+    fs::file_move(fs::path(dest_dir, script), new_script)
+
+    code <- readLines(new_script)
+    new_code <- c(sprintf("# Generated from %s in standard pipeline on %s", script, Sys.Date()),
+                  code)
+    new_code <- gsub('(\\s*)std_', paste0('\\1', nickname, "_"), new_code)
+    writeLines(new_code, new_script)
+  }
+
+  # Replace src/process subfolders with the directories we have built above
+  process_dirs <- fs::path(dest_dir, "src", "process", c("subject", "visit", "measurement"))
+  fs::dir_delete(process_dirs)
+  source_dirs <- fs::path(dest_dir, "src", c("subject", "visit", "measurement"))
+  fs::file_move(source_dirs, process_dirs)
+
+  # 7: Close ----
   msg("Project %s initialised at %s", project_name, dest_dir)
-
+  usethis::create_project(dest_dir)
   invisible(dest_dir) # Return the new project folder string
 }
