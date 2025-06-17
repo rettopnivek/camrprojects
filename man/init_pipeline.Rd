@@ -11,7 +11,10 @@ init_pipeline(
   dest_dir,
   std_repo_url,
   std_repo_branch = "main",
-  redcap_url = Sys.getenv("REDCAP_API_URL")
+  redcap_url = Sys.getenv("REDCAP_API_URL"),
+  excluded_forms = c("informed_consent", "contact_information", "intake_summary",
+    "adverse_event_review", "concomitant_medication_review", "data_checking",
+    "clinician_consult", "remuneration")
 )
 }
 \arguments{
@@ -32,6 +35,9 @@ project name, but not necessarily)}
 
 \item{redcap_url}{API endpoint. Defaults to Sys.getenv("REDCAP_API_URL") and
 aborts if still empty}
+
+\item{excluded_forms}{vector of form/instrument names that should \emph{not} have
+a target or processing function. Default vector includes administrative forms}
 }
 \value{
 side effect: \code{dest_dir} is populated with a provisional targets pipeline.

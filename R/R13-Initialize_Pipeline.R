@@ -18,6 +18,8 @@
 #' @param std_repo_branch Branch to clone from std_repo_url (default "main")
 #' @param redcap_url API endpoint. Defaults to Sys.getenv("REDCAP_API_URL") and
 #' aborts if still empty
+#' @param excluded_forms vector of form/instrument names that should *not* have
+#' a target or processing function. Default vector includes administrative forms
 #'
 #' @return side effect: `dest_dir` is populated with a provisional targets pipeline.
 #' `dest_dir` is also invisibly returned as a string.
@@ -34,12 +36,20 @@
 #'   redcap_url.     = "https://redcap.ourOrg.org/redcap/api/"
 #' )
 init_pipeline <- function(token_file,
-                                project_name,
-                                nickname,
-                                dest_dir,
-                                std_repo_url,
-                                std_repo_branch = 'main',
-                                redcap_url      = Sys.getenv("REDCAP_API_URL")) {
+                          project_name,
+                          nickname,
+                          dest_dir,
+                          std_repo_url,
+                          std_repo_branch = 'main',
+                          redcap_url      = Sys.getenv("REDCAP_API_URL"),
+                          excluded_forms = c('informed_consent',
+                                             'contact_information',
+                                             'intake_summary',
+                                             'adverse_event_review',
+                                             'concomitant_medication_review',
+                                             'data_checking',
+                                             'clinician_consult',
+                                             'remuneration')) {
   # Input Checks ----
   stopifnot(file.exists(token_file))
   if (nzchar(redcap_url) == FALSE) {
@@ -79,11 +89,14 @@ init_pipeline <- function(token_file,
   # Identify any repeating instruments
   repeating <- tryCatch(redcapAPI::exportRepeatingInstrumentsEvents(rc),
                         error = function(e) NULL)
-  rep_forms <- if (!is.null(repeating)) repeating$instrument else character()
+  ## Debug print
+  rep_forms <- if (!is.null(repeating)) unique(repeating$form_name) else character()
 
   instruments <- unique(md$form_name)
   # Remove timeline followback (which we'll always keep by default)
   instruments <- setdiff(instruments, "timeline_followback")
+  # Remove excluded instruments (e.g. admin things we don't need to process)
+  instruments <- setdiff(instruments, excluded_forms)
   #print(instruments)
 
   # Categorize as subject- visit- or measurement- level
@@ -97,7 +110,6 @@ init_pipeline <- function(token_file,
 
   form_types <- setNames(vapply(instruments, classify_form, character(1)),
                          instruments)
-  #print(form_types)
 
   # 3: index std_ functions ----
   msg("Scanning standard pipeline for existing instrument functions ...")
@@ -107,7 +119,6 @@ init_pipeline <- function(token_file,
   src_files <- fs::dir_ls(fs::path(dest_dir, "src/process"), recurse = TRUE, glob = "*.R")
   # Don't look in files with functions for core targets (e.g. TLFB)
   src_files <- src_files[!stringr::str_detect(src_files, paste(scripts_to_keep, collapse = "|"))]
-  print(src_files)
   form_lookup <- purrr::map_chr(src_files, function(path) {
     lines <- readLines(path, warn = FALSE)
     m <- stringr::str_match(lines, "REDCap.Form\\s*==\\s*['\"]([A-Za-z0-9_]+)['\"]")
@@ -228,13 +239,12 @@ init_pipeline <- function(token_file,
     lvl <- form_types[[form]]
     var <- sprintf("df_%s_%s", lvl, form)
     fun <- sprintf("%s_%s_%s", nickname, lvl, form)
-    comma <- if (idx < length(inst_forms)) "," else ""
 
     glue::glue(
       "  tar_target(\n",
       "    {var},\n",
       "    {fun}(df_redcap_raw),\n",
-      "  ){comma}\n",
+      "  ),\n",
       .open = "{", .close = "}", .trim = FALSE
     )
   })
@@ -248,6 +258,8 @@ init_pipeline <- function(token_file,
                       new_blocks[stringr::str_detect(new_blocks, '_ml_')])
 
   new_blocks <- c(subject_blocks, visit_blocks, measure_blocks)
+  new_blocks[length(new_blocks)] <- sub('\\),\n$', '\\)\n',
+                                        new_blocks[length(new_blocks)])
 
   # Combine new targets with head and tail of file
   body_txt <- c("##### Core Targets #####", kept_body, new_blocks, ")")
@@ -283,5 +295,7 @@ init_pipeline <- function(token_file,
   # 7: Close ----
   msg("Project %s initialised at %s", project_name, dest_dir)
   usethis::create_project(dest_dir)
+  # Remove unnecessary "/R" directory that create_project adds
+  fs::dir_delete(fs::path(dest_dir,'R'))
   invisible(dest_dir) # Return the new project folder string
 }
