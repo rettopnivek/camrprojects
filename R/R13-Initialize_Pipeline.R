@@ -35,7 +35,7 @@
 #'   std_repo_url    = "git@gitlab.ourOrg.org:our_team/standard-data-pipeline.git"
 #'   redcap_url.     = "https://redcap.ourOrg.org/redcap/api/"
 #' )
-init_pipeline <- function(token_file,
+camr_init_pipeline <- function(token_file,
                           project_name,
                           nickname,
                           dest_dir,
