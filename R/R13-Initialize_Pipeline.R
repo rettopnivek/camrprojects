@@ -267,7 +267,7 @@ camr_init_pipeline <- function(token_file,
 
   writeLines(c(head_txt, body_txt, tail_txt), tf)
 
-  # 6: Handle timeline_followback and reorganize scripts
+  # 6: Handle timeline_followback and reorganize scripts ----
   msg("Reorganizing files ...")
   # Make sure all subfolders exist
   fs::dir_create(fs::path(dest_dir, 'src', c('subject', 'visit', 'measurement')))
