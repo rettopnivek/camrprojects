@@ -220,13 +220,13 @@ camr_map_redcap_vars <- function(output_dir,
   # Function to pull variable pairs from transmute calls ----
   parse_transmute_pairs <- function(txt) {
     bodies <- stringr::str_match_all(txt,
-                                     stringr::regex("transmute\\s*\\((.*?)\n\\s*\\)\\s*\\|>", dotall = TRUE))[[1]][,2]
+                                     stringr::regex("transmute\\s*\\((.*?)\n\\s*\\)\\s*\\|>\\s*\n", dotall = TRUE))[[1]][,2]
                                      # Note: this regex is fragile but works well enough for our purposes
                                      # The issue is
     purrr::map(bodies, function(body) {
       # Split on comma (that aren't inside quotes or parentheses)
       pieces <- strsplit(body,
-                         ",",
+                         "[^\"'],",
                          perl = TRUE)[[1]]
       purrr::map(pieces, function(piece) {
         parts <- strsplit(piece, "=", fixed = TRUE)[[1]]
@@ -289,6 +289,7 @@ camr_map_redcap_vars <- function(output_dir,
 #'
 #' @importFrom httr    POST content
 #' @importFrom stringr str_trim
+#' @importFrom purrr   map set_names transpose
 #' @export
 #'
 camr_redcap_field_meta <- function(api_token_path) {
@@ -329,9 +330,9 @@ camr_redcap_field_meta <- function(api_token_path) {
   # Convert answer choices to a list with numbers as names and labels as values
   parse_choices <- function(x) {
     stringr::str_split(x, "\\s*\\|\\s*")[[1]] |>
-      map(~ stringr::str_match(.x, "^(\\d+), (.*)$")[,2:3]) |>
+      purrr::map(~ stringr::str_match(.x, "^(\\d+), (.*)$")[,2:3]) |>
       purrr::transpose() |>
-      (function(kv) set_names(kv[[2]], kv[[1]]))() |> as.list()
+      (function(kv) purrr::set_names(kv[[2]], kv[[1]]))() |> as.list()
   }
 
   meta_df$answer_choices <- lapply(meta_df$answer_choices, parse_choices)
@@ -427,4 +428,174 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
 
   return(output_dir)
 
+}
+
+#' Extract pairs of new and source variables from every dplyr::transmute call in a script
+#'
+#' @param file Path to an R script that defines target function
+#' @param redcap_vars a character vector of the variable names in the redcap project
+#' @param keep Optional character vector of variable names to keep
+#'
+#' @returns A list of lists, each with the processed variable (as key) and
+#' source variable (as value). The value defaults to "composite"
+parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
+
+  res <- list() # list to collect pairs
+  expr <- parse(file, keep.source = FALSE)
+
+  walk_ast <- function(node) {
+    if (is.call(node)) {
+
+      fun_sym <- node[[1]]
+      fun_chr <- paste(deparse(fun_sym), collapse = "")
+
+      # check for transmute or dplyr::transmute
+      if (grepl("(^|::)transmute$", fun_chr)) {
+        print(paste0("found transmute in ", file))
+        args <- as.list(node)[-1]
+        arg_names <- names(args) %||% rep("", length(args))
+
+        for (i in seq_along(args)) {
+          lhs <- arg_names[i]
+          print(lhs)
+          if (lhs == "") next
+
+          if (!is.null(keep) && !(lhs %in% keep)) next
+
+          rhs <- args[[i]]
+          found_redcap_vars <- sapply(redcap_vars,
+                                      function(x) stringr::str_match(as.character(rhs), paste0("(?:[^A-Za-z0-9_.]|^)(", x, ")", "(?:[^A-Za-z0-9_.]|$)"))[,2])
+          tokens <- found_redcap_vars[which(!is.na(found_redcap_vars))]
+          if (length(tokens) == 0) print(as.character(rhs))
+          src <- if (length(tokens) == 1) tokens else if (length(tokens > 1)) paste0("composite: ",
+                                                             paste(tokens, collapse = ", ")) else NA
+          res[[length(res) + 1]] <<- list(lhs = lhs, src = src)
+        }
+      }
+
+      # Check every part of the call
+      lapply(as.list(node), walk_ast)
+    }
+  }
+
+  lapply(expr, walk_ast)
+  return(res)
+}
+
+#' Scrape functions that generate targets to map variable names to the
+#' REDCap variables they were created from
+#'
+#' @description
+#' Scrape the functions that generate targets and map final variable names
+#' to their REDCap ancestor variables. Produces a yaml file that lists the
+#' target dataframes with their mappings (from final vars to REDCap vars). The
+#' scraper looks for transmute calls. If a variable is constructed from more than
+#' one REDCap ancester, the mapping is listed as "composite".
+#'
+#' @param output_dir file path to directory where the yaml should be saved
+#' @param api_token_path file path to txt file containing redcap project token
+#' @param exclude_redcap_vars character vector of redcap variables the parser
+#' should *not* search for. Default is "co" because it captures tons of stuff.
+#' @param src_dir directory to search for functions that generate variables.
+#' Default is "src/".
+#' @param exclude_targets a character vector with names of targets to exclude.
+#' Excludes core targets by default.
+#' @returns side effect: a yaml file is created in `output_dir`. Invisibly returns
+#' the list object containing the mapping
+#'
+#' @importFrom stringr str_extract
+#' @export
+#'
+camr_map_redcap_vars <- function(output_dir,
+                                 api_token_path,
+                                 exclude_redcap_vars = "co",
+                                 src_dir="src",
+                                 exclude_targets = c('rds_download',
+                                                     'chr_path_redcap_data',
+                                                     'chr_path_tlfb_data',
+                                                     'lst_redcap_data',
+                                                     'df_tlfb_raw',
+                                                     'df_id_table',
+                                                     'df_redcap_raw')) {
+  # Input checks ----
+  stopifnot(dir.exists(src_dir))
+  if (!dir.exists(output_dir)) dir.create(output_dir)
+
+  # Get project varnames ----
+  meta <- camr_redcap_field_meta(api_token_path)
+  redcap_vars <- meta$field_name
+  redcap_vars <- redcap_vars[!(redcap_vars %in% exclude_redcap_vars)]
+
+  # Manifest ----
+  man <- targets::tar_manifest(fields = c("name", "command"))
+  man <- man[!(man$name %in% exclude_targets),]
+
+  # extract function names from commands
+  man$fun <- vapply(man$command,
+                    \(cmd) stringr::str_extract(cmd, "^([A-Za-z][A-Za-z0-9_.]*)\\(", 1),
+                    character(1))
+
+  # which script defines which function
+  r_files <- list.files(src_dir, pattern = "\\.R$", recursive = TRUE,
+                        full.names = TRUE)
+  fun_table <- purrr::map_dfr(r_files,
+                              function(f) {
+                                defs <- stringr::str_match_all(
+                                  readLines(f, warn = FALSE),
+                                  "\\s*([A-Za-z][A-Za-z0-9_.]*)\\s*<-\\s*function")
+                                df <- try(do.call(rbind.data.frame, defs))
+                                if (inherits(df, "try-error") || nrow(df) == 0) {
+                                  return(data.frame(fun = character(), script = character()))
+                                }
+                                df$script <- f
+                                df <- df[,c("V2", "script")]
+                                colnames(df) <- c("fun", "script")
+                                return(df)
+                              })
+  if (nrow(fun_table) == 0) {
+    stop("No functions found in src_dir: ", src_dir)
+  }
+  fun_map <- split(fun_table$script, fun_table$fun)
+
+  # Create mapping ----
+  mapping <- list()
+
+  for (i in seq_len(nrow(man))) {
+    target_name <- man$name[i]
+    function_name <- man$fun[i]
+
+    if (is.na(function_name) || !(function_name %in% names(fun_map))) next
+
+    helper_file <- fun_map[[function_name]][1]
+
+    # Pull variable names from target df
+    colnames_target <- tryCatch(
+      names(targets::tar_read(target_name)),
+      error = function(e) character())
+
+    pairs <- parse_transmute_pairs(helper_file,
+                                   redcap_vars = redcap_vars)
+
+    if (length(pairs) == 0) next
+
+    mapping[[target_name]] <- purrr::reduce(
+      pairs,
+      function(acc, pr) {
+        acc[[pr$lhs]] <- pr$src
+        return(acc)
+      },
+      .init = list())
+  }
+
+  if (length(mapping) == 0) {
+    warning("no transmute mappings found")
+    return(invisible(NULL))
+  }
+
+  # Write YAML ----
+  out_file <- file.path(output_dir,
+                       sprintf("redcap_var_map_%s.yaml", format(Sys.time(), "%Y%m%dT%H%M%S")))
+  yaml::write_yaml(mapping, out_file)
+  message("Variable map written to ", out_file)
+  invisible(out_file)
 }
