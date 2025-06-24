@@ -147,136 +147,6 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
   invisible(written)
 }
 
-#' Scrape functions that generate targets to map variable names to the
-#' REDCap variables they were created from
-#'
-#' @description
-#' Scrape the functions that generate targets and map final variable names
-#' to their REDCap ancestor variables. Produces a yaml file that lists the
-#' target dataframes with their mappings (from final vars to REDCap vars). The
-#' scraper looks for transmute calls. If a variable is constructed from more than
-#' one REDCap ancester, the mapping is listed as "composite".
-#'
-#' @param output_dir file path to directory where the yaml should be saved
-#' @param src_dir directory to search for functions that generate variables.
-#' Default is "src/".
-#' @param exclude_targets a character vector with names of targets to exclude.
-#' Excludes core targets by default.
-#' @returns side effect: a yaml file is created in `output_dir`. Invisibly returns
-#' the list object containing the mapping
-#'
-#' @importFrom stringr str_extract
-#' @export
-#'
-camr_map_redcap_vars <- function(output_dir,
-                                 src_dir="src",
-                                 exclude_targets = c('rds_download',
-                                                     'chr_path_redcap_data',
-                                                     'chr_path_tlfb_data',
-                                                     'lst_redcap_data',
-                                                     'df_tlfb_raw',
-                                                     'df_id_table',
-                                                     'df_redcap_raw')) {
-  # Input checks ----
-  stopifnot(dir.exists(src_dir))
-  if (!dir.exists(output_dir)) dir.create(output_dir)
-
-  # Get the targets and functions from the manifest ----
-  man <- targets::tar_manifest(fields = c("name", "command"))
-  man <- man[!(man$name %in% exclude_targets),]
-
-  # Helper to pull the functions
-  extract_fun <- function(cmd) {
-    m <- stringr::str_extract(cmd,
-                              "^([A-Za-z][A-Za-z0-9_.]*)\\(",
-                              group = 1)
-  }
-  # Extract the function names
-  man$fun <- vapply(man$command, extract_fun, character(1))
-
-  # Map functions to the scripts that create them ----
-  r_files <- list.files(src_dir, pattern = "\\.R$",
-                        recursive = TRUE, full.names = TRUE)
-
-  fun_table <- purrr::map_dfr(r_files, function(f) {
-    lines <- readLines(f, warn = FALSE)
-    defs <- stringr::str_match_all(
-      lines,
-      "\\s*([A-Za-z][A-Za-z0-9_.]*)\\s*<-\\s*function"
-    )
-    df <- try(df <- do.call(rbind.data.frame, defs))
-    if ("try-error" %in% class(df) || nrow(df) == 0) df <- data.frame(script = f, V2 = NA)
-    else df$script <- f
-    df <- df[,c("V2", "script")]
-    colnames(df) <- c("fun", "script")
-    return(df)
-  })
-  fun_table <- fun_table[!is.na(fun_table$fun),]
-  if (nrow(fun_table) == 0) {
-    stop("No functions found in src_dir: ", src_dir)
-  }
-  fun_map <- split(fun_table$script, fun_table$fun)
-
-  # Function to pull variable pairs from transmute calls ----
-  parse_transmute_pairs <- function(txt) {
-    bodies <- stringr::str_match_all(txt,
-                                     stringr::regex("transmute\\s*\\((.*?)\n\\s*\\)\\s*\\|>\\s*\n", dotall = TRUE))[[1]][,2]
-                                     # Note: this regex is fragile but works well enough for our purposes
-                                     # The issue is
-    purrr::map(bodies, function(body) {
-      # Split on comma (that aren't inside quotes or parentheses)
-      pieces <- strsplit(body,
-                         "[^\"'],",
-                         perl = TRUE)[[1]]
-      purrr::map(pieces, function(piece) {
-        parts <- strsplit(piece, "=", fixed = TRUE)[[1]]
-        if (length(parts) != 2) return(NULL)
-        lhs <- stringr::str_trim(parts[1]) |>
-          stringr::str_extract("(#.*?\n)?\\s*([A-Za-z][A-Za-z0-9_.]*)", group = 2)
-        rhs <- stringr::str_trim(parts[2])
-
-        tokens <- stringr::str_extract_all(rhs, "[A-Za-z][A-Za-z0-9_.]*")[[1]]
-        tokens <- setdiff(tokens, c("c", "as.integer", "as.numeric",
-                                    "as.character", "as.logical"))
-        src <- if (length(tokens) == 1) tokens else "composite"
-        list(lhs = lhs, src = src)
-      }) |> purrr::compact()
-    }) |> purrr::flatten()
-  }
-
-  # Go through each target, locate its function's file, and build mapping ----
-  mapping <- list()
-  for (i in seq_len(nrow(man))) {
-    target_name <- man$name[i]
-    function_name <- man$fun[i]
-    if (is.na(function_name) || !(function_name %in% names(fun_map))) next
-
-    helper_file <- fun_map[[function_name]][1] # There shouldn't be duplicates but...
-    txt <- paste(readLines(helper_file, warn = FALSE), collapse = "\n")
-
-    pairs <- parse_transmute_pairs(txt)
-    if (length(pairs) == 0) next
-    mapping[[target_name]] <- purrr::reduce(pairs, function(acc, pr) {
-      acc[[pr$lhs]] <- pr$src
-      acc
-    }, .init = list())
-  }
-
-  if (length(mapping) == 0) {
-    warning("No transmute() mappings found")
-    return(invisible(NULL))
-  }
-
-  # Write yaml ----
-  out_file <- file.path(
-    output_dir,
-    sprintf("redcap_var_map_%s.yaml", format(Sys.time(), "%Y%m%dT%H%M%S"))
-  )
-  yaml::write_yaml(mapping, out_file)
-  message("Variable map written to ", out_file)
-  invisible(out_file)
-}
-
 #' Get REDCap project field metadata as a dataframe
 #'
 #' @description
@@ -496,6 +366,8 @@ parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
 #' @param api_token_path file path to txt file containing redcap project token
 #' @param exclude_redcap_vars character vector of redcap variables the parser
 #' should *not* search for. Default is "co" because it captures tons of stuff.
+#' (I have since refactored the regex so this isn't required, but leaving the
+#' option for now.)
 #' @param src_dir directory to search for functions that generate variables.
 #' Default is "src/".
 #' @param exclude_targets a character vector with names of targets to exclude.
