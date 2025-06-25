@@ -75,6 +75,7 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
     ## Create stub ----
     stub <- list(
       dataframe = tgt,
+      codebook_title = "...",
       generated_on = format(Sys.Date()),
       n_rows = nrow(obj),
       n_cols = ncol(obj),
@@ -92,8 +93,8 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
       expected_class <- class_abbrev[[declared]]
       actual_class <- class(x)[1]
 
-      # Throw error if
-      # The abbreviation is not standard; the stated class doesn't match actual
+      # Throw warning if
+      # 1. The abbreviation is not standard; or 2. the stated class doesn't match actual
       # Allow mismatch if all the values are missing (because type can't be inferred)
       if (!is.null(expected_class) && !(actual_class %in% expected_class) && !all(is.na(x))) {
         warning(sprintf(
@@ -128,7 +129,7 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
         description = "...",
         item_wording = "...",
         redcap_source_vars = "...",
-        data_type = declared,
+        data_type = actual_class,
         unique_values = uniq_map,
         unit_of_measurement = "...",
         missing_values = "NA",
@@ -200,7 +201,7 @@ camr_redcap_field_meta <- function(api_token_path) {
   # Convert answer choices to a list with numbers as names and labels as values
   parse_choices <- function(x) {
     stringr::str_split(x, "\\s*\\|\\s*")[[1]] |>
-      purrr::map(~ stringr::str_match(.x, "^(\\d+), (.*)$")[,2:3]) |>
+      purrr::map(~ stringr::str_match(.x, "^([A-Za-z0-9]+), (.*)$")[,2:3]) |>
       purrr::transpose() |>
       (function(kv) purrr::set_names(kv[[2]], kv[[1]]))() |> as.list()
   }
@@ -261,8 +262,10 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
   }
 
   item_info <- lapply(var_mapping,
-                      function(df) lapply(df, \(d) lapply(d,
-                                                          \(v) try(pull_item_info(v)))))
+                      function(df) {
+                        lapply(df,
+                               \(d) lapply(d,
+                                           \(v) if(is.na(v)) NA else try(pull_item_info(v))))})
 
   # Fill out codebook with info from item metadata ----
   # Helper function to fill out codebook for individual variables
@@ -274,9 +277,12 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
 
     # replace codebook entries
     var_entry <- codebook[[processed_dataframe]][["variables"]][[processed_varname]]
-    var_entry["unique_values"] <- ifelse(length(var_info[[1]][["answer_choices"]]) > 0,
-                                         var_info[[1]][["answer_choices"]],
-                                         var_entry["unique_values"])
+    if ((length(var_info[[1]][["answer_choices"]])) > 0 && (!grepl("^[A-Za-z]*\\.FCT\\..*", processed_varname))) {
+      # The second condition avoids replacing existing mappings for factors
+      var_entry["unique_values"] <- var_info[[1]][["answer_choices"]]
+    }
+    else var_entry["unique_values"] <- var_entry["unique_values"]
+
     var_entry[["item_wording"]] <- var_info[[1]][["field_label"]]
     var_entry[["redcap_source_vars"]] <- var_mapping[[processed_dataframe]][[processed_varname]]
 
@@ -287,7 +293,8 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
   # and fill out entries
   for (df_name in names(codebook)) {
     for (var_name in names(codebook[[df_name]][["variables"]])) {
-      if (is.null(var_mapping[[df_name]][[var_name]])) next
+      #print(sprintf("DF: %s; Variable: %s", df_name, var_name))
+      if (is.null(var_mapping[[df_name]][[var_name]]) || is.na(var_mapping[[df_name]][[var_name]])) next
       codebook[[df_name]][["variables"]][[var_name]] <- fill_codebook_variable(df_name,
                                                                                var_name,
                                                                                codebook)
@@ -296,7 +303,7 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
     yaml::write_yaml(codebook[[df_name]], paste0(output_dir, '/', df_name, '.yaml'))
   }
 
-  return(output_dir)
+  return(invisible(var_mapping))
 
 }
 
@@ -327,7 +334,6 @@ parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
 
         for (i in seq_along(args)) {
           lhs <- arg_names[i]
-          print(lhs)
           if (lhs == "") next
 
           if (!is.null(keep) && !(lhs %in% keep)) next
@@ -336,7 +342,7 @@ parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
           found_redcap_vars <- sapply(redcap_vars,
                                       function(x) stringr::str_match(as.character(rhs), paste0("(?:[^A-Za-z0-9_.]|^)(", x, ")", "(?:[^A-Za-z0-9_.]|$)"))[,2])
           tokens <- found_redcap_vars[which(!is.na(found_redcap_vars))]
-          if (length(tokens) == 0) print(as.character(rhs))
+          if (length(tokens) == 0) warning(paste("Variable map not found:", lhs, as.character(rhs)))
           src <- if (length(tokens) == 1) tokens else if (length(tokens > 1)) paste0("composite: ",
                                                              paste(tokens, collapse = ", ")) else NA
           res[[length(res) + 1]] <<- list(lhs = lhs, src = src)
