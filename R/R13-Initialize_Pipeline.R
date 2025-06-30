@@ -24,6 +24,7 @@
 #' @return side effect: `dest_dir` is populated with a provisional targets pipeline.
 #' `dest_dir` is also invisibly returned as a string.
 #'
+#' @importFrom redcapAPI redcapConnection exportMetaData exportMappings exportRepeatingInstrumentsEvents
 #' @export
 #'
 #' @examples
