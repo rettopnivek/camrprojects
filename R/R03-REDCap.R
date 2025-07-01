@@ -485,6 +485,45 @@ camr_redcap_field_meta <- function(api_token_path) {
   return(meta_df)
 }
 
+##### 1.4) Get REDCap mapping of instruments to events ####
+#' Download REDCap mapping of instruments to events via API
+#'
+#' @description
+#' Get the mapping of instruments to events as a dataframe. This function
+#' takes a filepath to a txt file with a project API token and returns a
+#' dataframe with mapping.
+#'
+#' @param api_token_path path to txt file containing project API token
+#'
+#' @returns A dataframe that maps instruments to events
+#'
+#' @importFrom stringr str_trim
+#' @export
+#' @author Zach Himmelsbach
+#'
+camr_instrument_event_map <- function(api_token_path) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API token file not found")
+
+  # Call API ----
+  api_token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
+
+  url <- "https://redcap.partners.org/redcap/api/"
+  formData <- list("token" = api_token,
+                   content = 'formEventMapping',
+                   format = 'json',
+                   'arms[0]' = '1',
+                   returnFormat = 'json'
+  ) # Will need to update this if we're doing a "multiple arms" REDCap
+  response <- httr::POST(url, body = formData, encode = "form")
+  result <- jsonlite::fromJSON(httr::content(response,
+                                             "text",
+                                             encoding = "UTF-8"),
+                               simplifyDataFrame = TRUE)
+
+  return(result)
+}
+
 #### 2) Functions for Naming Conventions ####
 
 ##### 2.1) validate_var_name #####
