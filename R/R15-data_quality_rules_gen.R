@@ -11,6 +11,7 @@
 #'
 #' @importFrom stringr str_trim
 #' @importFrom dplyr   filter
+#' @export
 #'
 #' @returns side-effect: saves csv at `output_path`. Invisibly returns the
 #' data quality rules csv for inspection
