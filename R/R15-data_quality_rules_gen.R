@@ -15,7 +15,7 @@
 #' @returns side-effect: saves csv at `output_path`. Invisibly returns the
 #' data quality rules csv for inspection
 #'
-gen_data_quality_rules <- function(path_to_api_token,
+camr_gen_data_quality_rules <- function(path_to_api_token,
                                    output_path = "data_quality_rules.csv") {
   # Check inputs ----
   if (file.exists(output_path)) stop("Cannot overwrite an existing file")
