@@ -29,3 +29,6 @@ invisibly returned.
 Load redcap variable info using REDCap API and fill in codebook info for
 related targets' vars.
 }
+\author{
+Zach Himmelsbach
+}

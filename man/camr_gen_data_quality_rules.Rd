@@ -24,3 +24,6 @@ Write data quality rules based on REDCap Metadata. Values should not be
 missing when they are 1) Required AND 2) reached by branching logic.
 Produces a csv that can be uploaded to the data quality module in REDCap.f
 }
+\author{
+Zach Himmelsbach
+}

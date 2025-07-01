@@ -41,3 +41,6 @@ target dataframes with their mappings (from final vars to REDCap vars). The
 scraper looks for transmute calls. If a variable is constructed from more than
 one REDCap ancester, the mapping is listed as "composite".
 }
+\author{
+Zach Himmelsbach
+}

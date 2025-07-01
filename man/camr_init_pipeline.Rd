@@ -61,3 +61,6 @@ init_pipeline(
   redcap_url.     = "https://redcap.ourOrg.org/redcap/api/"
 )
 }
+\author{
+Zach Himmelsbach
+}

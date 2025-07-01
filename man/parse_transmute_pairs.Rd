@@ -20,3 +20,6 @@ source variable (as value). The value defaults to "composite"
 \description{
 Extract pairs of new and source variables from every dplyr::transmute call in a script
 }
+\author{
+Zach Himmelsbach
+}

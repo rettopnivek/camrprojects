@@ -33,3 +33,6 @@ for new variables. Creates a directory in your project called "codebook" with
 one .yaml file per target in _targets.R. Some information is automatically
 inferred for new variables (data type, unique values, etc)
 }
+\author{
+Zach Himmelsbach
+}
