@@ -411,6 +411,80 @@ camr_redcap_download <- function(...) {
   camr_download_redcap(...)
 }
 
+##### 1.3) Download and clean REDCap metadata ####
+#' Get REDCap project field metadata as a cleaned dataframe
+#'
+#' @description
+#' Pull project field metadata via the REDCap API and clean it up to be useful.
+#' The output contains field names, field types, answer choices, branching logic,
+#' etc
+#'
+#' @param api_token_path path to text file containing REDCap project API token
+#' @returns a dataframe containing metadata on the fields from the REDCap project
+#'
+#' @importFrom httr    POST content
+#' @importFrom stringr str_trim
+#' @importFrom purrr   map set_names transpose
+#' @export
+#'
+#' @author Zach Himmelsbach
+#'
+camr_redcap_field_meta <- function(api_token_path) {
+  # Read token
+  token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
+
+  # Request metadata
+  url <- "https://redcap.partners.org/redcap/api/"
+  formData <- list("token"=token,
+                   content='metadata',
+                   format='json',
+                   returnFormat='json'
+  ) # json is easiest; the csv doesn't parse correctly
+  response <- httr::POST(url, body = formData, encode = "form")
+
+
+  meta_df <- jsonlite::fromJSON(httr::content(response,
+                                              "text",
+                                              encoding = "UTF-8"),
+                                simplifyDataFrame = TRUE)
+
+  # Convert field labels that contain html to text
+  rows_w_html <- grepl("<.*>", meta_df$field_label)
+  meta_df$field_label[rows_w_html] <- sapply(meta_df$field_label[rows_w_html],
+                                             function(s) {rvest::read_html(s) |>
+                                                 rvest::html_elements("p") |>
+                                                 rvest::html_text2() |>
+                                                 paste(collapse = "; ")})
+
+  # Separate calculations and answer choices
+  # keep original field for debugging
+  meta_df$original_choices <- meta_df$select_choices_or_calculations
+  meta_df$calculation <- ""
+  meta_df$calculation[meta_df$field_type == "calc"] <- meta_df$select_choices_or_calculations[meta_df$field_type == "calc"]
+  meta_df$select_choices_or_calculations[meta_df$field_type == "calc"] <- ""
+  meta_df <- meta_df |> dplyr::rename(answer_choices = select_choices_or_calculations)
+
+  # Convert answer choices to a list with numbers as names and labels as values
+  parse_choices <- function(x) {
+    stringr::str_split(x, "\\s*\\|\\s*")[[1]] |>
+      purrr::map(~ stringr::str_match(.x, "^([A-Za-z0-9]+), (.*)$")[,2:3]) |>
+      purrr::transpose() |>
+      (function(kv) purrr::set_names(kv[[2]], kv[[1]]))() |> as.list()
+  }
+
+  meta_df$answer_choices <- lapply(meta_df$answer_choices, parse_choices)
+
+  # Fill in answer choices for yes/no fields
+  meta_df$answer_choices[meta_df$field_type == "yesno"] <- lapply(1:length(meta_df$answer_choices[meta_df$field_type == "yesno"]),
+                                                                  \(x) list("1" = "Yes", "0" = "No"))
+
+  # Convert "identifier" and "required_field" fields to logical
+  meta_df$identifier <- meta_df$identifier == "y"
+  meta_df$required_field <- meta_df$required_field == "y"
+
+  return(meta_df)
+}
+
 #### 2) Functions for Naming Conventions ####
 
 ##### 2.1) validate_var_name #####
