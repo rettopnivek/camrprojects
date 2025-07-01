@@ -24,6 +24,8 @@
 #' @importFrom stringr str_match
 #' @export
 #'
+#' @author Zach Himmelsbach
+#'
 camr_yaml_codebook <- function(codebook_dir    = "codebook",
                                max_unique      = 20,
                                exclude_targets = c('rds_download',
@@ -163,6 +165,8 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
 #' @importFrom purrr   map set_names transpose
 #' @export
 #'
+#' @author Zach Himmelsbach
+#'
 camr_redcap_field_meta <- function(api_token_path) {
   # Read token
   token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
@@ -236,6 +240,8 @@ camr_redcap_field_meta <- function(api_token_path) {
 #' @importFrom fs        dir_exists path_abs path_ext_remove
 #' @importFrom yaml      read_yaml
 #' @export
+#'
+#' @author Zach Himmelsbach
 #'
 camr_fill_codebook_from_redcap <- function(api_token_path,
                                            codebook_dir,
@@ -315,6 +321,9 @@ camr_fill_codebook_from_redcap <- function(api_token_path,
 #'
 #' @returns A list of lists, each with the processed variable (as key) and
 #' source variable (as value). The value defaults to "composite"
+#'
+#' @author Zach Himmelsbach
+#'
 parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
 
   res <- list() # list to collect pairs
@@ -383,6 +392,8 @@ parse_transmute_pairs <- function(file, redcap_vars, keep = NULL) {
 #'
 #' @importFrom stringr str_extract
 #' @export
+#'
+#' @author Zach Himmelsbach
 #'
 camr_map_redcap_vars <- function(output_dir,
                                  api_token_path,

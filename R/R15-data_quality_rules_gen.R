@@ -13,6 +13,8 @@
 #' @importFrom dplyr   filter
 #' @export
 #'
+#' @author Zach Himmelsbach
+#'
 #' @returns side-effect: saves csv at `output_path`. Invisibly returns the
 #' data quality rules csv for inspection
 #'

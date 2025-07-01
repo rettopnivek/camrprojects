@@ -27,6 +27,8 @@
 #' @importFrom redcapAPI redcapConnection exportMetaData exportMappings exportRepeatingInstrumentsEvents
 #' @export
 #'
+#' @author Zach Himmelsbach
+#'
 #' @examples
 #' init_pipeline(
 #'   token_file      = "~/Documents/api_tokens/groundbreakingstudy.txt",
