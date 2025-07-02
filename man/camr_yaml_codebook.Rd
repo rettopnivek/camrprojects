@@ -6,6 +6,7 @@
 by _targets.R}
 \usage{
 camr_yaml_codebook(
+  api_token_path,
   codebook_dir = "codebook",
   max_unique = 20,
   exclude_targets = c("rds_download", "chr_path_redcap_data", "chr_path_tlfb_data",
@@ -13,6 +14,8 @@ camr_yaml_codebook(
 )
 }
 \arguments{
+\item{api_token_path}{Character. Path to text file with REDCap project API token}
+
 \item{codebook_dir}{Character. Directory to store the codebook files. This
 must \emph{not} currently exist. Default "codebook".}
 

@@ -8,6 +8,7 @@
 #' inferred for new variables (data type, unique values, etc). Must be run from
 #' a project with targets.
 #'
+#' @param api_token_path Character. Path to text file with REDCap project API token
 #' @param codebook_dir Character. Directory to store the codebook files. This
 #' must *not* currently exist. Default "codebook".
 #' @param max_unique Integer. If an integer or character variable has less than
@@ -27,7 +28,8 @@
 #'
 #' @author Zach Himmelsbach
 #'
-camr_yaml_codebook <- function(codebook_dir    = "codebook",
+camr_yaml_codebook <- function(api_token_path,
+                               codebook_dir    = "codebook",
                                max_unique      = 20,
                                exclude_targets = c('rds_download',
                                                    'chr_path_redcap_data',
@@ -41,10 +43,15 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
   if (dir.exists(codebook_dir)) {
     stop("`codebook_dir` already exists - choose a new folder or delete first")
   }
+  if (!file.exists(api_token_path)) stop("API token file not found")
 
   # Setup ----
   dir <- fs::path(codebook_dir)
   fs::dir_create(dir)
+
+  # Get map from targets to REDCap forms AND forms to events
+  tgt_form_map <- camr_map_targets_to_forms(api_token_path)
+  form_event_map <- camr_instrument_event_map(api_token_path)
 
   # helper maps ----
   # varname convention abbreviations
@@ -75,9 +82,15 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
     obj <- try(targets::tar_read_raw(tgt), silent = TRUE)
     if (inherits(obj, "try-error") || !inherits(obj, "data.frame")) next
 
+    tgt_form <- tgt_form_map[tgt]
+    form_events <- unique(form_event_map$unique_event_name[form_event_map$form == tgt_form]) |>
+      paste(collapse = ", ")
+
     ## Create stub ----
     stub <- list(
       dataframe = tgt,
+      REDCap_form = tgt_form,
+      events_collected = form_events,
       codebook_title = "...",
       generated_on = format(Sys.Date()),
       n_rows = nrow(obj),
@@ -478,7 +491,7 @@ camr_map_targets_to_forms <- function(api_token_path,
   if (nrow(fun_table) == 0) {
     stop("No functions found in src_dir: ", src_dir)
   }
-  fun_map <- split(fun_table$script, fun_table$fun)
+  man <- merge(man, fun_table, by = "fun")
 
   # Helper function to find related REDCap form in script
   find_source_form <- function(rscript_path) {
@@ -489,7 +502,10 @@ camr_map_targets_to_forms <- function(api_token_path,
     return(form)
   }
 
-  form_map <- sapply(fun_map, find_source_form) |> setNames(names(fun_map))
+  form_map <- apply(man, MARGIN = 1,
+                     function(row) {
+                       find_source_form(row['script'])
+                      }) |> setNames(man$name)
 
   return(form_map)
 }
