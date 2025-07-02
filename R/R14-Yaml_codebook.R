@@ -2,11 +2,13 @@
 #' by _targets.R
 #'
 #' @description
-#' Copy codebook for variables in the standard pipeline and generate stub entries
-#' for new variables. Creates a directory in your project called "codebook" with
+#' Generate empty codebook for variables in the current project. Creates a
+#' directory in your project called "codebook" with
 #' one .yaml file per target in _targets.R. Some information is automatically
-#' inferred for new variables (data type, unique values, etc)
+#' inferred for new variables (data type, unique values, etc). Must be run from
+#' a project with targets.
 #'
+#' @param api_token_path Character. Path to text file with REDCap project API token
 #' @param codebook_dir Character. Directory to store the codebook files. This
 #' must *not* currently exist. Default "codebook".
 #' @param max_unique Integer. If an integer or character variable has less than
@@ -26,7 +28,8 @@
 #'
 #' @author Zach Himmelsbach
 #'
-camr_yaml_codebook <- function(codebook_dir    = "codebook",
+camr_yaml_codebook <- function(api_token_path,
+                               codebook_dir    = "codebook",
                                max_unique      = 20,
                                exclude_targets = c('rds_download',
                                                    'chr_path_redcap_data',
@@ -40,10 +43,15 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
   if (dir.exists(codebook_dir)) {
     stop("`codebook_dir` already exists - choose a new folder or delete first")
   }
+  if (!file.exists(api_token_path)) stop("API token file not found")
 
   # Setup ----
   dir <- fs::path(codebook_dir)
   fs::dir_create(dir)
+
+  # Get map from targets to REDCap forms AND forms to events
+  tgt_form_map <- camr_map_targets_to_forms(api_token_path)
+  form_event_map <- camr_instrument_event_map(api_token_path)
 
   # helper maps ----
   # varname convention abbreviations
@@ -74,9 +82,15 @@ camr_yaml_codebook <- function(codebook_dir    = "codebook",
     obj <- try(targets::tar_read_raw(tgt), silent = TRUE)
     if (inherits(obj, "try-error") || !inherits(obj, "data.frame")) next
 
+    tgt_form <- tgt_form_map[tgt]
+    form_events <- unique(form_event_map$unique_event_name[form_event_map$form == tgt_form]) |>
+      paste(collapse = ", ")
+
     ## Create stub ----
     stub <- list(
       dataframe = tgt,
+      REDCap_form = tgt_form,
+      events_collected = form_events,
       codebook_title = "...",
       generated_on = format(Sys.Date()),
       n_rows = nrow(obj),
@@ -414,4 +428,134 @@ camr_map_redcap_vars <- function(output_dir,
   yaml::write_yaml(mapping, out_file)
   message("Variable map written to ", out_file)
   invisible(out_file)
+}
+
+#' Map targets objects to the REDCap forms they are processed from
+#'
+#' @description
+#' Get mapping from targets to REDCap forms. This utility finds the function
+#' used to generate a target and then - within that function - identifies the
+#' REDCap form associated with that targets object
+#'
+#' @param api_token_path file path to txt file containing redcap project token
+#' @param src_dir Directory to search for target-generating functions. Defaults
+#' to "src" (in accordance with the standard processing pipeline)
+#' @param exclude_targets character vector of targets object to skip for mapping.
+#' See default for typically excluded objects (these are file targets or won't
+#' map 1-to-1)
+#'
+#' @returns a named character vector with mappings from targets objects to
+#' REDCap forms. The names store the target object names and the values in the
+#' vector are the REDCap forms.
+#'
+#' @export
+#' @author Zach Himmelsbach
+camr_map_targets_to_forms <- function(api_token_path,
+                                      src_dir = "src",
+                                      exclude_targets = c('rds_download',
+                                                          'chr_path_redcap_data',
+                                                          'chr_path_tlfb_data',
+                                                          'lst_redcap_data',
+                                                          'df_tlfb_raw',
+                                                          'df_id_table',
+                                                          'df_redcap_raw')) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API Token Text File Not Found")
+
+  # Manifest ----
+  man <- targets::tar_manifest(fields = c("name", "command"))
+  man <- man[!(man$name %in% exclude_targets),]
+
+  # extract function names from commands
+  man$fun <- vapply(man$command,
+                    \(cmd) stringr::str_extract(cmd, "^([A-Za-z][A-Za-z0-9_.]*)\\(", 1),
+                    character(1))
+
+  # which script defines which function
+  r_files <- list.files(src_dir, pattern = "\\.R$", recursive = TRUE,
+                        full.names = TRUE)
+  fun_table <- purrr::map_dfr(r_files,
+                              function(f) {
+                                defs <- stringr::str_match_all(
+                                  readLines(f, warn = FALSE),
+                                  "\\s*([A-Za-z][A-Za-z0-9_.]*)\\s*<-\\s*function")
+                                df <- try(do.call(rbind.data.frame, defs))
+                                if (inherits(df, "try-error") || nrow(df) == 0) {
+                                  return(data.frame(fun = character(), script = character()))
+                                }
+                                df$script <- f
+                                df <- df[,c("V2", "script")]
+                                colnames(df) <- c("fun", "script")
+                                return(df)
+                              })
+  if (nrow(fun_table) == 0) {
+    stop("No functions found in src_dir: ", src_dir)
+  }
+  man <- merge(man, fun_table, by = "fun")
+
+  # Helper function to find related REDCap form in script
+  find_source_form <- function(rscript_path) {
+    code <- readLines(rscript_path, warn = FALSE) |> paste(collapse = " ")
+    form <- stringr::str_extract(code,
+                                 "VST.CHR.REDCap.Form == [\"']([A-Za-z_.0-9]*)[\"']",
+                                 group = 1)
+    return(form)
+  }
+
+  form_map <- apply(man, MARGIN = 1,
+                     function(row) {
+                       find_source_form(row['script'])
+                      }) |> setNames(man$name)
+
+  return(form_map)
+}
+
+#' Generate and fill codebook for current project (wrapper around suite of
+#' codebook functions)
+#'
+#' @description
+#' Create codebook based on existing targets in the current project. This function
+#' creates a directory with yaml files for each target dataframe. Within each
+#' file, there's information about the dataframe as well as entries for each
+#' variable within that dataframe. The function maps variables to their REDCap
+#' source variables. For variables with 1-to-1 mappings, much of the variable
+#' info is filled in automatically. The function also outputs the blank codebook
+#' and the mapping file from REDCap vars to target dataframe vars. If the mappings
+#' need to be updated manually, `camr_fill_codebook_from_redcap` can be used to
+#' refill the codebook.
+#'
+#' @param api_token_path Character. Path to a txt file containing the project
+#' API token
+#' @param output_dir     Character. Directory where the yaml files will be stored
+#'
+#' @returns Side-effect: Populates `output_dir` with one yaml file per targets
+#' dataframe. Invisibly returns `output_dir`
+#'
+#' @export
+#' @author Zach Himmelsbach
+camr_make_yaml_codebook <- function(api_token_path,
+                                    output_dir) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API Token File not found")
+  if (fs::dir_exists(output_dir)) stop("Cannot overwrite an existing directory")
+
+  # Set up temp directories to store codebook shell and variable mappings
+  tmp_shell <- file.path(tempdir(),
+                         paste0("codebook_shell", as.integer(Sys.time())))
+  tmp_varmap <- file.path(tempdir(),
+                          paste0("varmap_", as.integer(Sys.time())))
+
+  on.exit({
+    unlink(tmp_shell, recursive = TRUE, force = TRUE)
+    unlink(tmp_varmap, recursive = TRUE, force = TRUE)
+  }, add = TRUE)
+
+  # Make codebook
+  camr_yaml_codebook(api_token_path, tmp_shell)
+  var_map <- camr_map_redcap_vars(tmp_varmap, api_token_path)
+  camr_fill_codebook_from_redcap(api_token_path,
+                                 tmp_shell, var_map,
+                                 output_dir)
+
+  return(invisible(output_dir))
 }

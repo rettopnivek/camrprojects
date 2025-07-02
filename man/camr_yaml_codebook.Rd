@@ -6,6 +6,7 @@
 by _targets.R}
 \usage{
 camr_yaml_codebook(
+  api_token_path,
   codebook_dir = "codebook",
   max_unique = 20,
   exclude_targets = c("rds_download", "chr_path_redcap_data", "chr_path_tlfb_data",
@@ -13,6 +14,8 @@ camr_yaml_codebook(
 )
 }
 \arguments{
+\item{api_token_path}{Character. Path to text file with REDCap project API token}
+
 \item{codebook_dir}{Character. Directory to store the codebook files. This
 must \emph{not} currently exist. Default "codebook".}
 
@@ -28,10 +31,11 @@ for each targets object. Invisibly returns list of variables for which
 standard pipeline entries were \emph{not} found
 }
 \description{
-Copy codebook for variables in the standard pipeline and generate stub entries
-for new variables. Creates a directory in your project called "codebook" with
+Generate empty codebook for variables in the current project. Creates a
+directory in your project called "codebook" with
 one .yaml file per target in _targets.R. Some information is automatically
-inferred for new variables (data type, unique values, etc)
+inferred for new variables (data type, unique values, etc). Must be run from
+a project with targets.
 }
 \author{
 Zach Himmelsbach
