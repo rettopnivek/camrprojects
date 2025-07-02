@@ -2,10 +2,11 @@
 #' by _targets.R
 #'
 #' @description
-#' Copy codebook for variables in the standard pipeline and generate stub entries
-#' for new variables. Creates a directory in your project called "codebook" with
+#' Generate empty codebook for variables in the current project. Creates a
+#' directory in your project called "codebook" with
 #' one .yaml file per target in _targets.R. Some information is automatically
-#' inferred for new variables (data type, unique values, etc)
+#' inferred for new variables (data type, unique values, etc). Must be run from
+#' a project with targets.
 #'
 #' @param codebook_dir Character. Directory to store the codebook files. This
 #' must *not* currently exist. Default "codebook".
@@ -414,4 +415,81 @@ camr_map_redcap_vars <- function(output_dir,
   yaml::write_yaml(mapping, out_file)
   message("Variable map written to ", out_file)
   invisible(out_file)
+}
+
+#' Map targets objects to the REDCap forms they are processed from
+#'
+#' @description
+#' Get mapping from targets to REDCap forms. This utility finds the function
+#' used to generate a target and then - within that function - identifies the
+#' REDCap form associated with that targets object
+#'
+#' @param api_token_path file path to txt file containing redcap project token
+#' @param src_dir Directory to search for target-generating functions. Defaults
+#' to "src" (in accordance with the standard processing pipeline)
+#' @param exclude_targets character vector of targets object to skip for mapping.
+#' See default for typically excluded objects (these are file targets or won't
+#' map 1-to-1)
+#'
+#' @returns a named character vector with mappings from targets objects to
+#' REDCap forms. The names store the target object names and the values in the
+#' vector are the REDCap forms.
+#'
+#' @export
+#' @author Zach Himmelsbach
+camr_map_targets_to_forms <- function(api_token_path,
+                                      src_dir = "src",
+                                      exclude_targets = c('rds_download',
+                                                          'chr_path_redcap_data',
+                                                          'chr_path_tlfb_data',
+                                                          'lst_redcap_data',
+                                                          'df_tlfb_raw',
+                                                          'df_id_table',
+                                                          'df_redcap_raw')) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API Token Text File Not Found")
+
+  # Manifest ----
+  man <- targets::tar_manifest(fields = c("name", "command"))
+  man <- man[!(man$name %in% exclude_targets),]
+
+  # extract function names from commands
+  man$fun <- vapply(man$command,
+                    \(cmd) stringr::str_extract(cmd, "^([A-Za-z][A-Za-z0-9_.]*)\\(", 1),
+                    character(1))
+
+  # which script defines which function
+  r_files <- list.files(src_dir, pattern = "\\.R$", recursive = TRUE,
+                        full.names = TRUE)
+  fun_table <- purrr::map_dfr(r_files,
+                              function(f) {
+                                defs <- stringr::str_match_all(
+                                  readLines(f, warn = FALSE),
+                                  "\\s*([A-Za-z][A-Za-z0-9_.]*)\\s*<-\\s*function")
+                                df <- try(do.call(rbind.data.frame, defs))
+                                if (inherits(df, "try-error") || nrow(df) == 0) {
+                                  return(data.frame(fun = character(), script = character()))
+                                }
+                                df$script <- f
+                                df <- df[,c("V2", "script")]
+                                colnames(df) <- c("fun", "script")
+                                return(df)
+                              })
+  if (nrow(fun_table) == 0) {
+    stop("No functions found in src_dir: ", src_dir)
+  }
+  fun_map <- split(fun_table$script, fun_table$fun)
+
+  # Helper function to find related REDCap form in script
+  find_source_form <- function(rscript_path) {
+    code <- readLines(rscript_path, warn = FALSE) |> paste(collapse = " ")
+    form <- stringr::str_extract(code,
+                                 "VST.CHR.REDCap.Form == [\"']([A-Za-z_.0-9]*)[\"']",
+                                 group = 1)
+    return(form)
+  }
+
+  form_map <- sapply(fun_map, find_source_form) |> setNames(names(fun_map))
+
+  return(form_map)
 }

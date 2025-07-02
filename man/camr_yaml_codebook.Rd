@@ -28,10 +28,11 @@ for each targets object. Invisibly returns list of variables for which
 standard pipeline entries were \emph{not} found
 }
 \description{
-Copy codebook for variables in the standard pipeline and generate stub entries
-for new variables. Creates a directory in your project called "codebook" with
+Generate empty codebook for variables in the current project. Creates a
+directory in your project called "codebook" with
 one .yaml file per target in _targets.R. Some information is automatically
-inferred for new variables (data type, unique values, etc)
+inferred for new variables (data type, unique values, etc). Must be run from
+a project with targets.
 }
 \author{
 Zach Himmelsbach
