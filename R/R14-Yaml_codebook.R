@@ -509,3 +509,53 @@ camr_map_targets_to_forms <- function(api_token_path,
 
   return(form_map)
 }
+
+#' Generate and fill codebook for current project (wrapper around suite of
+#' codebook functions)
+#'
+#' @description
+#' Create codebook based on existing targets in the current project. This function
+#' creates a directory with yaml files for each target dataframe. Within each
+#' file, there's information about the dataframe as well as entries for each
+#' variable within that dataframe. The function maps variables to their REDCap
+#' source variables. For variables with 1-to-1 mappings, much of the variable
+#' info is filled in automatically. The function also outputs the blank codebook
+#' and the mapping file from REDCap vars to target dataframe vars. If the mappings
+#' need to be updated manually, `camr_fill_codebook_from_redcap` can be used to
+#' refill the codebook.
+#'
+#' @param api_token_path Character. Path to a txt file containing the project
+#' API token
+#' @param output_dir     Character. Directory where the yaml files will be stored
+#'
+#' @returns Side-effect: Populates `output_dir` with one yaml file per targets
+#' dataframe. Invisibly returns `output_dir`
+#'
+#' @export
+#' @author Zach Himmelsbach
+camr_make_yaml_codebook <- function(api_token_path,
+                                    output_dir) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API Token File not found")
+  if (fs::dir_exists(output_dir)) stop("Cannot overwrite an existing directory")
+
+  # Set up temp directories to store codebook shell and variable mappings
+  tmp_shell <- file.path(tempdir(),
+                         paste0("codebook_shell", as.integer(Sys.time())))
+  tmp_varmap <- file.path(tempdir(),
+                          paste0("varmap_", as.integer(Sys.time())))
+
+  on.exit({
+    unlink(tmp_shell, recursive = TRUE, force = TRUE)
+    unlink(tmp_varmap, recursive = TRUE, force = TRUE)
+  }, add = TRUE)
+
+  # Make codebook
+  camr_yaml_codebook(api_token_path, tmp_shell)
+  var_map <- camr_map_redcap_vars(tmp_varmap, api_token_path)
+  camr_fill_codebook_from_redcap(api_token_path,
+                                 tmp_shell, var_map,
+                                 output_dir)
+
+  return(invisible(output_dir))
+}
