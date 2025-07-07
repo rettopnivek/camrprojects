@@ -39,7 +39,7 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
       all_missing <- paste(sprintf("[%s(%s)] = ''", meta_row$field_name,
                                                     1:num_choices),
                            collapse = " and ")
-      return(sprintf("((%s) and (%s)", meta_row$branching_logic,
+      return(sprintf("((%s) and (%s))", meta_row$branching_logic,
                                        all_missing))
     }
     else {
@@ -64,7 +64,7 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
                          rule_logic = rules_vec,
                          real_time_execution = rep("n", length(rules_vec)))
 
-  write.csv(rules_df, output_path, row.names = FALSE, eol="\r")
+  write.csv(rules_df, output_path, row.names = FALSE, eol="\n")
   print(sprintf("Data quality rules written to %s", output_path))
   warning("Additional rules may need to be manually written, e.g. consult flagging rules")
   return(invisible(rules_df))
