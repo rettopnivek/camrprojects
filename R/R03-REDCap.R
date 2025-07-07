@@ -19,6 +19,9 @@
 #     1.2.3) Download Metadata
 #     1.2.4) Download Form-Event Map
 #     1.2.5) Generate README
+#   1.3) camr_field_redcap_meta
+#   1.4) camr_instrument_event_map
+#   1.5) camr_redcap_project_info
 # 2) Functions for Naming Conventions
 #   2.1) validate_var_name
 #   2.2) rename_redcap_vars
@@ -515,6 +518,45 @@ camr_instrument_event_map <- function(api_token_path) {
                    'arms[0]' = '1',
                    returnFormat = 'json'
   ) # Will need to update this if we're doing a "multiple arms" REDCap
+  response <- httr::POST(url, body = formData, encode = "form")
+  result <- jsonlite::fromJSON(httr::content(response,
+                                             "text",
+                                             encoding = "UTF-8"),
+                               simplifyDataFrame = TRUE)
+
+  return(result)
+}
+
+##### 1.5) Get REDCap project info ####
+#' Download REDCap project info via API
+#'
+#' @description
+#' Get the project info for a REDCap project. This information includes project
+#' ID, title, creation/production time, in_production flag, longitudinal flag,
+#' and other info. This function takes a filepath to a txt file with a project
+#' API token and returns a list.
+#'
+#' @param api_token_path path to txt file containing project API token
+#'
+#' @returns A list of REDCap project info
+#'
+#' @importFrom stringr str_trim
+#' @export
+#' @author Zach Himmelsbach
+#'
+camr_redcap_project_info <- function(api_token_path) {
+  # Check inputs ----
+  if (!file.exists(api_token_path)) stop("API token file not found")
+
+  # Call API ----
+  api_token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
+
+  url <- "https://redcap.partners.org/redcap/api/"
+  formData <- list("token" = api_token,
+                   content = "project",
+                   format = 'json',
+                   returnFormat = 'json'
+  )
   response <- httr::POST(url, body = formData, encode = "form")
   result <- jsonlite::fromJSON(httr::content(response,
                                              "text",
