@@ -30,6 +30,18 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
   # We auto generate rules only for required fields
   meta <- meta |> dplyr::filter(required_field)
 
+  # Check if project is longitudinal
+  is_longitudinal <- camr_redcap_project_info(path_to_api_token)$is_longitudinal == 1
+
+  # get record_status event for longitudinal projects
+  record_status_event <- ""
+  if (is_longitudinal) {
+    event_map <- camr_instrument_event_map(path_to_api_token)
+    record_status_event <- event_map$unique_event_name[event_map$form=="record_status"]
+    # Add braces so redcap parses as variable
+    record_status_event <- paste0("[", record_status_event, "]")
+  }
+
   # Build rules ----
   # Helper function to write rule for individual items
   write_rule <- function(meta_row) {
@@ -49,7 +61,8 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
   }
   # Helper function to combine rules for one instrument
   combine_rules <- function(name_of_form,
-                         pre_rules = "[record_status] > '0' and (\n  ",
+                         pre_rules = paste0(record_status_event,
+                                            "[record_status] > '0' and (\n  "),
                          post_rules = "\n)") {
     df <- meta |> dplyr::filter(form_name == name_of_form)
     rules <- apply(df, MARGIN = 1, FUN = write_rule)
@@ -67,5 +80,7 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
   write.csv(rules_df, output_path, row.names = FALSE, eol="\n")
   print(sprintf("Data quality rules written to %s", output_path))
   warning("Additional rules may need to be manually written, e.g. consult flagging rules")
+  warning("If the project includes very long instruments (e.g. the MINI),
+          inspect in RStudio (Excel will not display correctly due to cell limit)")
   return(invisible(rules_df))
 }
