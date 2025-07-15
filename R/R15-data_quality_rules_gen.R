@@ -8,6 +8,8 @@
 #' @param path_to_api_token path to a text file containing project API token
 #' @param output_path path to a file where csv should be saved; will *not*
 #' overwrite an existing file. Defaults to "data_quality_rules.csv"
+#' @param excluded_vars Character vector of REDCap vars that we do not want to
+#' check. By default, we exclude the MyCap variables.
 #'
 #' @importFrom stringr str_trim
 #' @importFrom dplyr   filter
@@ -19,7 +21,11 @@
 #' data quality rules csv for inspection
 #'
 camr_gen_data_quality_rules <- function(path_to_api_token,
-                                   output_path = "data_quality_rules.csv") {
+                                   output_path = "data_quality_rules.csv",
+                                   excluded_vars = c("record_joindate",
+                                                     "record_joindate_utc",
+                                                     "record_timezone",
+                                                     "record_code")) {
   # Check inputs ----
   if (file.exists(output_path)) stop("Cannot overwrite an existing file")
   if (!file.exists(path_to_api_token)) stop("API token file not found")
@@ -29,6 +35,9 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
 
   # We auto generate rules only for required fields
   meta <- meta |> dplyr::filter(required_field)
+
+  # Exclude excluded_vars fields
+  meta <- meta |> dplyr::filter(!(field_name %in% excluded_vars))
 
   # Check if project is longitudinal
   is_longitudinal <- camr_redcap_project_info(path_to_api_token)$is_longitudinal == 1
