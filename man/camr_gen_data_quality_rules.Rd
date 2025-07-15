@@ -6,7 +6,9 @@
 \usage{
 camr_gen_data_quality_rules(
   path_to_api_token,
-  output_path = "data_quality_rules.csv"
+  output_path = "data_quality_rules.csv",
+  excluded_vars = c("record_joindate", "record_joindate_utc", "record_timezone",
+    "record_code")
 )
 }
 \arguments{
@@ -14,6 +16,9 @@ camr_gen_data_quality_rules(
 
 \item{output_path}{path to a file where csv should be saved; will \emph{not}
 overwrite an existing file. Defaults to "data_quality_rules.csv"}
+
+\item{excluded_vars}{Character vector of REDCap vars that we do not want to
+check. By default, we exclude the MyCap variables.}
 }
 \value{
 side-effect: saves csv at \code{output_path}. Invisibly returns the
