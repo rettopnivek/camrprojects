@@ -20,6 +20,8 @@ First install the statistical software [R](https://www.r-project.org/). It is al
 * [rlang](https://cran.r-project.org/web/packages/rlang/index.html)
 * [stringr](https://cran.r-project.org/web/packages/stringr/index.html)
 * [tidyr](https://cran.r-project.org/web/packages/tidyr/index.html)
+* [DiagrammeR](https://cran.r-project.org/web/packages/DiagrammeR/index.html)
+* [glue](https://cran.r-project.org/web/packages/glue/index.html)
 
 ### Installation
 
@@ -100,11 +102,14 @@ Forthcoming.
 * Kevin Potter
 * William Schmitt
 * Bryn Evohr
+* Zachary Himmelsbach
+* Luwei Liu
+
 
 ### Current maintainers
 
 * Kevin Potter
-* Bryn Evohr
+* Zachary Himmelsbach
 
 ## License
 
