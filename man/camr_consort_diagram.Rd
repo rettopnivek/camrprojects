@@ -83,51 +83,51 @@ Key features include:
 }
 }
 \examples{
-# 1) Basic example - no pending cases, no attrition 
-camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 170,  
-  n_randomized      = 150,  
-  n_GroupA          = 75,
-  n_GroupB          = 75,
-  n_Completed_A     = 70,
-  n_Completed_B     = 75,
-  n_rand_pending    = 0,
-  n_exclusion_1     = 30,   
-  n_pending_consent = 0,
-  n_exclusion_3     = 20,  
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = NULL,
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;") #sometimes adding empty space helps with alignment.
-)
-
-# 2) With pending cases only 
-camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 150,  
-  n_randomized      = 130,  
-  n_GroupA          = 65,
-  n_GroupB          = 65,
-  n_Completed_A     = 65,
-  n_Completed_B     = 65,
-  n_rand_pending    = 5,
-  n_exclusion_1     = 30,
-  n_pending_consent = 20,   
-  n_exclusion_3     = 20,
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = c("Still screening (n=15)", "Pending consent (n=5)&nbsp;&nbsp;&nbsp;"),
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;")
-)
-
-# 3) With attrition only 
+# 1) Basic example - no pending cases, no attrition
 camr_consort_diagram(
   total_assessed    = 200,
   n_consented       = 170,
   n_randomized      = 150,
   n_GroupA          = 75,
   n_GroupB          = 75,
-  n_Completed_A     = 65,   
-  n_Completed_B     = 70,   
+  n_Completed_A     = 70,
+  n_Completed_B     = 75,
+  n_rand_pending    = 0,
+  n_exclusion_1     = 30,
+  n_pending_consent = 0,
+  n_exclusion_3     = 20,
+  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
+  pending_reasons     = NULL,
+  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;") #sometimes adding empty space helps with alignment.
+)
+
+# 2) With pending cases only
+camr_consort_diagram(
+  total_assessed    = 200,
+  n_consented       = 150,
+  n_randomized      = 130,
+  n_GroupA          = 65,
+  n_GroupB          = 65,
+  n_Completed_A     = 65,
+  n_Completed_B     = 65,
+  n_rand_pending    = 5,
+  n_exclusion_1     = 30,
+  n_pending_consent = 20,
+  n_exclusion_3     = 20,
+  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
+  pending_reasons     = c("Still screening (n=15)", "Pending consent (n=5)&nbsp;&nbsp;&nbsp;"),
+  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;")
+)
+
+# 3) With attrition only
+camr_consort_diagram(
+  total_assessed    = 200,
+  n_consented       = 170,
+  n_randomized      = 150,
+  n_GroupA          = 75,
+  n_GroupB          = 75,
+  n_Completed_A     = 65,
+  n_Completed_B     = 70,
   n_rand_pending    = 0,
   n_exclusion_1     = 30,
   n_pending_consent = 0,
@@ -141,15 +141,15 @@ camr_consort_diagram(
   lost_to_followup_b = 3
 )
 
-# 4) Complete example with both pending cases and attrition 
+# 4) Complete example with both pending cases and attrition
 camr_consort_diagram(
   total_assessed    = 200,
-  n_consented       = 150,  
-  n_randomized      = 130,  
+  n_consented       = 150,
+  n_randomized      = 130,
   n_GroupA          = 65,
   n_GroupB          = 65,
-  n_Completed_A     = 55,   
-  n_Completed_B     = 60,   
+  n_Completed_A     = 55,
+  n_Completed_B     = 60,
   n_rand_pending    = 5,
   n_exclusion_1     = 30,
   n_pending_consent = 20,
