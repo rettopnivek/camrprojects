@@ -2,7 +2,7 @@
 % Please edit documentation in R/R16-Visualization_and_reporting.R
 \name{camr_consort_diagram}
 \alias{camr_consort_diagram}
-\title{Generate CONSORT Flow Diagram}
+\title{Generate CONSORT Flow Diagram (with Follow-up Phase)}
 \usage{
 camr_consort_diagram(
   total_assessed,
@@ -10,159 +10,100 @@ camr_consort_diagram(
   n_randomized,
   n_GroupA,
   n_GroupB,
-  n_Completed_A,
-  n_Completed_B,
-  n_rand_pending,
+  n_Completed_Intervention_A,
+  n_Completed_Intervention_B,
+  n_Completed_Study_A,
+  n_Completed_Study_B,
+  n_rand_pending = NULL,
   n_exclusion_1,
-  n_pending_consent,
+  n_pending_consent = NULL,
   n_exclusion_3,
   exclusion_reasons_1,
-  pending_reasons,
+  pending_reasons = NULL,
   exclusion_reasons_3,
-  withdrawn_a = 0,
-  withdrawn_b = 0,
-  lost_to_followup_a = 0,
-  lost_to_followup_b = 0
+  withdrawn_intervention_a = 0,
+  withdrawn_intervention_b = 0,
+  lost_to_followup_intervention_a = 0,
+  lost_to_followup_intervention_b = 0,
+  terminated_intervention_a = 0,
+  terminated_intervention_b = 0,
+  withdrawn_study_a = 0,
+  withdrawn_study_b = 0,
+  lost_to_followup_study_a = 0,
+  lost_to_followup_study_b = 0,
+  terminated_study_a = 0,
+  terminated_study_b = 0
 )
 }
 \arguments{
-\item{total_assessed}{Total number of individuals assessed for eligibility (integer)}
+\item{total_assessed}{Integer. Total assessed for eligibility.}
 
-\item{n_consented}{Number of individuals who provided consent (integer)}
+\item{n_consented}{Integer. Number who provided consent.}
 
-\item{n_randomized}{Number of individuals randomized (integer)}
+\item{n_randomized}{Integer. Number randomized.}
 
-\item{n_GroupA}{Number allocated to Group A (integer)}
+\item{n_GroupA}{Integer. Number allocated to Group A.}
 
-\item{n_GroupB}{Number allocated to Group B (integer)}
+\item{n_GroupB}{Integer. Number allocated to Group B.}
 
-\item{n_Completed_A}{Number who completed the study in Group A (integer)}
+\item{n_Completed_Intervention_A}{Integer. Number who completed the intervention in Group A.}
 
-\item{n_Completed_B}{Number who completed the study in Group B (integer)}
+\item{n_Completed_Intervention_B}{Integer. Number who completed the intervention in Group B.}
 
-\item{n_rand_pending}{Number pending randomization (integer)}
+\item{n_Completed_Study_A}{Integer. Number who completed the study in Group A.}
 
-\item{n_exclusion_1}{Number excluded during screening (integer)}
+\item{n_Completed_Study_B}{Integer. Number who completed the study in Group B.}
 
-\item{n_pending_consent}{Number pending consent (integer)}
+\item{n_rand_pending}{Integer or NULL. Pending randomization.}
 
-\item{n_exclusion_3}{Number excluded post-consent (integer)}
+\item{n_exclusion_1}{Integer. Excluded during screening.}
 
-\item{exclusion_reasons_1}{Character vector of screening exclusion reasons}
+\item{n_pending_consent}{Integer or NULL. Pending consent.}
 
-\item{pending_reasons}{Character vector of reasons for pending cases}
+\item{n_exclusion_3}{Integer. Excluded post-consent.}
 
-\item{exclusion_reasons_3}{Character vector of post-consent exclusion reasons}
+\item{exclusion_reasons_1}{Character vector. Screening exclusion reasons.}
 
-\item{withdrawn_a}{Number withdrawn from Group A (default = 0)}
+\item{pending_reasons}{Character vector or NULL. Reasons for pending consent.}
 
-\item{withdrawn_b}{Number withdrawn from Group B (default = 0)}
+\item{exclusion_reasons_3}{Character vector. Post-consent exclusion reasons.}
 
-\item{lost_to_followup_a}{Number lost to follow-up in Group A (default = 0)}
+\item{withdrawn_intervention_a, b}{Integers (default 0). Withdrawn during intervention.}
 
-\item{lost_to_followup_b}{Number lost to follow-up in Group B (default = 0)}
+\item{lost_to_followup_intervention_a, b}{Integers (default 0). Lost during intervention.}
+
+\item{terminated_intervention_a, b}{Integers (default 0). Terminated during intervention.}
+
+\item{withdrawn_study_a, b}{Integers (default 0). Withdrawn during follow-up.}
+
+\item{lost_to_followup_study_a, b}{Integers (default 0). Lost during follow-up.}
+
+\item{terminated_study_a, b}{Integers (default 0). Terminated during follow-up.}
 }
 \value{
-A DiagrammeR graph object visualizing the CONSORT flow diagram
+A \code{DiagrammeR} graph object rendering the CONSORT diagram.
 }
 \description{
-Creates a CONSORT-style flow diagram using Graphviz syntax via the DiagrammeR package.
-The diagram visually represents the flow of participants through different stages of a study,
-including assessment, consent,randomization, group allocation (Group A and Group B),
-and completion, with optional boxes for lost to follow-up, and pending cases.
-}
-\details{
-This function generates a standardized CONSORT (Consolidated Standards of Reporting Trials)
-diagram commonly used in DSMB reports or project updates to document participant flow.
-Key features include:
-\itemize{
-\item Automatic calculation of active participants in each group
-\item Dynamic display of exclusion reasons with bullet points
-\item Conditional display of boxes based on participant counts
-\item Formatting with consistent styling
-}
+Creates a CONSORT-style flow diagram for projects that include both an
+intervention phase and a follow-up phase. Uses Graphviz syntax via
+\pkg{DiagrammeR}. The diagram shows the flow of participants through
+assessment, consent, randomization, group allocation, intervention
+completion, and follow-up completion, including boxes for pending cases and
+attrition (withdrawn, lost to follow-up, terminated).
 }
 \examples{
-# 1) Basic example - no pending cases, no attrition
 camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 170,
-  n_randomized      = 150,
-  n_GroupA          = 75,
-  n_GroupB          = 75,
-  n_Completed_A     = 70,
-  n_Completed_B     = 75,
-  n_rand_pending    = 0,
-  n_exclusion_1     = 30,
-  n_pending_consent = 0,
-  n_exclusion_3     = 20,
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = NULL,
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;") #sometimes adding empty space helps with alignment.
+  total_assessed = 250, n_consented = 180, n_randomized = 150,
+  n_GroupA = 75, n_GroupB = 75,
+  n_Completed_Intervention_A = 60, n_Completed_Intervention_B = 58,
+  n_Completed_Study_A = 52, n_Completed_Study_B = 50,
+  n_rand_pending = 5, n_exclusion_1 = 40, n_pending_consent = 8, n_exclusion_3 = 15,
+  exclusion_reasons_1 = c("Did not meet criteria (n=39)", "Other Reasons (n=1)"),
+  pending_reasons = c("Waiting for consent (n=5)&nbsp;&nbsp;", "Still Screening (n=10)"),
+  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;&nbsp;"),
+  withdrawn_intervention_a = 3, lost_to_followup_intervention_a = 2, terminated_intervention_a = 1,
+  withdrawn_intervention_b = 2, lost_to_followup_intervention_b = 3, terminated_intervention_b = 1,
+  withdrawn_study_a = 2, lost_to_followup_study_a = 2, terminated_study_a = 1,
+  withdrawn_study_b = 3, lost_to_followup_study_b = 1, terminated_study_b = 2
 )
-
-# 2) With pending cases only
-camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 150,
-  n_randomized      = 130,
-  n_GroupA          = 65,
-  n_GroupB          = 65,
-  n_Completed_A     = 65,
-  n_Completed_B     = 65,
-  n_rand_pending    = 5,
-  n_exclusion_1     = 30,
-  n_pending_consent = 20,
-  n_exclusion_3     = 20,
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = c("Still screening (n=15)", "Pending consent (n=5)&nbsp;&nbsp;&nbsp;"),
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;")
-)
-
-# 3) With attrition only
-camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 170,
-  n_randomized      = 150,
-  n_GroupA          = 75,
-  n_GroupB          = 75,
-  n_Completed_A     = 65,
-  n_Completed_B     = 70,
-  n_rand_pending    = 0,
-  n_exclusion_1     = 30,
-  n_pending_consent = 0,
-  n_exclusion_3     = 20,
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = NULL,
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;"),
-  withdrawn_a       = 3,
-  withdrawn_b       = 2,
-  lost_to_followup_a = 2,
-  lost_to_followup_b = 3
-)
-
-# 4) Complete example with both pending cases and attrition
-camr_consort_diagram(
-  total_assessed    = 200,
-  n_consented       = 150,
-  n_randomized      = 130,
-  n_GroupA          = 65,
-  n_GroupB          = 65,
-  n_Completed_A     = 55,
-  n_Completed_B     = 60,
-  n_rand_pending    = 5,
-  n_exclusion_1     = 30,
-  n_pending_consent = 20,
-  n_exclusion_3     = 20,
-  exclusion_reasons_1 = c("Did not meet criteria (n=25)", "Other reasons (n=5)"),
-  pending_reasons     = c("Still screening (n=15)", "Pending consent (n=5)&nbsp;&nbsp;&nbsp;"),
-  exclusion_reasons_3 = c("Screen fail (n=15)", "Withdrew consent (n=5)&nbsp;&nbsp;&nbsp;"),
-  withdrawn_a       = 3,
-  withdrawn_b       = 2,
-  lost_to_followup_a = 2,
-  lost_to_followup_b = 3
-)
-}
-\seealso{
-\code{\link[DiagrammeR]{grViz}} for the underlying graphing function
 }
