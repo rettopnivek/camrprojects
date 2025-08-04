@@ -9,9 +9,9 @@ Authors@R:
 Description: A set of portable functions commonly 
   used in R projects for the Center for Addiction 
   Medicine - CAM - at the Massachusetts General Hospital - MGH.
-Depends:
+Depends: 
     R (>= 4.1)
-Imports:
+Imports: 
     checkmate (>= 2.1.0),
     config,
     devtools,
@@ -37,11 +37,12 @@ License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Suggests:
+Suggests: 
+    httptest,
     knitr,
+    lifecycle,
     rmarkdown,
-    testthat (>= 3.0.0),
-    lifecycle
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
