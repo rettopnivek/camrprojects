@@ -1,0 +1,25 @@
+[
+    {
+    "record_id": "1",
+
+    "name": "Alice",
+    "age": 29,
+    "enrolled": "1"
+  },
+      {
+
+    "record_id": "2",
+    "name": "Bob",
+    "age": 35,
+    "enrolled": "0"
+  },
+        {
+    "record_id": "3",
+    "name": "Charlie",
+    "age": 42,
+
+    "enrolled": "1"
+    }
+
+  ]
+
