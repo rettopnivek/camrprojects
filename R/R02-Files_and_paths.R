@@ -13,8 +13,8 @@
 
 # Table of contents
 # 1) File paths and names
-#   1.1) camr_file_name
-#   1.2) camr_filename
+#   1.1) camr_name_file
+#   1.2) camr_file_name
 #   2.2) camr_file_path
 #   2.3) camr_find_file
 # 2) Folders and directories
