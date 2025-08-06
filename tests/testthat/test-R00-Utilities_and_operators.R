@@ -1,9 +1,13 @@
+
+#Testing %??%
 test_that("%??% works", {
   expect_equal(1 %??% 2 , 1)
   expect_equal(NA %??% 3, 3)
   expect_equal(NULL %??% 3, 3)
 })
 
+
+#Testing %p%
 test_that("%p% works with strings", {
   expect_equal("an" %p% " apple", "an apple")
   expect_equal(3 %p% "p", "3p")
@@ -15,6 +19,8 @@ test_that("%p% works with string vectors", {
   expect_equal(3 %p% c(" dollars", " cents"), c("3 dollars", "3 cents"))
   expect_equal(4 %p% c(3, 4, 5), c("43", "44", "45"))
 })
+
+#Testing %+=% and %-=%
 
 #Testing that variable assigns, doesn't just output result
 x = 0
@@ -48,6 +54,8 @@ test_that("%-=% works with vectors", {
   expect_equal(z, c(0, 1, 2))
 })
 
+
+#Testing %not_in%
 test_that("%not_in% works", {
   expect_equal(1 %not_in% 2, TRUE)
   expect_equal(1 %not_in% c(1, 2), FALSE)
@@ -55,6 +63,8 @@ test_that("%not_in% works", {
   expect_equal(c(1, 3, 4, 5) %not_in% c(1, 2), c(FALSE, TRUE, TRUE, TRUE))
 })
 
+
+#Testing %pm% and %em%
 test_that("%pm% works", {
   expect_equal(c(1, 2, 3) %pm% 1, c(TRUE, FALSE, FALSE))
   expect_equal(c("hey", "hello", "goodbye") %pm% "he", c(TRUE, TRUE, FALSE))
