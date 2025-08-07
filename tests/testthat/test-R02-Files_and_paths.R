@@ -96,7 +96,7 @@ test_that("camr_file_path uses folder correctly", {
   withr::local_dir(temp_dir)
 
 
-  #test succeeds if folder argument is a subset of folder, but not if folder = "subfolder"
+  #test succeeds if folder argument is a substring of folder, but not if folder = "subfolder"
   result = camr_file_path("examplefile.txt", folder = "subfolder")
   expect_equal(result, normalizePath("subfolder/examplefile.txt", winslash = "/"))
 })
