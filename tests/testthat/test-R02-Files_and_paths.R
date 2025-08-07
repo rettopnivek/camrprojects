@@ -48,9 +48,9 @@ test_that("camr_name_file recognizes malformed dates/times", {
 
 #Testing camr_file_path
 test_that("camr_file_path works with partial filename match", {
-  tmp_dir = tempdir()
-  file.create(file.path(tmp_dir, "examplefile.txt"))
-  withr::local_dir(tmp_dir)
+  temp_dir = tempdir()
+  file.create(file.path(temp_dir, "examplefile.txt"))
+  withr::local_dir(temp_dir)
 
   result = camr_file_path("examplefile")
   expect_true(file.exists(result))
@@ -58,39 +58,47 @@ test_that("camr_file_path works with partial filename match", {
 })
 
 test_that("camr_file_path can find latest created file", {
-  tmp_dir = tempdir()
-  file1 = file.path(tmp_dir, "valid_project-valid_description-2024_12_03-20_04_00.txt")
-  file2 = file.path(tmp_dir, "valid_project-valid_description-2024_12_03-20_05_00.txt")
+  temp_dir = tempdir()
+  file1 = file.path(temp_dir, "valid_project-valid_description-2024_12_03-20_04_00.txt")
+  file2 = file.path(temp_dir, "valid_project-valid_description-2024_12_03-20_05_00.txt")
   file.create(file1)
   #Create file2 later
   Sys.sleep(1)
   file.create(file2)
-  withr::local_dir(tmp_dir)
+  withr::local_dir(temp_dir)
 
   result =  camr_file_path("valid_project-valid_description", latest = TRUE)
   expect_equal(result,
                normalizePath("valid_project-valid_description-2024_12_03-20_05_00.txt", winslash = "/"))
 })
 
-#May not work with Windows?
+test_that("camr_file_path uses env_variable correctly", {
+  temp_dir = tempdir()
+  #Fixes problem with Windows matching
+  temp_dir = normalizePath(temp_dir, winslash = "/")
+
+  file.create(file.path(temp_dir, "examplefile.txt"))
+  withr::local_envvar(FOLDER = temp_dir)
+
+  result = camr_file_path("examplefile", env_variable = "FOLDER")
+  withr::local_dir(temp_dir)
+  expect_equal(result, normalizePath("examplefile.txt", winslash = "/"))
+})
+
+
 test_that("camr_file_path uses folder correctly", {
-  tmp_dir = tempdir()
-  subfolder = file.path(tmp_dir, "subfolder")
+  temp_dir = tempdir()
+  temp_dir = normalizePath(temp_dir, winslash = "/")
+
+  subfolder = file.path(temp_dir, "subfolder")
   dir.create(subfolder)
   file.create(file.path(subfolder, "examplefile.txt"))
-  withr::local_dir(tmp_dir)
+  withr::local_dir(temp_dir)
 
+
+  #test succeeds if folder argument is a subset of folder, but not if folder = "subfolder"
   result = camr_file_path("examplefile.txt", folder = "subfolder")
   expect_equal(result, normalizePath("subfolder/examplefile.txt", winslash = "/"))
 })
 
-#May not work with Windows?
-test_that("camr_file_path uses env_variable correctly", {
-  tmp_dir = tempdir()
-  file.create(file.path(tmp_dir, "examplefile.txt"))
-  withr::local_envvar(FOLDER = tmp_dir)
 
-  result = camr_file_path("examplefile", env_variable = "FOLDER")
-  withr::local_dir(tmp_dir)
-  expect_equal(result, normalizePath("examplefile.txt", winslash = "/"))
-})
