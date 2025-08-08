@@ -36,7 +36,8 @@ Imports:
     gt,
     gtExtras,
     redcapAPI,
-    targets
+    targets,
+    svglite
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
