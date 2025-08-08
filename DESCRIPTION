@@ -32,7 +32,9 @@ Imports:
     rlang,
     stringr,
     testthat,
-    tidyr
+    tidyr,
+    gt,
+    gtExtras
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
