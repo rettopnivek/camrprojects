@@ -96,7 +96,10 @@ test_that("camr_file_path uses folder correctly", {
   withr::local_dir(temp_dir)
 
 
-  #test succeeds if folder argument is a substring of folder, but not if folder = "subfolder"
+  # test succeeds if folder argument is a uniquely identifiable
+  # substring of folder(e.g, "subfold), but not if folder = "subfolder"
+
+  #This results in an error("Unable to locate any folders containing the label")
   result = camr_file_path("examplefile.txt", folder = "subfolder")
   expect_equal(result, normalizePath("subfolder/examplefile.txt", winslash = "/"))
 })
