@@ -1,9 +1,10 @@
+image: rocker/r-ver:latest
+
 stages:
   - test
 
-testthat:
+test:
   stage: test
-  image: rocker/r-ver:latest  # Use an R-based Docker image
   script:
     - apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
     - R -e 'install.packages("devtools", repos = "https://cloud.r-project.org")'
@@ -11,4 +12,3 @@ testthat:
     - R -e 'devtools::test()'
   only:
     - merge_requests
-
