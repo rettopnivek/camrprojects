@@ -138,7 +138,10 @@ camr_make_table1 <- function(df,
     )
 
   if (!is.null(output)) {
-    for (path in output) gt::gtsave(table1, path)
+    for (path in output) {
+      tryCatch(gt::gtsave(table1, path),
+               error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
+    }
   }
   return(table1)
 }
