@@ -35,7 +35,8 @@ Imports:
     tidyr,
     gt,
     gtExtras,
-    redcapAPI
+    redcapAPI,
+    targets
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
