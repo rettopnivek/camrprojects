@@ -269,7 +269,7 @@ NULL
 #' operand.
 #'
 #' @param x A vector of values to be matched.
-#' @param y The value to be partially matched against.
+#' @param y The value to be exactly matched against.
 #'
 #' @return A logical vector equal to \code{TRUE} for all elements
 #' in \code{x} that exactly match \code{y}.
