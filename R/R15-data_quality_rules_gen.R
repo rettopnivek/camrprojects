@@ -56,9 +56,8 @@ camr_gen_data_quality_rules <- function(path_to_api_token,
   write_rule <- function(meta_row) {
     if (meta_row$branching_logic == "") return(sprintf("[%s] = ''", meta_row$field_name))
     else if (meta_row$field_type == "checkbox") {
-      num_choices <- length(meta_row$answer_choices)
-      all_missing <- paste(sprintf("[%s(%s)] = ''", meta_row$field_name,
-                                                    1:num_choices),
+      all_missing <- paste(sprintf("[%s(%s)] = '0'", meta_row$field_name,
+                                                    names(meta_row$answer_choices)),
                            collapse = " and ")
       return(sprintf("((%s) and (%s))", meta_row$branching_logic,
                                        all_missing))
