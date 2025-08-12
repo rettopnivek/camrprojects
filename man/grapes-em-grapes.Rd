@@ -9,7 +9,7 @@ x \%em\% y
 \arguments{
 \item{x}{A vector of values to be matched.}
 
-\item{y}{The value to be partially matched against.}
+\item{y}{The value to be exactly matched against.}
 }
 \value{
 A logical vector equal to \code{TRUE} for all elements
