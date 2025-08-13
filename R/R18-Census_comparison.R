@@ -94,6 +94,8 @@ download_census <- function(census_api_key_path,
 #' @returns A list with a metadata element and the dataframe containing
 #'          the processed PUMS data
 #'
+#' @importFrom forcats fct_collapse
+#'
 process_pums <- function(pums_list_obj,
                          age_lower_limit = NULL,
                          age_upper_limit = NULL,

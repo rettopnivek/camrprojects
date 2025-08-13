@@ -17,9 +17,12 @@ Imports:
     devtools,
     DiagrammeR,
     dplyr,
+    forcats,
     furrr,
     git2r,
     glue,
+    gt,
+    gtExtras,
     httr,
     jsonlite,
     keyring,
@@ -29,16 +32,15 @@ Imports:
     progress,
     progressr,
     purrr,
+    redcapAPI,
     rlang,
     stringr,
-    testthat,
-    tidyr,
-    gt,
-    gtExtras,
-    redcapAPI,
-    targets,
     svglite,
+    targets,
+    testthat,
     tidycensus
+    tidyr
+    
 License: License: MIT + License
 Encoding: UTF-8
 LazyData: true
