@@ -20,6 +20,85 @@ camr_census_compare(
   age_right = TRUE
 )
 }
+\arguments{
+\item{demographics_df}{A dataframe with demographics data on your sample}
+
+\item{output_path}{A character filepath (ending in .html) where you want the
+table saved.}
+
+\item{census_age_max}{The maximum age of your target population.}
+
+\item{census_age_min}{The minimum age of your target population.}
+
+\item{census_states_to_keep}{A character vector with the abbreviations of
+states in your target population.
+e.g., \code{c("NY", "MA")}. Defaults to all states,
+plus DC and Puerto Rico.}
+
+\item{census_states_to_drop}{A character vector with the abbreviations of
+states NOT in your target population. Must be
+\code{NULL} if \code{census_states_to_keep} is specified.}
+
+\item{sample_data_args}{A list of arguments for processing the sample data.
+See \code{pums_prep_sample_data} for options. Defaults to
+assuming variable names from the standard pipeline.
+See example code for how to use.}
+
+\item{pums_cache}{A character string. Directory where the cached PUMS data
+can be found. Only needs to be specified if you're interested
+in storing different versions of the PUMS data.}
+
+\item{census_api_key_path}{A string. Path to a .txt file with your Census
+API key, e.g. "Users/me/api_tokens/census_api.txt".
+Only required if the PUMS data have not already been
+cached.}
+
+\item{force_pums_download}{Logical. If TRUE, forces a fresh PUMS download.}
+
+\item{age_breaks}{Numeric vector. The cutpoints for binning subject age.}
+
+\item{age_labels}{Character vector. The labels for each of the age bins.}
+
+\item{age_right}{Logical. If TRUE, the right cut-point for each bin is included
+in the \emph{lower} bin, e.g. \code{age_breaks = c(10, 29, 50)} bins
+ages into 10-29 and 30-50. Setting the option to FALSE would
+give bins of 10-28 and 29-50.}
+}
 \description{
-Process PUMS and Sample Data. Produce a table comparing the sample to the Census.
+Provide a demographics dataframe and produce a table comparing your sample
+to a representative sample from the PUMS Microdata (US Census). You can set
+the age range of your target population with \code{census_age_min} and/or
+\code{census_age_max}. You can also choose which states to include (all states
+plus DC and Puerto Rico are included by default). The first time you run
+\code{camr_census_compare}, it will cache the Census data on your local computer.
+Therefore, the first run requires supplying a path to your Census API key.
+Additionally, there are options to bin and label ages (by default the table
+has one row for every age in your range).
+
+Note that this function 1) stores the full PUMS locally
+once, and then 2) subsets it for all subsequent sample comparisons.
+
+The first time you run the function, downloading the PUMS will take several
+minutes.
+}
+\examples{
+df_demo <- data.frame(SBJ.FCT.Race = sample(c("White", "Black"), 100, replace=TRUE),
+                      SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
+                      SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
+                      SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
+
+df_demo$SBJ.FCT.Race[3] <- "Crimean" # to test values not included in Census
+camr_census_compare(df, "test_census_table.html",
+                    sample_data_args = list(age_var = "SBJ.INT.Age"),
+                    census_api_key_path = Sys.getenv(CENSUS_API_PATH))
+
+camr_census_compare(df, "test_census_table_binned.html",
+                    sample_data_args = list(age_var = "SBJ.INT.Age"),
+                    age_breaks = c(1,49,100),
+                    age_labels = c("Under 50", "Over 50"))
+
+
+}
+\author{
+Zach Himmelsbach
 }
