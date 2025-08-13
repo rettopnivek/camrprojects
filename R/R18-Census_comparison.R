@@ -148,7 +148,8 @@ process_pums <- function(pums_list_obj,
                     "56" = "WY",
                     "57" = "PR")
   age_sex <- pums_list_obj$data |>
-    dplyr::mutate(Female = SEX == 2,
+    dplyr::mutate(Sex = dplyr::case_when(SEX == 2 ~ "Female",
+                                         SEX == 1 ~ "Male"),
                   Age = AGEP |> as.numeric(),
                   Hispanic = dplyr::case_when(HISP != "01" ~ "Hispanic or Latino",
                                               HISP == "01" ~ "Not Hispanic or Latino"),
@@ -163,20 +164,20 @@ process_pums <- function(pums_list_obj,
                                            "Other",
                                            "More than one race")),
                                       State = unlist(state_map[STATE])) |>
-    select(PWGTP, Female, Age, Hispanic, Race, State)
+    select(PWGTP, Sex, Age, Hispanic, Race, State)
 
   # We never distinguish between American Indian, Alaska Native, and "Native Tribe Specified"
   # So we'll combine those categories
-  age_sex <- age_sex |> mutate(Race = forcats::fct_collapse(Race,
-                                                            "White" = "White",
-                                                            "Black" = "Black",
-                                                            "Asian" = "Asian",
-                                                            "Hawaiian/Pacific Islander" = "Hawaiian/Pac Islander",
-                                                            "American Indian/Alaska Native" = c("American Indian",
-                                                                                                "Alaska Native",
-                                                                                                "Native Tribe Specified"),
-                                                            "Other" = "Other",
-                                                            "More than one race" = "More than one race"))
+  age_sex <- age_sex |>
+    mutate(Race = forcats::fct_collapse(Race,
+                                        "White" = "White",
+                                        "Black" = "Black",
+                                        "Asian" = "Asian",
+                                        "Hawaiian/Pacific Islander" = "Hawaiian/Pac Islander",
+                                        "American Indian/Alaska Native" = c("American Indian",
+                                                                            "Alaska Native",
+                                                                            "Native Tribe Specified"),
+                                        "More than one race" = "More than one race"))
 
   if (!is.null(age_lower_limit)) {
     age_sex <- age_sex |> dplyr::filter(Age >= age_lower_limit)
@@ -206,7 +207,7 @@ process_pums <- function(pums_list_obj,
 #' Collapse PUMS microdata into representative summary by grouping variable
 #'
 #' @param pums_list_obj A processed PUMS dataframe. The output of `process_pums`.
-#' @param group_variable Variable by which to group summary (e.g. Race or Female)
+#' @param group_variable Variable by which to group summary (e.g. Race or Sex)
 #' @param weight_variable Varible with population weights. Defaults to
 #'                        PWGTP
 #' @returns A list. Metadata (as a list), plus a dataframe with proportions of
@@ -232,7 +233,7 @@ collapse_pums <- function(pums_data,
 get_pums_summaries <- function(pums_data) {
   summary_vars <- list(race_var = "Race",
                        hisp_var = "Hispanic",
-                       sex_var = "Female",
+                       sex_var = "Sex",
                        age_var = "Age")
   summary_dfs <- lapply(summary_vars, \(v) collapse_pums(pums_data,
                                           !!sym(v),
@@ -261,10 +262,10 @@ get_pums_summaries <- function(pums_data) {
 #'                 options on the 2023 census).
 #'
 pums_prep_sample_data <- function(demographics_target_df,
-                                  race_var = SBJ.FCT.Race,
-                                  sex_var = SBJ.FCT.Sex,
-                                  hispanic_var = SBJ.FCT.Ethnicity,
-                                  age_var = SBJ.INT.AgeAtEnrollment,
+                                  race_var = "SBJ.FCT.Race",
+                                  sex_var = "SBJ.FCT.Sex",
+                                  hispanic_var = "SBJ.FCT.Ethnicity",
+                                  age_var = "SBJ.INT.AgeAtEnrollment",
                                   race_map = list("White" = "White",
                                                   "Black" = "Black",
                                                   "Asian" = "Asian",
@@ -272,51 +273,59 @@ pums_prep_sample_data <- function(demographics_target_df,
                                                   "American Indian/Alaska Native" = "American Indian/Alaska Native",
                                                   "Other" = "Middle Eastern/North African",
                                                   "More than one race" = "More than one race")) {
+  sample_df <- demographics_target_df
+
   # Drop races not in mapping and print warning
-  dropped_races <- base::setdiff(unique(demographics_target_df[[as.character(substitute(race_var))]]),
+  dropped_races <- base::setdiff(unique(demographics_target_df[[race_var]]),
                                  unlist(race_map))
-  if (length(dropped_races)) warning(sprintf("The following race values are not mapped and will be dropped: %s",
-                                     dropped_races))
-  sample_df <- demographics_target_df |> filter(!{{race_var}} %in% dropped_races)
+  if (length(dropped_races)) {
+    warning(sprintf("The following race values are not mapped and will be dropped: %s",
+                    paste(dropped_races, collapse = "; ")))
+    sample_df <- demographics_target_df |> filter(! .data[[race_var]] %in% dropped_races)
+  }
 
   # Drop sexes not in Census and print warning
   census_sexes <- c("Male", "Female")
-  dropped_sexes <- base::setdiff(unique(demographics_target_df[[as.character(substitute(sex_var))]]),
+  dropped_sexes <- base::setdiff(unique(demographics_target_df[[sex_var]]),
                                  census_sexes)
-  if (length(dropped_sexes)) warning(sprintf("The following sex values are not in the Census and will be dropped: %s",
-                                             dropped_sexes))
-  sample_df <- sample_df |> filter(!{{sex_var}} %in% dropped_sexes)
+  if (length(dropped_sexes)) {
+    warning(sprintf("The following sex values are not in the Census and will be dropped: %s",
+                    paste(dropped_sexes, collapse = "; ")))
+    sample_df <- sample_df |> filter(! .data[[sex_var]] %in% dropped_sexes)
+  }
 
   # Drop ethnicity values not in Census and print warning
   census_ethnicity <- c("Hispanic or Latino", "Not Hispanic or Latino")
-  dropped_ethnicity <- base::setdiff(unique(demographics_target_df[[as.character(substitute(hispanic_var))]]),
+  dropped_ethnicity <- base::setdiff(unique(demographics_target_df[[hispanic_var]]),
                                      census_ethnicity)
   if (length(dropped_ethnicity)) {
     warning(sprintf("The following ethnicity values are not in the Census: %s",
-                                                 dropped_ethnicity))
+                                                 paste(dropped_ethnicity, collapse = "; ")))
     warning(sprintf("The Census options include: %s",
                     paste(census_ethnicity, collapse = ";")))
+    sample_df <- sample_df |> filter(! .data[[hispanic_var]] %in% dropped_ethnicity)
   }
-  sample_df <- sample_df |> filter(!{{hispanic_var}} %in% dropped_ethnicity)
+
 
   # Create vars that match the PUMS
   sample_df <- sample_df |>
-    mutate(Race = dplyr::case_when({{race_var}} %in% race_map[["White"]] ~ "White",
-                                   {{race_var}} %in% race_map[["Black"]] ~ "Black",
-                                   {{race_var}} %in% race_map[["Asian"]] ~ "Asian",
-                                   {{race_var}} %in% race_map[["Hawaiian/Pacific Islander"]] ~ "Hawaiian/Pacific Islander",
-                                   {{race_var}} %in% race_map[["American Indian/Alaska Native"]] ~ "American Indian/Alaska Native",
-                                   {{race_var}} %in% race_map[["Other"]] ~ "Other",
-                                   {{race_var}} %in% race_map[["More than one race"]] ~ "More than one race"),
-           Female = {{sex_var}} == "Female",
-           Hispanic = dplyr::case_when({{hispanic_var}} == "Hispanic or Latino" ~ "Hispanic or Latino",
-                                   {{hispanic_var}} == "Not Hispanic or Latino" ~ "Not Hispanic or Latino"),
-           Age = {{age_var}})
+    mutate(Race = dplyr::case_when(.data[[race_var]] %in% race_map[["White"]] ~ "White",
+                                   .data[[race_var]] %in% race_map[["Black"]] ~ "Black",
+                                   .data[[race_var]] %in% race_map[["Asian"]] ~ "Asian",
+                                   .data[[race_var]] %in% race_map[["Hawaiian/Pacific Islander"]] ~ "Hawaiian/Pacific Islander",
+                                   .data[[race_var]] %in% race_map[["American Indian/Alaska Native"]] ~ "American Indian/Alaska Native",
+                                   .data[[race_var]] %in% race_map[["Other"]] ~ "Other",
+                                   .data[[race_var]] %in% race_map[["More than one race"]] ~ "More than one race"),
+           Sex = dplyr::case_when(.data[[sex_var]] == "Female" ~ "Female",
+                                  .data[[sex_var]] == "Male" ~ "Male"),
+           Hispanic = dplyr::case_when(.data[[hispanic_var]] == "Hispanic or Latino" ~ "Hispanic or Latino",
+                                       .data[[hispanic_var]] == "Not Hispanic or Latino" ~ "Not Hispanic or Latino"),
+           Age = .data[[age_var]])
 
   # Aggregate and bind summaries
   summary_vars <- list(race_var = "Race",
                        hisp_var = "Hispanic",
-                       sex_var = "Female",
+                       sex_var = "Sex",
                        age_var = "Age")
   summary_dfs <- lapply(summary_vars,
          \(v) sample_df |> group_by(!!sym(v)) |>
