@@ -82,17 +82,18 @@ The first time you run the function, downloading the PUMS will take several
 minutes.
 }
 \examples{
+# You must first set Sys.setenv(CENSUS_API_PATH = "[your_path]")
 df_demo <- data.frame(SBJ.FCT.Race = sample(c("White", "Black"), 100, replace=TRUE),
                       SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
                       SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
                       SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
 
 df_demo$SBJ.FCT.Race[3] <- "Crimean" # to test values not included in Census
-camr_census_compare(df, "test_census_table.html",
+camr_census_compare(df_demo, "test_census_table.html",
                     sample_data_args = list(age_var = "SBJ.INT.Age"),
                     census_api_key_path = Sys.getenv(CENSUS_API_PATH))
 
-camr_census_compare(df, "test_census_table_binned.html",
+camr_census_compare(df_demo, "test_census_table_binned.html",
                     sample_data_args = list(age_var = "SBJ.INT.Age"),
                     age_breaks = c(1,49,100),
                     age_labels = c("Under 50", "Over 50"))
