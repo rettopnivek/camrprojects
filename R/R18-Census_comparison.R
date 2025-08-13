@@ -183,7 +183,7 @@ process_pums <- function(pums_list_obj,
     pums_list_obj$meta$lower_age <- age_lower_limit
   }
   if (!is.null(age_upper_limit)) {
-    age_sex <- age_sex |> dplyr::filter(Age >= age_upper_limit)
+    age_sex <- age_sex |> dplyr::filter(Age <= age_upper_limit)
     pums_list_obj$meta$upper_age <- age_upper_limit
   }
   if (!is.null(states_to_drop)) {
