@@ -38,7 +38,7 @@ Imports:
     svglite,
     targets,
     testthat,
-    tidycensus
+    tidycensus,
     tidyr
     
 License: License: MIT + License
