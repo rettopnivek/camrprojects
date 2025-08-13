@@ -9,7 +9,10 @@ process_pums(
   age_lower_limit = NULL,
   age_upper_limit = NULL,
   states_to_drop = NULL,
-  states_to_keep = NULL
+  states_to_keep = NULL,
+  age_breaks = NULL,
+  age_labels = NULL,
+  age_right = TRUE
 )
 }
 \arguments{

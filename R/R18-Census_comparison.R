@@ -1,6 +1,19 @@
 # Functions to compare sample data with Census (PUMS) and
 # NSDUH samples
 
+#' Helper function to bin ages (used when processing sample and census data)
+#'
+#'
+bin_age <- function(x, breaks, labels = NULL, right = TRUE) {
+  cut(as.numeric(x),
+      breaks = breaks,
+      labels = labels,
+      right = right,
+      include.lowest = TRUE,
+      ordered_result = TRUE
+  )
+}
+
 #' Download PUMS from census data
 #'
 #' @description
@@ -17,9 +30,10 @@
 #'             the processing code is based on 2023. (A warning will print
 #'             for non-2023 years). Defaults to 2023.
 #' @param survey A string. The survey you want to download. Defaults to
-#'               "asc1".
+#'               "acs1".
 #' @returns Side effect: downloads PUMS data to `cache_path`.
-#'          Invisibly returns a dataframe with the PUMS microdata
+#'          Invisibly returns a list with the PUMS microdata and some
+#'          metadata.
 #'
 #' @importFrom tidycensus census_api_key get_pums
 #' @importFrom fs dir_create
@@ -55,7 +69,7 @@ download_census <- function(census_api_key_path,
                year = year,
                survey = survey)
   output <- list(meta = meta, data = age_sex)
-  saveRDS(output, fs::path(cache_dir,paste0("pums_",year,"_",Sys.time(), ".RDS")))
+  saveRDS(output, fs::path(cache_dir,paste0("pums_", year, "_", Sys.Date(), ".RDS")))
   return(invisible(output))
 }
 
@@ -84,69 +98,30 @@ process_pums <- function(pums_list_obj,
                          age_lower_limit = NULL,
                          age_upper_limit = NULL,
                          states_to_drop = NULL,
-                         states_to_keep = NULL) {
+                         states_to_keep = NULL,
+                         age_breaks = NULL,
+                         age_labels = NULL,
+                         age_right = TRUE) {
 
   if (pums_list_obj$meta$year != 2023) {
     warning(sprintf("Recoding based on 2023 Codebook. Check for changes in
-            %s codebook.", year))
+            %s codebook.", pums_list_obj$meta$year))
   }
 
   # Can specify states to drop or states to keep, but not both
   stopifnot(is.null(states_to_drop) | is.null(states_to_keep))
 
-  # Recode variables
-  state_map <- list("01" = "AL",
-                    "02" = "AK",
-                    "04" = "AZ",
-                    "05" = "AR",
-                    "06" = "CA",
-                    "08" = "CO",
-                    "09" = "CT",
-                    "10" = "DE",
-                    "11" = "DC",
-                    "12" = "FL",
-                    "13" = "GA",
-                    "15" = "HI",
-                    "16" = "ID",
-                    "17" = "IL",
-                    "18" = "IN",
-                    "19" = "IA",
-                    "20" = "KS",
-                    "21" = "KY",
-                    "22" = "LA",
-                    "23" = "ME",
-                    "24" = "MD",
-                    "25" = "MA",
-                    "26" = "MI",
-                    "27" = "MN",
-                    "28" = "MS",
-                    "29" = "MO",
-                    "30" = "MT",
-                    "31" = "NE",
-                    "32" = "NV",
-                    "33" = "NH",
-                    "34" = "NJ",
-                    "35" = "NM",
-                    "36" = "NY",
-                    "37" = "NC",
-                    "38" = "ND",
-                    "39" = "OH",
-                    "40" = "OK",
-                    "41" = "OR",
-                    "42" = "PA",
-                    "44" = "RI",
-                    "45" = "SC",
-                    "46" = "SD",
-                    "47" = "TN",
-                    "48" = "TX",
-                    "49" = "UT",
-                    "50" = "VT",
-                    "51" = "VA",
-                    "53" = "WA",
-                    "54" = "WV",
-                    "55" = "WI",
-                    "56" = "WY",
-                    "57" = "PR")
+  if (!is.null(states_to_drop) && !is.null(states_to_keep)) {
+    rlang::abort("Specify only one of `states_to_drop` or `states_to_keep`, not both")
+  }
+
+  # Recode variables ----
+  # Get FIPS codes for states (to map codes to state abbreviations)
+  state_map <- tidycensus::fips_codes |> select(state, state_code) |>
+    group_by(state) |> filter(row_number() == 1) |> ungroup()
+  state_map <- state_map |> pull(state) |> as.list() |>
+    setNames(state_map$state_code)
+
   age_sex <- pums_list_obj$data |>
     dplyr::mutate(Sex = dplyr::case_when(SEX == 2 ~ "Female",
                                          SEX == 1 ~ "Male"),
@@ -165,6 +140,12 @@ process_pums <- function(pums_list_obj,
                                            "More than one race")),
                                       State = unlist(state_map[STATE])) |>
     select(PWGTP, Sex, Age, Hispanic, Race, State)
+
+  # Optional age-binning
+  if (!is.null(age_breaks)) {
+    age_sex <- age_sex |>
+      dplyr::mutate(Age = bin_age(Age, age_breaks, age_labels, age_right))
+  }
 
   # We never distinguish between American Indian, Alaska Native, and "Native Tribe Specified"
   # So we'll combine those categories
@@ -206,8 +187,9 @@ process_pums <- function(pums_list_obj,
 #' @description
 #' Collapse PUMS microdata into representative summary by grouping variable
 #'
-#' @param pums_list_obj A processed PUMS dataframe. The output of `process_pums`.
-#' @param group_variable Variable by which to group summary (e.g. Race or Sex)
+#' @param pums_data       A processed PUMS dataframe. The data output element
+#'                        of `process_pums`.
+#' @param group_variable  Variable by which to group summary (e.g. Race or Sex)
 #' @param weight_variable Varible with population weights. Defaults to
 #'                        PWGTP
 #' @returns A list. Metadata (as a list), plus a dataframe with proportions of
@@ -272,7 +254,10 @@ pums_prep_sample_data <- function(demographics_target_df,
                                                   "Hawaiian/Pacific Islander" = "Hawaiian/Pacific Islander",
                                                   "American Indian/Alaska Native" = "American Indian/Alaska Native",
                                                   "Other" = "Middle Eastern/North African",
-                                                  "More than one race" = "More than one race")) {
+                                                  "More than one race" = "More than one race"),
+                                  age_breaks = NULL,
+                                  age_labels = NULL,
+                                  age_right = TRUE) {
   sample_df <- demographics_target_df
 
   # Drop races not in mapping and print warning
@@ -322,6 +307,12 @@ pums_prep_sample_data <- function(demographics_target_df,
                                        .data[[hispanic_var]] == "Not Hispanic or Latino" ~ "Not Hispanic or Latino"),
            Age = .data[[age_var]])
 
+  # Optional age binning
+  if (!is.null(age_breaks)) {
+    sample_df <- sample_df |>
+      dplyr::mutate(Age = bin_age(Age, age_breaks, age_labels, age_right))
+  }
+
   # Aggregate and bind summaries
   summary_vars <- list(race_var = "Race",
                        hisp_var = "Hispanic",
@@ -347,7 +338,6 @@ make_pums_comparison_table <- function(sample_summary_dfs,
 
   ## Merge together summary dataframes (from sample and PUMS) ----
   comp_vars <- names(pums_summary_dfs)
-  print(sapply(sample_summary_dfs, \(df) colnames(df)[1]))
   comp_dfs <- lapply(comp_vars,
                      \(v) base::merge(sample_summary_dfs[[v]],
                                       pums_summary_dfs[[v]],
@@ -355,16 +345,22 @@ make_pums_comparison_table <- function(sample_summary_dfs,
                                       all = TRUE) |>
                        select(!!sym(colnames(pums_summary_dfs[[v]])[1]),
                               `Sample Count`, `Sample Proportion`, `Census Proportion`) |>
-                       mutate(across(where(is.numeric), ~ round(.x, 2)),
-                              across(where(is.numeric), ~ ifelse(is.na(.x), 0, .x)))) |>
+                       mutate(across(c(`Sample Proportion`, `Census Proportion`), ~ round(.x, 2)),
+                              across(where(is.numeric), ~ ifelse(is.na(.x), 0, .x))) |>
+                       mutate(`Sample %` = scales::percent(`Sample Proportion`),
+                              `Census %` = scales::percent(`Census Proportion`)) |>
+                       select(-c(`Sample Proportion`, `Census Proportion`))) |>
     setNames(sapply(pums_summary_dfs, \(df) colnames(df)[1]))
 
   ## Make html tables from list of summary dataframes ----
-  n_cols <- ncol(comp_dfs$Race)
-  col_width <- round(100/n_cols, 1)
 
   make_table_html <- function(df, caption = NULL) {
-    table <- knitr::kable(df, format = "html", table.attr = "class='table table-striped'") |>
+    n_cols <- ncol(df)
+    col_width <- round(100/n_cols, 1)
+    table <- knitr::kable(df,
+                          format = "html",
+                          table.attr = "class='table table-striped'",
+                          align = rep("l", n_cols)) |>
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
                     full_width = FALSE,
                     position = "center")
@@ -372,7 +368,7 @@ make_pums_comparison_table <- function(sample_summary_dfs,
       table <- kableExtra::column_spec(table, i, width = paste0(col_width, "%"))
     }
 
-    paste0("<div style='display: inline-block; margin-right; 20px;'>", as.character(table), "</div>")
+    paste0("<div style='display: inline-block; margin-right: 20px;'>", as.character(table), "</div>")
   }
 
   tables <- sapply(comp_dfs, make_table_html)
@@ -400,10 +396,13 @@ camr_census_compare <- function(demographics_df,
                                 sample_data_args = NULL,
                                 pums_cache = "~/.cache/pums",
                                 census_api_key_path = NULL,
-                                force_pums_download = FALSE) {
+                                force_pums_download = FALSE,
+                                age_breaks = NULL,
+                                age_labels = NULL,
+                                age_right = TRUE) {
 
   # Download PUMS if forced or Cache is empty
-  if (force_pums_download | (!dir.exists(pums_cache))) {
+  if (force_pums_download || (!dir.exists(pums_cache))) {
     download_census(census_api_key_path, cache_dir = pums_cache)
   }
 
@@ -417,27 +416,51 @@ camr_census_compare <- function(demographics_df,
                        age_lower_limit = census_age_min,
                        age_upper_limit = census_age_max,
                        states_to_drop = census_states_to_drop,
-                       states_to_keep = census_states_to_keep)
+                       states_to_keep = census_states_to_keep,
+                       age_breaks = age_breaks,
+                       age_labels = age_labels,
+                       age_right = age_right)
   pums <- list(meta = pums$meta,
                data = get_pums_summaries(pums_data = pums$data))
 
   # Prep sample data
   if (is.null(sample_data_args)) {
-    sample_dfs <- pums_prep_sample_data(demographics_df)
+    sample_dfs <- pums_prep_sample_data(demographics_df,
+                                        age_breaks = age_breaks,
+                                        age_labels = age_labels,
+                                        age_right = age_right)
   }
-  else sample_dfs <- rlang::exec(pums_prep_sample_data,
-                                 !!!sample_data_args,
-                                 demographics_target_df = demographics_df)
+  else {
+    sample_data_args <- c(list(demographics_target_df = demographics_df,
+                          age_breaks = age_breaks,
+                          age_labels = age_labels,
+                          age_right = age_right),
+                          sample_data_args)
+    sample_dfs <- do.call(pums_prep_sample_data, sample_data_args)
+  }
 
   make_pums_comparison_table(sample_dfs, pums$data,
                              output_path = output_path)
 }
 
-#' Download and cache NSDUH data
+#' Download 2023 NSDUH data
 #'
 #' @description
-#' Download and cache data from NSDUH
+#' Download 2023 data from NSDUH
 #'
 get_nsduh <- function() {
+  # The codebook can be found here: https://www.samhsa.gov/data/system/files/media-puf-file/NSDUH-2023-DS0001-info-codebook_v1.pdf
+  url <- "https://www.samhsa.gov/data/system/files/media-puf-file/NSDUH-2023-DS0001-bndl-data-r_v1.zip"
+  tf <- tempfile(fileext = ".zip")
 
+  download.file(url, tf, mode = "wb")
+  rdata_name <- unzip(tf, list = TRUE)$Name
+
+  con <- unz(tf, rdata_name)
+  load(con)
+  close(con)
+  unlink(tf)
+
+  # Rename the object
+  return(puf2023_102124)
 }

@@ -2,10 +2,10 @@
 % Please edit documentation in R/R18-Census_comparison.R
 \name{get_nsduh}
 \alias{get_nsduh}
-\title{Download and cache NSDUH data}
+\title{Download 2023 NSDUH data}
 \usage{
 get_nsduh()
 }
 \description{
-Download and cache data from NSDUH
+Download 2023 data from NSDUH
 }

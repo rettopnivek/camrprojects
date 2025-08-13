@@ -14,7 +14,10 @@ camr_census_compare(
   sample_data_args = NULL,
   pums_cache = "~/.cache/pums",
   census_api_key_path = NULL,
-  force_pums_download = FALSE
+  force_pums_download = FALSE,
+  age_breaks = NULL,
+  age_labels = NULL,
+  age_right = TRUE
 )
 }
 \description{

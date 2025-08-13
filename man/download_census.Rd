@@ -28,11 +28,12 @@ the processing code is based on 2023. (A warning will print
 for non-2023 years). Defaults to 2023.}
 
 \item{survey}{A string. The survey you want to download. Defaults to
-"asc1".}
+"acs1".}
 }
 \value{
 Side effect: downloads PUMS data to \code{cache_path}.
-Invisibly returns a dataframe with the PUMS microdata
+Invisibly returns a list with the PUMS microdata and some
+metadata.
 }
 \description{
 Function that downloads PUMS data

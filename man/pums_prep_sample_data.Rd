@@ -6,14 +6,17 @@
 \usage{
 pums_prep_sample_data(
   demographics_target_df,
-  race_var = SBJ.FCT.Race,
-  sex_var = SBJ.FCT.Sex,
-  hispanic_var = SBJ.FCT.Ethnicity,
-  age_var = SBJ.INT.AgeAtEnrollment,
+  race_var = "SBJ.FCT.Race",
+  sex_var = "SBJ.FCT.Sex",
+  hispanic_var = "SBJ.FCT.Ethnicity",
+  age_var = "SBJ.INT.AgeAtEnrollment",
   race_map = list(White = "White", Black = "Black", Asian = "Asian",
     `Hawaiian/Pacific Islander` = "Hawaiian/Pacific Islander",
     `American Indian/Alaska Native` = "American Indian/Alaska Native", Other =
-    "Middle Eastern/North African", `More than one race` = "More than one race")
+    "Middle Eastern/North African", `More than one race` = "More than one race"),
+  age_breaks = NULL,
+  age_labels = NULL,
+  age_right = TRUE
 )
 }
 \arguments{

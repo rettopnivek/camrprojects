@@ -7,12 +7,13 @@
 collapse_pums(pums_data, group_variable, weight_variable = PWGTP)
 }
 \arguments{
-\item{group_variable}{Variable by which to group summary (e.g. Race or Female)}
+\item{pums_data}{A processed PUMS dataframe. The data output element
+of \code{process_pums}.}
+
+\item{group_variable}{Variable by which to group summary (e.g. Race or Sex)}
 
 \item{weight_variable}{Varible with population weights. Defaults to
 PWGTP}
-
-\item{pums_list_obj}{A processed PUMS dataframe. The output of \code{process_pums}.}
 }
 \value{
 A list. Metadata (as a list), plus a dataframe with proportions of
