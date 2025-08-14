@@ -469,8 +469,6 @@ camr_census_compare <- function(demographics_df,
                                 age_labels = NULL,
                                 age_right = TRUE) {
 
-  # avoid masking issues with attr (from xfun package)
-  attr <- base::attr
 
   # Download PUMS if forced or Cache is empty
   if (force_pums_download || (!dir.exists(pums_cache))) {
