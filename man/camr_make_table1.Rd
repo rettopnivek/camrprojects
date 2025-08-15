@@ -39,8 +39,8 @@ demos_to_plot <- list("SBJ.INT.CompleteAge" = "Age",
                       "SBJ.FCT.Gender" = "Gender",
                       "SBJ.FCT.Ethnicity" = "Ethnicity")
 make_table1(df, demos_to_plot,
-output = c("outputs/tables/demo_table.html",
-           "outputs/tables/demo_table.docx"))
+            output = c("outputs/tables/demo_table.html",
+                       "outputs/tables/demo_table.docx"))
 
 
 }

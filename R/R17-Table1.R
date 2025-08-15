@@ -34,8 +34,8 @@
 #'                       "SBJ.FCT.Gender" = "Gender",
 #'                       "SBJ.FCT.Ethnicity" = "Ethnicity")
 #' make_table1(df, demos_to_plot,
-#' output = c("outputs/tables/demo_table.html",
-#'            "outputs/tables/demo_table.docx"))
+#'             output = c("outputs/tables/demo_table.html",
+#'                        "outputs/tables/demo_table.docx"))
 #'
 #'
 camr_make_table1 <- function(df,
@@ -60,7 +60,7 @@ camr_make_table1 <- function(df,
       tidyr::pivot_longer(everything(), names_to = "Variable") |>
       dplyr::group_by(Variable) |>
       dplyr::summarize(
-        `Mean (SD)` = sprintf("%.1f (%.1f)", mean(value, na.rm = TRUE), sd(value, na.rm = TRUE)),
+        `Mean (SD)` = sprintf("%.1f (%.1f); NA = %i", mean(value, na.rm = TRUE), sd(value, na.rm = TRUE), sum(is.na(value))),
         dist = list(value), # To create histogram using gt_plt_dist()
         min_val = min(value, na.rm = TRUE),
         max_val = max(value, na.rm = TRUE),
