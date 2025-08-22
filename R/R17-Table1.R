@@ -29,13 +29,19 @@
 #' @author Zach Himmelsbach
 #'
 #' @examples
-#' df <- targets::tar_read(df_demographics)
-#' demos_to_plot <- list("SBJ.INT.CompleteAge" = "Age",
-#'                       "SBJ.FCT.Gender" = "Gender",
+#' df <- data.frame(SBJ.FCT.Race = sample(c("White", "Black", "Crimean"), 100, replace=TRUE, prob = c(.5, .4, .1)),
+#'                  SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
+#'                  SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
+#'                  SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
+#' # Factors will appear ordered by their levels
+#' df$SBJ.FCT.Race <- df$SBJ.FCT.Race |> factor(levels = c("White", "Black", "Crimean"))
+#' demos_to_plot <- list("SBJ.INT.Age" = "Age",
+#'                       "SBJ.FCT.Race" = "Race",
+#'                       "SBJ.FCT.Sex" = "Sex",
 #'                       "SBJ.FCT.Ethnicity" = "Ethnicity")
-#' make_table1(df, demos_to_plot,
-#'             output = c("outputs/tables/demo_table.html",
-#'                        "outputs/tables/demo_table.docx"))
+#' camr_make_table1(df, demos_to_plot)#, Can save out tables using arg below
+#'             #output = c("outputs/tables/demo_table.html",
+#'                        #"outputs/tables/demo_table.docx"))
 #'
 #'
 camr_make_table1 <- function(df,
@@ -89,6 +95,18 @@ camr_make_table1 <- function(df,
     categorical_tbl <- df |>
       dplyr::select(all_of(factor_vars)) |>
       tidyr::pivot_longer(everything(), names_to = "variable_grp", values_to = "Variable") |>
+      dplyr::group_by(variable_grp) |>
+      # Keep factors in order of their levels
+      dplyr::mutate(
+        Variable = factor(
+          Variable,
+          levels = {
+            col_data <- df[[unique(variable_grp)]]
+            # Convert character vars to factors
+            if (is.factor(col_data)) levels(col_data) else unique(col_data)
+          }
+        )
+      ) |>
       dplyr::group_by(variable_grp, Variable) |>
       dplyr::summarize(n = n()) |> ungroup() |> group_by(variable_grp) |>
       dplyr::mutate(pct = n/sum(n) * 100) |>

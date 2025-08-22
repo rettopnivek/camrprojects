@@ -34,13 +34,19 @@ it creates an inline histogram. Optionally, you can save the table as
 docx or html (note that the histograms won't render in docx)
 }
 \examples{
-df <- targets::tar_read(df_demographics)
-demos_to_plot <- list("SBJ.INT.CompleteAge" = "Age",
-                      "SBJ.FCT.Gender" = "Gender",
+df <- data.frame(SBJ.FCT.Race = sample(c("White", "Black", "Crimean"), 100, replace=TRUE, prob = c(.5, .4, .1)),
+                 SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
+                 SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
+                 SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
+# Factors will appear ordered by their levels
+df$SBJ.FCT.Race <- df$SBJ.FCT.Race |> factor(levels = c("White", "Black", "Crimean"))
+demos_to_plot <- list("SBJ.INT.Age" = "Age",
+                      "SBJ.FCT.Race" = "Race",
+                      "SBJ.FCT.Sex" = "Sex",
                       "SBJ.FCT.Ethnicity" = "Ethnicity")
-make_table1(df, demos_to_plot,
-            output = c("outputs/tables/demo_table.html",
-                       "outputs/tables/demo_table.docx"))
+camr_make_table1(df, demos_to_plot)#, Can save out tables using arg below
+            #output = c("outputs/tables/demo_table.html",
+                       #"outputs/tables/demo_table.docx"))
 
 
 }
