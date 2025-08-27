@@ -291,6 +291,14 @@ cbind_gt_groups <- function(gts,
     }
   }
 
+  # Format Factor Variable Group Names
+  gt_tbl <- gt_tbl |> gt::tab_stubhead("Variable") |>
+    gt::tab_style(
+      style = cell_text(weight = "bold"),
+      locations = cells_row_groups()
+    )
+
+
   return(gt_tbl)
 
 }
