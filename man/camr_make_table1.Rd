@@ -10,7 +10,8 @@ camr_make_table1(
   var_label_list,
   hist_bar_color = "blue",
   group_var = NULL,
-  output = NULL
+  output = NULL,
+  hide_distributions = FALSE
 )
 }
 \arguments{
@@ -22,14 +23,18 @@ variables of \code{df} that you want to summarize. The values are the
 labels that will appear in the table. E.g. \code{list(SBJ.INT.Age = "Age")}}
 
 \item{hist_bar_color}{Optional. A character or hex code for the color you'd
-like the inline histograms to be. Defaults to "blue".}
+like the inline histograms (and horizontal bars for factor variables) to be.
+Defaults to "blue".}
 
 \item{group_var}{Optional String. The name of a factor variable by which to group
 the summaries (e.g. SBJ.FCT.RandGroup to separate results by Treatment group)}
 
-\item{output}{Optional. A character vector with paths as elements. Paths
+\item{output}{Optional Character. A character vector with paths as elements. Paths
 can be relative to your project. If provided, the table will be saved.
 Supports .html and .docx paths.}
+
+\item{hide_distributions}{If TRUE, hide the inline distribution visualizations.
+Defaults to \code{FALSE}.}
 }
 \value{
 A gt_tbl object. Side effect: if \code{output} was provided, the table

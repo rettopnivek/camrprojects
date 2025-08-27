@@ -15,12 +15,15 @@
 #' variables of `df` that you want to summarize. The values are the
 #' labels that will appear in the table. E.g. `list(SBJ.INT.Age = "Age")`
 #' @param hist_bar_color Optional. A character or hex code for the color you'd
-#' like the inline histograms to be. Defaults to "blue".
+#' like the inline histograms (and horizontal bars for factor variables) to be.
+#' Defaults to "blue".
 #' @param group_var  Optional String. The name of a factor variable by which to group
 #' the summaries (e.g. SBJ.FCT.RandGroup to separate results by Treatment group)
-#' @param output Optional. A character vector with paths as elements. Paths
+#' @param output Optional Character. A character vector with paths as elements. Paths
 #' can be relative to your project. If provided, the table will be saved.
 #' Supports .html and .docx paths.
+#' @param hide_distributions If TRUE, hide the inline distribution visualizations.
+#'                           Defaults to `FALSE`.
 #'
 #' @returns A gt_tbl object. Side effect: if `output` was provided, the table
 #' will be saved as .html or .docx at the designated path(s)
@@ -53,7 +56,8 @@ camr_make_table1 <- function(df,
                         var_label_list,
                         hist_bar_color = "blue",
                         group_var = NULL,
-                        output = NULL) {
+                        output = NULL,
+                        hide_distributions = FALSE) {
 
   # Handle group_var cases recursively
   if (!is.null(group_var)) {
@@ -62,6 +66,11 @@ camr_make_table1 <- function(df,
     combined_gt <- cbind_gt_groups(gts = group_gts,
                                    group_var = group_var,
                                    hist_bar_color = hist_bar_color)
+
+    # Optionally hide distribution columns
+    if (hide_distributions) {
+      combined_gt <- combined_gt |> gt::cols_hide(matches("__dist$"))
+    }
 
     if (!is.null(output)) {
       for (path in output) {
@@ -138,7 +147,7 @@ camr_make_table1 <- function(df,
       dplyr::mutate(
         `Mean (SD)` = sprintf("%d (%.0f%%)", n, pct),
         dist = list(NA),
-        axis_vals = NA_character_
+        axis_vals = sprintf('<div style="width: %spx; height: 20px; background-color: %s;"></div>', pct, hist_bar_color)
       ) |>
       dplyr::ungroup()
   }
@@ -178,6 +187,10 @@ camr_make_table1 <- function(df,
       style = cell_text(weight = "bold"),
       locations = cells_row_groups()
     )
+
+  if (hide_distributions) {
+    table1 <- table1 |> gt::cols_hide(dist)
+  }
 
   if (!is.null(output)) {
     for (path in output) {
