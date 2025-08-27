@@ -5,7 +5,13 @@
 \title{Create a table1 style table for weekly updates and
 data inspection}
 \usage{
-camr_make_table1(df, var_label_list, hist_bar_color = "blue", output = NULL)
+camr_make_table1(
+  df,
+  var_label_list,
+  hist_bar_color = "blue",
+  group_var = NULL,
+  output = NULL
+)
 }
 \arguments{
 \item{df}{A dataframe with columns that follow CAM-standard naming
@@ -17,6 +23,9 @@ labels that will appear in the table. E.g. \code{list(SBJ.INT.Age = "Age")}}
 
 \item{hist_bar_color}{Optional. A character or hex code for the color you'd
 like the inline histograms to be. Defaults to "blue".}
+
+\item{group_var}{Optional String. The name of a factor variable by which to group
+the summaries (e.g. SBJ.FCT.RandGroup to separate results by Treatment group)}
 
 \item{output}{Optional. A character vector with paths as elements. Paths
 can be relative to your project. If provided, the table will be saved.
@@ -35,16 +44,19 @@ docx or html (note that the histograms won't render in docx)
 }
 \examples{
 df <- data.frame(SBJ.FCT.Race = sample(c("White", "Black", "Crimean"), 100, replace=TRUE, prob = c(.5, .4, .1)),
-                 SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
-                 SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
-                 SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
+                 SBJ.FCT.Sex = factor(sample(c("Male", "Female"), 100, replace = TRUE),
+                                      levels = c("Male", "Female")),
+                 SBJ.FCT.Ethnicity = factor(sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
+                                            levels = c("Hispanic or Latino", "Not Hispanic or Latino")),
+                 SBJ.INT.Age = sample(13:50, 100, replace = TRUE),
+                 SBJ.FCT.Treatment = factor(sample(1:2, 100, replace = TRUE), levels = 1:2, labels = c("Group A", "Group B")))
 # Factors will appear ordered by their levels
 df$SBJ.FCT.Race <- df$SBJ.FCT.Race |> factor(levels = c("White", "Black", "Crimean"))
 demos_to_plot <- list("SBJ.INT.Age" = "Age",
                       "SBJ.FCT.Race" = "Race",
                       "SBJ.FCT.Sex" = "Sex",
                       "SBJ.FCT.Ethnicity" = "Ethnicity")
-camr_make_table1(df, demos_to_plot)#, Can save out tables using arg below
+camr_make_table1(df, demos_to_plot, group_var = "SBJ.FCT.Treatment")#, Can save out tables using arg below
             #output = c("outputs/tables/demo_table.html",
                        #"outputs/tables/demo_table.docx"))
 
