@@ -16,6 +16,8 @@
 #' labels that will appear in the table. E.g. `list(SBJ.INT.Age = "Age")`
 #' @param hist_bar_color Optional. A character or hex code for the color you'd
 #' like the inline histograms to be. Defaults to "blue".
+#' @param group_var  Optional String. The name of a factor variable by which to group
+#' the summaries (e.g. SBJ.FCT.RandGroup to separate results by Treatment group)
 #' @param output Optional. A character vector with paths as elements. Paths
 #' can be relative to your project. If provided, the table will be saved.
 #' Supports .html and .docx paths.
@@ -30,16 +32,19 @@
 #'
 #' @examples
 #' df <- data.frame(SBJ.FCT.Race = sample(c("White", "Black", "Crimean"), 100, replace=TRUE, prob = c(.5, .4, .1)),
-#'                  SBJ.FCT.Sex = sample(c("Male", "Female"), 100, replace = TRUE),
-#'                  SBJ.FCT.Ethnicity = sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
-#'                  SBJ.INT.Age = sample(13:50, 100, replace = TRUE))
+#'                  SBJ.FCT.Sex = factor(sample(c("Male", "Female"), 100, replace = TRUE),
+#'                                       levels = c("Male", "Female")),
+#'                  SBJ.FCT.Ethnicity = factor(sample(c("Hispanic or Latino", "Not Hispanic or Latino"), 100, replace = TRUE),
+#'                                             levels = c("Hispanic or Latino", "Not Hispanic or Latino")),
+#'                  SBJ.INT.Age = sample(13:50, 100, replace = TRUE),
+#'                  SBJ.FCT.Treatment = factor(sample(1:2, 100, replace = TRUE), levels = 1:2, labels = c("Group A", "Group B")))
 #' # Factors will appear ordered by their levels
 #' df$SBJ.FCT.Race <- df$SBJ.FCT.Race |> factor(levels = c("White", "Black", "Crimean"))
 #' demos_to_plot <- list("SBJ.INT.Age" = "Age",
 #'                       "SBJ.FCT.Race" = "Race",
 #'                       "SBJ.FCT.Sex" = "Sex",
 #'                       "SBJ.FCT.Ethnicity" = "Ethnicity")
-#' camr_make_table1(df, demos_to_plot)#, Can save out tables using arg below
+#' camr_make_table1(df, demos_to_plot, group_var = "SBJ.FCT.Treatment")#, Can save out tables using arg below
 #'             #output = c("outputs/tables/demo_table.html",
 #'                        #"outputs/tables/demo_table.docx"))
 #'
@@ -47,7 +52,26 @@
 camr_make_table1 <- function(df,
                         var_label_list,
                         hist_bar_color = "blue",
+                        group_var = NULL,
                         output = NULL) {
+
+  # Handle group_var cases recursively
+  if (!is.null(group_var)) {
+    group_dfs <- split(df, df[[group_var]])
+    group_gts <- lapply(group_dfs, function(d) camr_make_table1(d, var_label_list, hist_bar_color))
+    combined_gt <- cbind_gt_groups(gts = group_gts,
+                                   group_var = group_var,
+                                   hist_bar_color = hist_bar_color)
+
+    if (!is.null(output)) {
+      for (path in output) {
+        tryCatch(gt::gtsave(combined_gt, path),
+                 error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
+      }
+    }
+
+    return(combined_gt)
+  }
 
   # Helper function to switch from var names to labels
   get_label <- function(varname) {
@@ -162,4 +186,111 @@ camr_make_table1 <- function(df,
     }
   }
   return(table1)
+}
+
+#' Column bind two gt tables
+#'
+#' @description
+#' A helper function to column bind two gt tables. Used when running camr_make_table1
+#' with groups.
+#'
+#' @param gts A named list of gt tables. The names should be the levels of the factor
+#'            they were grouped by.
+#' @param group_var A string. The name of the grouping factor variable.
+#' @param fct_group_col A string. The name of the column in the gt tables
+#'                      that groups factor levels. (e.g. for the factor levels
+#'                      "Male" and "Female" this variable holds the value "Sex")
+#' @param id_col A string. The column the two tables will be merged on. Usually
+#'               "Variable"
+#' @param keep_order Logical. Indicator for preserving the order of vars in the
+#'                   inputted tables. Defaults to TRUE.
+#' @param hist_bar_color The color you want the histograms for numeric variables
+#'                       to appear.
+#'
+#' @returns A gt_tbl object that combines the tables in `gts`.
+#'
+#' @importFrom purrr imap reduce set_names
+cbind_gt_groups <- function(gts,
+                            group_var,
+                            fct_group_col = "variable_grp",
+                            id_col = "Variable",
+                            keep_order = TRUE,
+                            hist_bar_color = "blue") {
+  if (is.null(names(gts)) || any(names(gts) == "")) {
+    stop("Please pass a *named* list of gt_tbls; the names are used for spanner labels")
+  }
+
+  # Pull underlying data from each gt_tbl
+  cleaned <- purrr::imap(gts,
+                         function(gt_obj, label) {
+                           dat <- gt_obj[["_data"]] |> dplyr::as_tibble()
+                           if (!id_col %in% names(dat)) {
+                             stop(sprintf("'%s' not found in a table's _data.", id_col))
+                           }
+
+                           present <- setdiff(names(dat), c(id_col, group_var, fct_group_col))
+                           out <- dat |> dplyr::select(all_of(c(id_col, fct_group_col)), all_of(present))
+
+                           # Keep order of the first table
+                           if (keep_order && identical(label, names(gts)[1])) {
+                             out <- out |> dplyr::mutate(.order_ = row_number())
+                           }
+
+                           # Rename group columns
+                           rename_map <- purrr::set_names(
+                             present,
+                             paste0(label, "__", present)
+                           )
+                           out |> dplyr::rename(!!!rename_map)
+                         })
+  combined <- purrr::reduce(cleaned, function(df1, df2) {base::merge(df1, df2, all = TRUE)})
+
+  # order factors
+  if (keep_order && ".order_" %in% names(combined)) {
+    combined <- dplyr::arrange(combined, .order_)
+    combined$.order_ <- NULL
+  }
+
+  gt_tbl <- gt::gt(combined, groupname_col = fct_group_col) |>
+    gt::cols_hide(columns = all_of(fct_group_col))
+
+  # Add a spanner for each group and fix subcolumn labels
+  for (label in names(gts)) {
+    cols_for_label <- names(combined)[grepl(paste0(label, "__"), names(combined))]
+    if (length(cols_for_label) == 0L) next
+
+    # under this spanner, show sub-headers without the "{label}__" prefix
+    display_labels <- sub(paste0("^", label, "__"), "", cols_for_label)
+
+    gt_tbl <- gt_tbl |>
+      gt::tab_spanner(
+        label = label,
+        columns = all_of(cols_for_label)
+      ) |>
+      gt::cols_label(!!!set_names(as.list(display_labels), cols_for_label))
+  }
+
+  gt_tbl <- gt_tbl |> gt::cols_label(!!id_col := id_col)
+
+  for (lab in names(gts)) {
+    dist_col <- paste0(lab, "__dist")
+    axis_col <- paste0(lab, "__axis_vals")
+    if (dist_col %in% names(combined)) {
+      gt_tbl <- gt_tbl |>
+        gtExtras::gt_plt_dist(
+          column = dist_col,
+          type = "histogram",
+          fill_color = hist_bar_color,
+          line_color = hist_bar_color,
+          bw = 1,
+          same_limit = FALSE
+        ) |>
+        gtExtras::gt_merge_stack(col1 = dist_col, col2=axis_col) |>
+        # Formatting
+        gt::cols_label(!!dist_col := html("Distribution<br><span style='font-size:10px'>(w/ min and max)</span>"))
+    }
+  }
+
+  return(gt_tbl)
+
 }
