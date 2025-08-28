@@ -59,6 +59,21 @@ camr_make_table1 <- function(df,
                         output = NULL,
                         hide_distributions = FALSE) {
 
+  # Check output file extensions
+  if (!is.null(output)) {
+    if (!all(fs::path_ext(output) %in% c("pdf", "html", "png", "rtf"))) {
+      stop("Only pdf, html, png, and rtf outputs are supported. Check the file extension on your `output`.")
+    }
+  }
+
+  # Helper for saving out files
+  save_gt_table <- function(gt_tbl_obj, output) {
+    for (path in output) {
+      tryCatch(gt::gtsave(gt_tbl_obj, path),
+               error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
+    }
+  }
+
   # Handle group_var cases recursively
   if (!is.null(group_var)) {
     group_dfs <- split(df, df[[group_var]])
@@ -73,10 +88,7 @@ camr_make_table1 <- function(df,
     }
 
     if (!is.null(output)) {
-      for (path in output) {
-        tryCatch(gt::gtsave(combined_gt, path),
-                 error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
-      }
+      save_gt_table(combined_gt, output = output)
     }
 
     return(combined_gt)
@@ -146,7 +158,7 @@ camr_make_table1 <- function(df,
       dplyr::ungroup() |>
       dplyr::mutate(
         `Mean (SD)` = sprintf("%d (%.0f%%)", n, pct),
-        dist = list(NA),
+        dist = list(NA_real_),
         axis_vals = sprintf('<div style="width: %spx; height: 20px; background-color: %s;"></div>', pct, hist_bar_color)
       ) |>
       dplyr::ungroup()
@@ -159,15 +171,15 @@ camr_make_table1 <- function(df,
   table_data <- dplyr::bind_rows(numeric_tbl, categorical_tbl) |>
     dplyr::mutate(variable_grp = get_label(variable_grp)) |>
     dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals)
-  if (length(numeric_vars) == 0) {
-    table_data <- table_data |> select(-c(dist, axis_vals))
-  }
+  # if (length(numeric_vars) == 0) {
+  #   table_data <- table_data |> select(-c(dist, axis_vals))
+  # }
 
   table1 <- table_data |>
     gt::gt(rowname_col = "Variable",
            groupname_col = "variable_grp")
 
-  if (length(numeric_vars) > 0) {
+  if (TRUE) {
     # Histogram for numeric rows
     table1 <- table1 |> gtExtras::gt_plt_dist(column = dist,
                                               type = "histogram",
@@ -193,11 +205,9 @@ camr_make_table1 <- function(df,
   }
 
   if (!is.null(output)) {
-    for (path in output) {
-      tryCatch(gt::gtsave(table1, path),
-               error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
-    }
+    save_gt_table(table1, output = output)
   }
+
   return(table1)
 }
 
