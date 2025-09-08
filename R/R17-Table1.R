@@ -15,12 +15,15 @@
 #' variables of `df` that you want to summarize. The values are the
 #' labels that will appear in the table. E.g. `list(SBJ.INT.Age = "Age")`
 #' @param hist_bar_color Optional. A character or hex code for the color you'd
-#' like the inline histograms to be. Defaults to "blue".
+#' like the inline histograms (and horizontal bars for factor variables) to be.
+#' Defaults to "blue".
 #' @param group_var  Optional String. The name of a factor variable by which to group
 #' the summaries (e.g. SBJ.FCT.RandGroup to separate results by Treatment group)
-#' @param output Optional. A character vector with paths as elements. Paths
+#' @param output Optional Character. A character vector with paths as elements. Paths
 #' can be relative to your project. If provided, the table will be saved.
 #' Supports .html and .docx paths.
+#' @param hide_distributions If TRUE, hide the inline distribution visualizations.
+#'                           Defaults to `FALSE`.
 #'
 #' @returns A gt_tbl object. Side effect: if `output` was provided, the table
 #' will be saved as .html or .docx at the designated path(s)
@@ -53,7 +56,23 @@ camr_make_table1 <- function(df,
                         var_label_list,
                         hist_bar_color = "blue",
                         group_var = NULL,
-                        output = NULL) {
+                        output = NULL,
+                        hide_distributions = FALSE) {
+
+  # Check output file extensions
+  if (!is.null(output)) {
+    if (!all(fs::path_ext(output) %in% c("pdf", "html", "png", "rtf"))) {
+      stop("Only pdf, html, png, and rtf outputs are supported. Check the file extension on your `output`.")
+    }
+  }
+
+  # Helper for saving out files
+  save_gt_table <- function(gt_tbl_obj, output) {
+    for (path in output) {
+      tryCatch(gt::gtsave(gt_tbl_obj, path),
+               error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
+    }
+  }
 
   # Handle group_var cases recursively
   if (!is.null(group_var)) {
@@ -63,11 +82,13 @@ camr_make_table1 <- function(df,
                                    group_var = group_var,
                                    hist_bar_color = hist_bar_color)
 
+    # Optionally hide distribution columns
+    if (hide_distributions) {
+      combined_gt <- combined_gt |> gt::cols_hide(matches("__dist$"))
+    }
+
     if (!is.null(output)) {
-      for (path in output) {
-        tryCatch(gt::gtsave(combined_gt, path),
-                 error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
-      }
+      save_gt_table(combined_gt, output = output)
     }
 
     return(combined_gt)
@@ -137,8 +158,8 @@ camr_make_table1 <- function(df,
       dplyr::ungroup() |>
       dplyr::mutate(
         `Mean (SD)` = sprintf("%d (%.0f%%)", n, pct),
-        dist = list(NA),
-        axis_vals = NA_character_
+        dist = list(NA_real_),
+        axis_vals = sprintf('<div style="width: %spx; height: 20px; background-color: %s;"></div>', pct, hist_bar_color)
       ) |>
       dplyr::ungroup()
   }
@@ -150,15 +171,15 @@ camr_make_table1 <- function(df,
   table_data <- dplyr::bind_rows(numeric_tbl, categorical_tbl) |>
     dplyr::mutate(variable_grp = get_label(variable_grp)) |>
     dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals)
-  if (length(numeric_vars) == 0) {
-    table_data <- table_data |> select(-c(dist, axis_vals))
-  }
+  # if (length(numeric_vars) == 0) {
+  #   table_data <- table_data |> select(-c(dist, axis_vals))
+  # }
 
   table1 <- table_data |>
     gt::gt(rowname_col = "Variable",
            groupname_col = "variable_grp")
 
-  if (length(numeric_vars) > 0) {
+  if (TRUE) {
     # Histogram for numeric rows
     table1 <- table1 |> gtExtras::gt_plt_dist(column = dist,
                                               type = "histogram",
@@ -179,12 +200,14 @@ camr_make_table1 <- function(df,
       locations = cells_row_groups()
     )
 
-  if (!is.null(output)) {
-    for (path in output) {
-      tryCatch(gt::gtsave(table1, path),
-               error = function(e) stop("You must have Chrome installed to save table as .pdf or .png"))
-    }
+  if (hide_distributions) {
+    table1 <- table1 |> gt::cols_hide(dist)
   }
+
+  if (!is.null(output)) {
+    save_gt_table(table1, output = output)
+  }
+
   return(table1)
 }
 
