@@ -11,7 +11,8 @@ camr_visit_and_dropout_flow(
   visit_flow_title = "Active/Completed Participants: Most Recent Completed Visit",
   dropout_flow_title = "Dropped Participants: Most Recent Completed Visit",
   dropout_statuses = c("LTFU", "Withdrawn", "Terminated"),
-  label_max = 5
+  label_max = 5,
+  show_all_visits = TRUE
 )
 }
 \arguments{
@@ -32,13 +33,17 @@ Defaults to "Active/Completed Participants: Most Recent Completed Visit"}
 
 \item{dropout_flow_title}{A string with the title of the dropout flow plot.
 Defaults to "Dropped Participants: Most Recent Completed Visit"}
+
+\item{show_all_visits}{Logical. If TRUE, shows all visits on x-axis,
+even if it was not the final visit for any participant. Defaults to TRUE.}
 }
 \value{
 A list of ggplot2 objects. Optionally saves .svg to \code{output_path}
 }
 \description{
 Create a bar plot that shows the most recent completed visit for participants
-who are active (or completed). Takes the standard \code{df_visits} as input.
+who are active (or completed). Takes the standard \code{df_visits} and
+\code{df_status} as inputs. See parameter descriptions for the expected variable names.
 }
 \author{
 Zach Himmelsbach

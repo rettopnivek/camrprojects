@@ -4,7 +4,8 @@
 #'
 #' @description
 #' Create a bar plot that shows the most recent completed visit for participants
-#' who are active (or completed). Takes the standard `df_visits` as input.
+#' who are active (or completed). Takes the standard `df_visits` and
+#' `df_status` as inputs. See parameter descriptions for the expected variable names.
 #'
 #' @param df_visits A dataframe following the conventions for `df_visits` in the
 #' standard pipeline. The function expects SSS.LGL.Visit.Completed to indicate
@@ -24,6 +25,9 @@
 #' @param dropout_flow_title A string with the title of the dropout flow plot.
 #' Defaults to "Dropped Participants: Most Recent Completed Visit"
 #'
+#' @param show_all_visits Logical. If TRUE, shows all visits on x-axis,
+#' even if it was not the final visit for any participant. Defaults to TRUE.
+#'
 #' @returns A list of ggplot2 objects. Optionally saves .svg to `output_path`
 #'
 #' @import ggplot2
@@ -35,7 +39,8 @@ camr_visit_and_dropout_flow <- function(df_visits, df_status, output_dir = NULL,
                                         visit_flow_title = "Active/Completed Participants: Most Recent Completed Visit",
                                         dropout_flow_title = "Dropped Participants: Most Recent Completed Visit",
                                         dropout_statuses = c("LTFU", "Withdrawn", "Terminated"),
-                                        label_max = 5) {
+                                        label_max = 5,
+                                        show_all_visits = TRUE) {
 
   # Process visit and status data
   processed_dfs <- preprocess_visit_flow_data(df_visits, df_status,
@@ -46,13 +51,15 @@ camr_visit_and_dropout_flow <- function(df_visits, df_status, output_dir = NULL,
                                processed_dfs$processed_visits |> dplyr::filter(SBJ.LGL.Dropped == FALSE),
                                plot_title = visit_flow_title,
                                output_dir = output_dir,
-                               label_max = label_max)
+                               label_max = label_max,
+                               show_all_visits = show_all_visits)
 
   dropout_flow <- viz_visit_flow(processed_dfs$df_counts |> dplyr::filter(SBJ.LGL.Dropped == TRUE),
                                  processed_dfs$processed_visits |> dplyr::filter(SBJ.LGL.Dropped == TRUE),
                                  plot_title = dropout_flow_title,
                                  output_dir = output_dir,
-                                 label_max = label_max)
+                                 label_max = label_max,
+                                 show_all_visits = show_all_visits)
 
   return(list(visit_flow   = visit_flow,
               dropout_flow = dropout_flow))
@@ -138,6 +145,8 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
 #' @param output_dir (Optional) The directory where the plot should be saved
 #' @param label_max Integer. The maximum number of record IDs that should be
 #' printed above a visit's bar in the plot.
+#' @param show_all_visits Logical. If TRUE, shows all visits on x-axis,
+#' even if it was not the final visit for any participant. Defaults to TRUE.
 #'
 #' @returns A ggplot. If `output_dir` is given, the plot is also saved there
 #' as a .svg file.
@@ -145,7 +154,8 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
 #' @import ggplot2
 viz_visit_flow <- function(df_counts, df_visits,
                            plot_title,
-                           output_dir = NULL, label_max = 5) {
+                           output_dir = NULL, label_max = 5,
+                           show_all_visits = TRUE) {
 
   # Put text labels (with Subject IDs) on only those with counts <= 5
   df_labels <- df_counts |>
@@ -157,6 +167,7 @@ viz_visit_flow <- function(df_counts, df_visits,
     ylab("Number of Participants") +
     xlab("Last Completed Visit") +
     ggtitle(plot_title) + scale_y_continuous(breaks = scales::pretty_breaks()) +
+    scale_x_discrete(drop = !show_all_visits) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     geom_text(data = df_labels,
               aes(x = SSS.FCT.VisitName, y = n, label = VST.SUB.INT.RecordNumber),

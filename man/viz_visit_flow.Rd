@@ -9,7 +9,8 @@ viz_visit_flow(
   df_visits,
   plot_title,
   output_dir = NULL,
-  label_max = 5
+  label_max = 5,
+  show_all_visits = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ svg files if \code{output_dir} is supplied.}
 
 \item{label_max}{Integer. The maximum number of record IDs that should be
 printed above a visit's bar in the plot.}
+
+\item{show_all_visits}{Logical. If TRUE, shows all visits on x-axis,
+even if it was not the final visit for any participant. Defaults to TRUE.}
 }
 \value{
 A ggplot. If \code{output_dir} is given, the plot is also saved there
