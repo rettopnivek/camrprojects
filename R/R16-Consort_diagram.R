@@ -330,6 +330,7 @@ camr_consort_diagram_no_follow_up <- function(
 #' @param show_pending_rand Logical, whether to display the pending-randomization box (default TRUE).
 #'
 #' @return A DiagrammeR htmlwidget.
+#' @export
 #' @importFrom DiagrammeR grViz
 #' @importFrom glue glue
 #' @examples
