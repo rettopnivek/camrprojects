@@ -312,7 +312,6 @@ camr_consort_diagram_no_follow_up <- function(
 }
 
 #' Generate CONSORT Flow Diagram (with Follow-up Phase) from df_consort
-#' Creates a CONSORT-style flow diagram from a participant-level dataframe.
 #'
 #' @param df A dataframe where each row represents a screened participant and contains at least:
 #'   assessed, exclusion_reasons_1, IDS.CHR.Subject, SBJ.FCT.Rand.Group, SBJ.FCT.Status,
@@ -333,6 +332,99 @@ camr_consort_diagram_no_follow_up <- function(
 #' @return A DiagrammeR htmlwidget.
 #' @importFrom DiagrammeR grViz
 #' @importFrom glue glue
+#' @examples
+#' # Minimal reproducible example ----------------------------------------------
+#' library(tibble)
+#'
+#' df_consort_demo <- tibble::tibble(
+#'   assessed = rep(1, 14),
+#'   exclusion_reasons_1 = c(
+#'     "Out of age range", # R01: pre-consent exclusion
+#'     NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#'   ),
+#'   IDS.CHR.Subject = c(
+#'     NA,        # R01 excluded pre-consent
+#'     "P01",     # R02
+#'     "P02",     # R03
+#'     "P03",     # R04
+#'     "P04",     # R05
+#'     "P05",     # R06
+#'     "P06",     # R07
+#'     "P07",     # R08
+#'     NA,        # R09 pending consent
+#'     "P08",     # R10 pending randomization
+#'     "P09",     # R11
+#'     "P10",     # R12
+#'     "P11",     # R13 withdrawn after intervention A
+#'     "P12"      # R14 LTFU after intervention B
+#'   ),
+#'   SBJ.FCT.Rand.Group = c(
+#'     NA, "Group A", "Group B", "Group A", "Group B",
+#'     "Group A", "Group B", "Group A", NA, NA,
+#'     "Group A", "Group B", "Group A", "Group B"
+#'   ),
+#'   SBJ.FCT.Status = c(
+#'     "Screen Fail",             # R01: pre-consent exclusion
+#'     "Completed Intervention",  # R02: finished intervention A
+#'     "Completed Study",         # R03: fully completed B
+#'     "Lost to Follow-Up",       # R04: lost during intervention A
+#'     "Completed Intervention",  # R05: finished intervention B
+#'     "Lost to Follow-Up",       # R06: lost during follow-up A (after intervention)
+#'     "Withdrawn",               # R07: withdrew during intervention B
+#'     "Terminated",              # R08: terminated during intervention A
+#'     NA,                        # R09: pending consent
+#'     NA,                        # R10: pending randomization
+#'     "Completed Study",         # R11: fully completed A
+#'     "Completed Study",         # R12: fully completed B
+#'     "Withdrawn",               # R13: withdrew AFTER intervention A
+#'     "Lost to Follow-Up"        # R14: LTFU AFTER intervention B
+#'   ),
+#'   SBJ.FCT.Status.ScreenFailReason = c(
+#'     "Did not meet criteria", # R01 reason
+#'     NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+#'   ),
+#'   SBJ.LGL.InterventionCompleted = c(
+#'     NA,   # R01 excluded pre-consent
+#'     TRUE, # R02 completed intervention
+#'     TRUE, # R03 completed study
+#'     FALSE,# R04 dropped before intervention complete
+#'     TRUE, # R05 completed intervention
+#'     TRUE, # R06 completed intervention, dropped later
+#'     FALSE,# R07 dropped before intervention complete
+#'     FALSE,# R08 terminated before intervention complete
+#'     NA,   # R09 pending consent
+#'     NA,   # R10 pending randomization
+#'     TRUE, # R11 completed study
+#'     TRUE, # R12 completed study
+#'     TRUE, # R13 withdrew AFTER intervention complete (Group A)
+#'     TRUE  # R14 LTFU AFTER intervention complete (Group B)
+#'   )
+#' )
+#'
+#' # Example 1: Show both pending boxes (auto-counted), with reasons
+#' camr_consort_diagram(
+#'   df_consort_demo,
+#'   pending_reasons = c("Awaiting consent form (n=1)", "Scheduling (n=1)"),
+#'   pending_rand_reasons = c("Waiting for lab results (n=1)"),
+#'   show_pending_consent = TRUE,
+#'   show_pending_rand = TRUE
+#' )
+#'
+#' # Example 2: Hide pending-consent, show pending-randomization
+#' camr_consort_diagram(
+#'   df_consort_demo,
+#'   pending_rand_reasons = c("PI review"),
+#'   show_pending_consent = FALSE,
+#'   show_pending_rand = TRUE
+#' )
+#'
+#' # Example 3: Hide both pending boxes
+#' camr_consort_diagram(
+#'   df_consort_demo,
+#'   show_pending_consent = FALSE,
+#'   show_pending_rand = FALSE
+#' )
+
 camr_consort_diagram <- function(
     df,
     pending_reasons = NULL,
@@ -717,98 +809,6 @@ camr_consort_diagram <- function(
   DiagrammeR::grViz(paste(lines, collapse = "\n"))
 }
 
-#' @examples
-#' # Minimal reproducible example ----------------------------------------------
-#' library(tibble)
-#'
-#' df_consort_demo <- tibble::tibble(
-#'   assessed = rep(1, 14),
-#'   exclusion_reasons_1 = c(
-#'     "Out of age range", # R01: pre-consent exclusion
-#'     NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
-#'   ),
-#'   IDS.CHR.Subject = c(
-#'     NA,        # R01 excluded pre-consent
-#'     "P01",     # R02
-#'     "P02",     # R03
-#'     "P03",     # R04
-#'     "P04",     # R05
-#'     "P05",     # R06
-#'     "P06",     # R07
-#'     "P07",     # R08
-#'     NA,        # R09 pending consent
-#'     "P08",     # R10 pending randomization
-#'     "P09",     # R11
-#'     "P10",     # R12
-#'     "P11",     # R13 withdrawn after intervention A
-#'     "P12"      # R14 LTFU after intervention B
-#'   ),
-#'   SBJ.FCT.Rand.Group = c(
-#'     NA, "Group A", "Group B", "Group A", "Group B",
-#'     "Group A", "Group B", "Group A", NA, NA,
-#'     "Group A", "Group B", "Group A", "Group B"
-#'   ),
-#'   SBJ.FCT.Status = c(
-#'     "Screen Fail",             # R01: pre-consent exclusion
-#'     "Completed Intervention",  # R02: finished intervention A
-#'     "Completed Study",         # R03: fully completed B
-#'     "Lost to Follow-Up",       # R04: lost during intervention A
-#'     "Completed Intervention",  # R05: finished intervention B
-#'     "Lost to Follow-Up",       # R06: lost during follow-up A (after intervention)
-#'     "Withdrawn",               # R07: withdrew during intervention B
-#'     "Terminated",              # R08: terminated during intervention A
-#'     NA,                        # R09: pending consent
-#'     NA,                        # R10: pending randomization
-#'     "Completed Study",         # R11: fully completed A
-#'     "Completed Study",         # R12: fully completed B
-#'     "Withdrawn",               # R13: withdrew AFTER intervention A
-#'     "Lost to Follow-Up"        # R14: LTFU AFTER intervention B
-#'   ),
-#'   SBJ.FCT.Status.ScreenFailReason = c(
-#'     "Did not meet criteria", # R01 reason
-#'     NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
-#'   ),
-#'   SBJ.LGL.InterventionCompleted = c(
-#'     NA,   # R01 excluded pre-consent
-#'     TRUE, # R02 completed intervention
-#'     TRUE, # R03 completed study
-#'     FALSE,# R04 dropped before intervention complete
-#'     TRUE, # R05 completed intervention
-#'     TRUE, # R06 completed intervention, dropped later
-#'     FALSE,# R07 dropped before intervention complete
-#'     FALSE,# R08 terminated before intervention complete
-#'     NA,   # R09 pending consent
-#'     NA,   # R10 pending randomization
-#'     TRUE, # R11 completed study
-#'     TRUE, # R12 completed study
-#'     TRUE, # R13 withdrew AFTER intervention complete (Group A)
-#'     TRUE  # R14 LTFU AFTER intervention complete (Group B)
-#'   )
-#' )
-#'
-#' # Example 1: Show both pending boxes (auto-counted), with reasons
-#' camr_consort_diagram(
-#'   df_consort_demo,
-#'   pending_reasons = c("Awaiting consent form (n=1)", "Scheduling (n=1)"),
-#'   pending_rand_reasons = c("Waiting for lab results (n=1)"),
-#'   show_pending_consent = TRUE,
-#'   show_pending_rand = TRUE
-#' )
-#'
-#' # Example 2: Hide pending-consent, show pending-randomization
-#' camr_consort_diagram(
-#'   df_consort_demo,
-#'   pending_rand_reasons = c("PI review"),
-#'   show_pending_consent = FALSE,
-#'   show_pending_rand = TRUE
-#' )
-#'
-#' # Example 3: Hide both pending boxes
-#' camr_consort_diagram(
-#'   df_consort_demo,
-#'   show_pending_consent = FALSE,
-#'   show_pending_rand = FALSE
-#' )
 
 
 
