@@ -321,7 +321,7 @@ camr_consort_diagram_no_follow_up <- function(
 #'   - IDS.CHR.Subject: subject identifier (non-NA if consented)
 #'   - SBJ.FCT.Rand.Group: randomization group label (e.g., "Group A", "Group B")
 #'   - SBJ.FCT.Status: participant status; expected values include
-#'       "Screen Fail", "Lost to Follow-Up", "Withdrawn", "Terminated", "Completed", or NA
+#'       "Screen Fail", "Lost to Follow-Up", "Withdrawn", "Terminated", "Completed Study", or NA
 #'   - SBJ.FCT.Status.ScreenFailReason: reason text when SBJ.FCT.Status == "Screen Fail"
 #'   - SBJ.LGL.InterventionCompleted: logical flag indicating intervention completion (TRUE/FALSE)
 #' @param pending_reasons Character vector of reasons to show under the Pending consent box (optional).
@@ -366,10 +366,10 @@ camr_consort_diagram_no_follow_up <- function(
 #'   ),
 #'   SBJ.FCT.Status = c(
 #'     "Screen Fail",             # R01: pre-consent exclusion
-#'     "Completed Intervention",  # R02: finished intervention A
+#'     "Active",                  # R02: finished intervention A
 #'     "Completed Study",         # R03: fully completed B
 #'     "Lost to Follow-Up",       # R04: lost during intervention A
-#'     "Completed Intervention",  # R05: finished intervention B
+#'     "Active",                  # R05: finished intervention B
 #'     "Lost to Follow-Up",       # R06: lost during follow-up A (after intervention)
 #'     "Withdrawn",               # R07: withdrew during intervention B
 #'     "Terminated",              # R08: terminated during intervention A

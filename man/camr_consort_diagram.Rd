@@ -22,7 +22,7 @@ SBJ.FCT.Status.ScreenFailReason, SBJ.LGL.InterventionCompleted.
 \item IDS.CHR.Subject: subject identifier (non-NA if consented)
 \item SBJ.FCT.Rand.Group: randomization group label (e.g., "Group A", "Group B")
 \item SBJ.FCT.Status: participant status; expected values include
-"Screen Fail", "Lost to Follow-Up", "Withdrawn", "Terminated", "Completed", or NA
+"Screen Fail", "Lost to Follow-Up", "Withdrawn", "Terminated", "Completed Study", or NA
 \item SBJ.FCT.Status.ScreenFailReason: reason text when SBJ.FCT.Status == "Screen Fail"
 \item SBJ.LGL.InterventionCompleted: logical flag indicating intervention completion (TRUE/FALSE)
 }}
@@ -74,10 +74,10 @@ df_consort_demo <- tibble::tibble(
   ),
   SBJ.FCT.Status = c(
     "Screen Fail",             # R01: pre-consent exclusion
-    "Completed Intervention",  # R02: finished intervention A
+    "Active",                  # R02: finished intervention A
     "Completed Study",         # R03: fully completed B
     "Lost to Follow-Up",       # R04: lost during intervention A
-    "Completed Intervention",  # R05: finished intervention B
+    "Active",                  # R05: finished intervention B
     "Lost to Follow-Up",       # R06: lost during follow-up A (after intervention)
     "Withdrawn",               # R07: withdrew during intervention B
     "Terminated",              # R08: terminated during intervention A
