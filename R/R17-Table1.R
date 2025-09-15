@@ -153,7 +153,14 @@ camr_make_table1 <- function(df,
         )
       ) |>
       dplyr::group_by(variable_grp, Variable) |>
-      dplyr::summarize(n = n()) |> ungroup() |> group_by(variable_grp) |>
+      dplyr::summarize(n = n()) |> ungroup() |>
+      # Get zeros for unused levels (instead of them being NA)
+      group_by(variable_grp) |>
+      tidyr::complete(
+        Variable,
+        fill = list(n = 0)
+      ) |> dplyr::filter(Variable %in% levels(df[[unique(variable_grp)]])) |>
+      group_by(variable_grp) |>
       dplyr::mutate(pct = n/sum(n) * 100) |>
       dplyr::ungroup() |>
       dplyr::mutate(
