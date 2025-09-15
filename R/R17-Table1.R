@@ -24,6 +24,8 @@
 #' Supports .html and .docx paths.
 #' @param hide_distributions If TRUE, hide the inline distribution visualizations.
 #'                           Defaults to `FALSE`.
+#' @param add_NA_level Logical. If TRUE, includes NA as a reported level for
+#' factor variables.
 #'
 #' @returns A gt_tbl object. Side effect: if `output` was provided, the table
 #' will be saved as .html or .docx at the designated path(s)
@@ -57,7 +59,8 @@ camr_make_table1 <- function(df,
                         hist_bar_color = "blue",
                         group_var = NULL,
                         output = NULL,
-                        hide_distributions = FALSE) {
+                        hide_distributions = FALSE,
+                        add_NA_level = TRUE) {
 
   # Check output file extensions
   if (!is.null(output)) {
@@ -74,10 +77,18 @@ camr_make_table1 <- function(df,
     }
   }
 
+  numeric_vars <- names(var_label_list)[grepl("\\.(INT)|(DBL)\\.", names(var_label_list))]
+  factor_vars <- setdiff(names(var_label_list), numeric_vars)
+
+  if (add_NA_level == TRUE) {
+    df <- df |>
+      mutate(across(all_of(factor_vars), ~ forcats::fct_na_value_to_level(.x, level = "NA")))
+  }
+
   # Handle group_var cases recursively
   if (!is.null(group_var)) {
     group_dfs <- split(df, df[[group_var]])
-    group_gts <- lapply(group_dfs, function(d) camr_make_table1(d, var_label_list, hist_bar_color))
+    group_gts <- lapply(group_dfs, function(d) camr_make_table1(d, var_label_list, hist_bar_color, add_NA_level = FALSE))
     combined_gt <- cbind_gt_groups(gts = group_gts,
                                    group_var = group_var,
                                    hist_bar_color = hist_bar_color)
@@ -100,9 +111,6 @@ camr_make_table1 <- function(df,
     return(var_label_list[[varname]])
   }
   get_label <- Vectorize(get_label, vectorize.args = "varname")
-
-  numeric_vars <- names(var_label_list)[grepl("\\.(INT)|(DBL)\\.", names(var_label_list))]
-  factor_vars <- setdiff(names(var_label_list), numeric_vars)
 
   # --- summaries of numeric variables ----
   if (length(numeric_vars) > 0) {
@@ -153,7 +161,14 @@ camr_make_table1 <- function(df,
         )
       ) |>
       dplyr::group_by(variable_grp, Variable) |>
-      dplyr::summarize(n = n()) |> ungroup() |> group_by(variable_grp) |>
+      dplyr::summarize(n = n()) |> ungroup() |>
+      # Get zeros for unused levels (instead of them being NA)
+      group_by(variable_grp) |>
+      tidyr::complete(
+        Variable,
+        fill = list(n = 0)
+      ) |> dplyr::filter((Variable %in% levels(df[[unique(variable_grp)]]))) |>
+      group_by(variable_grp) |>
       dplyr::mutate(pct = n/sum(n) * 100) |>
       dplyr::ungroup() |>
       dplyr::mutate(

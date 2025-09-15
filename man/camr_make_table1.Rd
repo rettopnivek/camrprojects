@@ -11,7 +11,8 @@ camr_make_table1(
   hist_bar_color = "blue",
   group_var = NULL,
   output = NULL,
-  hide_distributions = FALSE
+  hide_distributions = FALSE,
+  add_NA_level = TRUE
 )
 }
 \arguments{
@@ -35,6 +36,9 @@ Supports .html and .docx paths.}
 
 \item{hide_distributions}{If TRUE, hide the inline distribution visualizations.
 Defaults to \code{FALSE}.}
+
+\item{add_NA_level}{Logical. If TRUE, includes NA as a reported level for
+factor variables.}
 }
 \value{
 A gt_tbl object. Side effect: if \code{output} was provided, the table
