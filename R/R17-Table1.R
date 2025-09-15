@@ -91,7 +91,10 @@ camr_make_table1 <- function(df,
     group_gts <- lapply(group_dfs, function(d) camr_make_table1(d, var_label_list, hist_bar_color, add_NA_level = FALSE))
     combined_gt <- cbind_gt_groups(gts = group_gts,
                                    group_var = group_var,
-                                   hist_bar_color = hist_bar_color)
+                                   hist_bar_color = hist_bar_color) |>
+      gt::tab_style(
+        style = cell_text(align = "left"),
+        locations = cells_body(columns = Variable))
 
     # Optionally hide distribution columns
     if (hide_distributions) {
@@ -334,8 +337,10 @@ cbind_gt_groups <- function(gts,
     gt::tab_style(
       style = cell_text(weight = "bold"),
       locations = cells_row_groups()
-    )
-
+    ) |>
+    gt::tab_style(
+      style = cell_text(align = "left"),
+      locations = cells_body(columns = Variable))
 
   return(gt_tbl)
 
