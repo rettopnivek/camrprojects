@@ -1,0 +1,9 @@
+---
+title: "test"
+output: html_document
+---
+
+```{r}
+library(camrprojects)
+?camr_consort_diagram
+```
