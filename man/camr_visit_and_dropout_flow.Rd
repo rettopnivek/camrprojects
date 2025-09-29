@@ -8,8 +8,8 @@ camr_visit_and_dropout_flow(
   df_visits,
   df_status,
   output_dir = NULL,
-  visit_flow_title = "Active/Completed Participants: Most Recent Completed Visit",
-  dropout_flow_title = "Dropped Participants: Most Recent Completed Visit",
+  visit_flow_title = "Active/Completed Participants: Most Recent Attended Visit",
+  dropout_flow_title = "Dropped Participants: Most Recent Attended Visit",
   dropout_statuses = c("LTFU", "Withdrawn", "Terminated"),
   label_max = 5,
   show_all_visits = TRUE
@@ -17,8 +17,8 @@ camr_visit_and_dropout_flow(
 }
 \arguments{
 \item{df_visits}{A dataframe following the conventions for \code{df_visits} in the
-standard pipeline. The function expects SSS.LGL.Visit.Completed to indicate
-visit completion, IDX.INT.VisitNumber to provide the ordered visit numbers, and
+standard pipeline. The function expects SSS.LGL.Visit.Attd to indicate
+visit attendance, IDX.INT.VisitNumber to provide the ordered visit numbers, and
 SSS.FCT.VisitName to provide visit names (with levels that match the visit numbers).}
 
 \item{df_status}{A dataframe following the conventions for \code{df_status} in the
@@ -29,10 +29,10 @@ standard pipeline. Expects dropouts to have \code{SBJ.FCT.Status} of
 svg files.}
 
 \item{visit_flow_title}{A string with the title of the visit flow plot.
-Defaults to "Active/Completed Participants: Most Recent Completed Visit"}
+Defaults to "Active/Completed Participants: Most Recent Attended Visit"}
 
 \item{dropout_flow_title}{A string with the title of the dropout flow plot.
-Defaults to "Dropped Participants: Most Recent Completed Visit"}
+Defaults to "Dropped Participants: Most Recent Attended Visit"}
 
 \item{show_all_visits}{Logical. If TRUE, shows all visits on x-axis,
 even if it was not the final visit for any participant. Defaults to TRUE.}

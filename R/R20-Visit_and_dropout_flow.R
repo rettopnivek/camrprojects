@@ -8,8 +8,8 @@
 #' `df_status` as inputs. See parameter descriptions for the expected variable names.
 #'
 #' @param df_visits A dataframe following the conventions for `df_visits` in the
-#' standard pipeline. The function expects SSS.LGL.Visit.Completed to indicate
-#' visit completion, IDX.INT.VisitNumber to provide the ordered visit numbers, and
+#' standard pipeline. The function expects SSS.LGL.Visit.Attd to indicate
+#' visit attendance, IDX.INT.VisitNumber to provide the ordered visit numbers, and
 #' SSS.FCT.VisitName to provide visit names (with levels that match the visit numbers).
 #'
 #' @param df_status A dataframe following the conventions for `df_status` in the
@@ -20,10 +20,10 @@
 #' svg files.
 #'
 #' @param visit_flow_title A string with the title of the visit flow plot.
-#' Defaults to "Active/Completed Participants: Most Recent Completed Visit"
+#' Defaults to "Active/Completed Participants: Most Recent Attended Visit"
 #'
 #' @param dropout_flow_title A string with the title of the dropout flow plot.
-#' Defaults to "Dropped Participants: Most Recent Completed Visit"
+#' Defaults to "Dropped Participants: Most Recent Attended Visit"
 #'
 #' @param show_all_visits Logical. If TRUE, shows all visits on x-axis,
 #' even if it was not the final visit for any participant. Defaults to TRUE.
@@ -36,8 +36,8 @@
 #'
 #' @author Zach Himmelsbach
 camr_visit_and_dropout_flow <- function(df_visits, df_status, output_dir = NULL,
-                                        visit_flow_title = "Active/Completed Participants: Most Recent Completed Visit",
-                                        dropout_flow_title = "Dropped Participants: Most Recent Completed Visit",
+                                        visit_flow_title = "Active/Completed Participants: Most Recent Attended Visit",
+                                        dropout_flow_title = "Dropped Participants: Most Recent Attended Visit",
                                         dropout_statuses = c("LTFU", "Withdrawn", "Terminated"),
                                         label_max = 5,
                                         show_all_visits = TRUE) {
@@ -85,8 +85,8 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
                                        dropout_statuses = c("LTFU", "Withdrawn", "Terminated")) {
 
   # Check that inputs contain required variables
-  if (!"SSS.LGL.Visit.Completed" %in% colnames(df_visits)) {
-    stop("The variable SSS.LGL.Visit.Completed is required in `df_visits`.")
+  if (!"SSS.LGL.Visit.Attd" %in% colnames(df_visits)) {
+    stop("The variable SSS.LGL.Visit.Attd is required in `df_visits`.")
   }
   if (!"IDX.INT.VisitNumber" %in% colnames(df_visits)) {
     stop("The variable IDX.INT.VisitNumber is required in `df_visits`.")
@@ -103,7 +103,7 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
 
   # Get most recent completed visit
   df_visits <- df_visits |> dplyr::group_by(IDX.CHR.Subject) |>
-    dplyr::filter(SSS.LGL.Visit.Completed == TRUE) |> dplyr::arrange(IDX.CHR.Subject, desc(IDX.INT.VisitNumber)) |>
+    dplyr::filter(SSS.LGL.Visit.Attd == TRUE) |> dplyr::arrange(IDX.CHR.Subject, desc(IDX.INT.VisitNumber)) |>
     dplyr::slice(1) |> dplyr::ungroup()
 
   df_visits <- base::merge(df_visits, df_status, by = "IDX.CHR.Subject", all = TRUE) |>
@@ -116,8 +116,8 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
 
   # Reorder levels so "No Visits Completed" is first
   df_visits$SSS.FCT.VisitName <- factor(df_visits$SSS.FCT.VisitName,
-                                        levels = c("No Visits Completed",
-                                                   setdiff(levels(df_visits$SSS.FCT.VisitName), "No Visits Completed")))
+                                        levels = c("No Visits Attended",
+                                                   setdiff(levels(df_visits$SSS.FCT.VisitName), "No Visits Attended")))
 
 
   # Aggregate record ID labels to visit level
