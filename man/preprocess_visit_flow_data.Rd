@@ -16,7 +16,7 @@ standard pipeline. Expects dropouts to have \code{SBJ.FCT.Status} of
 "LTFU", "Withdrawn", or "Terminated".}
 
 \item{df_visit}{A dataframe following the conventions for \code{df_visits} in the
-standard pipeline. The function expects SSS.LGL.Visit.Completed to indicate
+standard pipeline. The function expects SSS.LGL.Visit.Attd to indicate
 visit completion, IDX.INT.VisitNumber to provide the ordered visit numbers, and
 SSS.FCT.VisitName to provide visit names (with levels that match the visit numbers).}
 }

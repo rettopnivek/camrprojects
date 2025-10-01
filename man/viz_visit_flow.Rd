@@ -35,6 +35,6 @@ as a .svg file.
 }
 \description{
 Take in output from \code{preprocess_visit_flow_data} and plot most recent
-completed visits of participants. Can be used for active participants or
+attended visits of participants. Can be used for active participants or
 dropouts.
 }

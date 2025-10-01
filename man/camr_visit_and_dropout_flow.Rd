@@ -41,7 +41,7 @@ even if it was not the final visit for any participant. Defaults to TRUE.}
 A list of ggplot2 objects. Optionally saves .svg to \code{output_path}
 }
 \description{
-Create a bar plot that shows the most recent completed visit for participants
+Create a bar plot that shows the most recent attended visit for participants
 who are active (or completed). Takes the standard \code{df_visits} and
 \code{df_status} as inputs. See parameter descriptions for the expected variable names.
 }
