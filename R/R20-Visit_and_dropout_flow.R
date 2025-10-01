@@ -3,7 +3,7 @@
 #' Visualize Visit flow, separately, for active participants and dropouts
 #'
 #' @description
-#' Create a bar plot that shows the most recent completed visit for participants
+#' Create a bar plot that shows the most recent attended visit for participants
 #' who are active (or completed). Takes the standard `df_visits` and
 #' `df_status` as inputs. See parameter descriptions for the expected variable names.
 #'
@@ -72,7 +72,7 @@ camr_visit_and_dropout_flow <- function(df_visits, df_status, output_dir = NULL,
 #' Takes in visit and status dataframes and prepares them for visualization
 #'
 #' @param df_visit A dataframe following the conventions for `df_visits` in the
-#' standard pipeline. The function expects SSS.LGL.Visit.Completed to indicate
+#' standard pipeline. The function expects SSS.LGL.Visit.Attd to indicate
 #' visit completion, IDX.INT.VisitNumber to provide the ordered visit numbers, and
 #' SSS.FCT.VisitName to provide visit names (with levels that match the visit numbers).
 #'
@@ -101,7 +101,7 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
     stop("`df_visits` must include `IDX.CHR.Subject`.")
   }
 
-  # Get most recent completed visit
+  # Get most recent attended visit
   df_visits <- df_visits |> dplyr::group_by(IDX.CHR.Subject) |>
     dplyr::filter(SSS.LGL.Visit.Attd == TRUE) |> dplyr::arrange(IDX.CHR.Subject, desc(IDX.INT.VisitNumber)) |>
     dplyr::slice(1) |> dplyr::ungroup()
@@ -110,11 +110,11 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
     dplyr::mutate(VST.SUB.INT.RecordNumber = IDX.CHR.Subject) # Previously we modified this, but we're now going with the full IDs
 
   df_visits <- df_visits |> dplyr::mutate(SBJ.LGL.Dropped = SBJ.FCT.Status %in% dropout_statuses)
-  # Add level for participants without any completed visits
+  # Add level for participants without any attended visits
   df_visits$SSS.FCT.VisitName <- addNA(df_visits$SSS.FCT.VisitName)  # Makes NA an explicit level
-  levels(df_visits$SSS.FCT.VisitName)[is.na(levels(df_visits$SSS.FCT.VisitName))] <- "No Visits Completed"
+  levels(df_visits$SSS.FCT.VisitName)[is.na(levels(df_visits$SSS.FCT.VisitName))] <- "No Visits Attended"
 
-  # Reorder levels so "No Visits Completed" is first
+  # Reorder levels so "No Visits Attended" is first
   df_visits$SSS.FCT.VisitName <- factor(df_visits$SSS.FCT.VisitName,
                                         levels = c("No Visits Attended",
                                                    setdiff(levels(df_visits$SSS.FCT.VisitName), "No Visits Attended")))
@@ -135,7 +135,7 @@ preprocess_visit_flow_data <- function(df_visits, df_status,
 #'
 #' @description
 #' Take in output from `preprocess_visit_flow_data` and plot most recent
-#' completed visits of participants. Can be used for active participants or
+#' attended visits of participants. Can be used for active participants or
 #' dropouts.
 #'
 #' @param df_counts A dataframe with counts and record labels
@@ -165,7 +165,7 @@ viz_visit_flow <- function(df_counts, df_visits,
     geom_bar() +
     theme_minimal() +
     ylab("Number of Participants") +
-    xlab("Last Completed Visit") +
+    xlab("Last Attended Visit") +
     ggtitle(plot_title) + scale_y_continuous(breaks = scales::pretty_breaks()) +
     scale_x_discrete(drop = !show_all_visits) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
