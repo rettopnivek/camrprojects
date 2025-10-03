@@ -93,7 +93,7 @@ camr_gen_quarto_report <- function(report_list,
     heading <- paste0(strrep("#", depth), " ", key)
     section_lines <- c(section_lines, heading, "")
 
-    if (is.list(obj)) {
+    if (identical(class(obj), "list")) {
       names_vec <- names(obj)
       for (i in seq_along(obj)) {
         item <- obj[[i]]
