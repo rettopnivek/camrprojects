@@ -33,6 +33,7 @@ Imports:
     progress,
     progressr,
     purrr,
+    quarto,
     redcapAPI,
     rlang,
     stringr,
