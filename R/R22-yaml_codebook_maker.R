@@ -72,14 +72,14 @@ camr_check_codebook <- function(data_df, codebook_df) {
     expected_values <- codebook_df[codebook_df$Variable == varname, ] |>
       dplyr::pull(Values)
     if (expected_values %in% c("numeric", "character")) {
-      if (!all(class(data_df[varname]) %in% expected_values)) {
+      if (!all(class(data_df[[varname]]) %in% expected_values)) {
         warning(sprintf("%s is not the declared data type.", varname))
         return(FALSE)
       }
       else return(TRUE)
     }
     else {
-      if (!all(data_df[varname] %in% c(expected_values, NA))) {
+      if (!all(data_df[[varname]] %in% c(expected_values, NA))) {
         warning(sprintf("Undeclared values found in %s", varname))
         warning(sprintf("The following values are in the data but not the codebook: %s",
                         paste(setdiff(unique(data_df[varname]), expected_values), collapse = ", ")))
