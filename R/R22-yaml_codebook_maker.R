@@ -82,7 +82,7 @@ camr_check_codebook <- function(data_df, codebook_df) {
       if (!all(data_df[[varname]] %in% c(expected_values, NA))) {
         warning(sprintf("Undeclared values found in %s", varname))
         warning(sprintf("The following values are in the data but not the codebook: %s",
-                        paste(setdiff(unique(data_df[varname]), expected_values), collapse = ", ")))
+                        paste(setdiff(unique(data_df[[varname]]), expected_values), collapse = ", ")))
         return(FALSE)
       }
       else return(TRUE)
