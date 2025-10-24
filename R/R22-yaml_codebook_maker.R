@@ -4,6 +4,7 @@
 #' Matches variables in target dataframe with variable info stored in a directory
 #' of yaml files. Outputs a dataframe with the names of all the variables and
 #' codebook info (what instrument it's from, the meaning of its values, etc).
+#' Also checks codebook-dataset consistency using `camr_check_codebook`.
 #'
 #' @author Zach Himmelsbach
 #'
@@ -30,6 +31,9 @@ camr_gen_codebook <- function(df,
 
   ## Clean up output ----
   codebook <- clean_codebook_df(yaml_info)
+
+  ## Check codebook-data match ----
+  camr_check_codebook(df, codebook)
 
   return(codebook)
 }
