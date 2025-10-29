@@ -93,10 +93,10 @@ process_redcap_var <- function(df,
   }
   # Radio and dropdowns are factors
   else if (var_type %in% c("radio", "dropdown")) {
-    answer_choices <- meta_row[["answer_choices"]]
+    answer_choices <- meta_row[["answer_choices"]] |> unlist()
     df <- df |> dplyr::mutate(!!var_name := factor(.data[[var_name]],
                                                    levels = names(answer_choices),
-                                                   labels = unlist(answer_choices)))
+                                                   labels = answer_choices))
     data_type = "FCT"
   }
   # Sliders are numeric
@@ -105,7 +105,7 @@ process_redcap_var <- function(df,
     data_type <- "NUM"
   }
   # Text inputs depend on validation info
-  else if (var_type == "text") {
+  else if (var_type %in% c("text", "notes")) {
     # Get validation info
     validation <- meta_row[["text_validation_type_or_show_slider_number"]]
 
