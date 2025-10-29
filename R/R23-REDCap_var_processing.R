@@ -185,7 +185,8 @@ make_indicators <- function(df,
                             sep = "\\|") {
 
   # Extract form name (e.g., "pscn")
-  form_name <- stringr::str_extract(var_name, "^[^_]+")
+  form_name <- stringr::str_extract(var_name, "^[^_]+") |>
+    stringr::str_to_upper()
 
   # Extract core variable name (e.g., "substance_used")
   core_var <- stringr::str_remove(var_name, "^[^_]+_")
@@ -195,12 +196,12 @@ make_indicators <- function(df,
 
   # Step 1: Create the wide indicator matrix
   indicators <- df |>
-    mutate(row_id = row_number()) |>
-    select(row_id, all_of(var_name)) |>
-    tidyr::separate_rows(all_of(var_name), sep = sep) |>
-    mutate(value = TRUE) |>
+    dplyr::mutate(row_id = dplyr::row_number()) |>
+    dplyr::select(row_id, dplyr::all_of(var_name)) |>
+    tidyr::separate_rows(dplyr::all_of(var_name), sep = sep) |>
+    dplyr::mutate(value = TRUE) |>
     tidyr::pivot_wider(
-      names_from = all_of(var_name),
+      names_from = dplyr::all_of(var_name),
       values_from = value,
       values_fill = FALSE
     )
@@ -213,24 +214,29 @@ make_indicators <- function(df,
 
   # Step 3: Reorder columns
   indicators <- indicators |>
-    select(row_id, all_of(all_choices))
+    dplyr::select(row_id, dplyr::all_of(all_choices))
 
   # Step 4: Rename columns properly
-  base_name <- stringr::str_to_title(core_var) |>
+  base_name <- core_var |>
+    stringr::str_to_title() |>
     stringr::str_replace_all("_", "") |>
     stringr::str_replace_all(" ", "")
 
-  new_names <- paste0(prefix, ".", data_type, ".", base_name, ".", all_choices)
+  new_names <- paste0(prefix, ".",
+                      data_type, ".",
+                      form_name, ".",
+                      base_name, ".", all_choices)
   colnames(indicators)[-1] <- new_names
 
   # Step 5: Join back to original df
   out <- df |>
-    mutate(row_id = row_number()) |>
-    left_join(indicators, by = "row_id") |>
-    select(-row_id, -all_of(var_name))
+    dplyr::mutate(row_id = dplyr::row_number()) |>
+    dplyr::left_join(indicators, by = "row_id") |>
+    dplyr::select(-row_id, -dplyr::all_of(var_name))
 
   return(out)
 }
+
 
 
 
