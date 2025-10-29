@@ -90,6 +90,7 @@ process_redcap_var <- function(df,
   # Descriptive fields are removed
   else if (var_type == "descriptive") {
     df <- df |> dplyr::select(-dplyr::all_of(var_name))
+    return(df)
   }
   # Radio and dropdowns are factors
   else if (var_type %in% c("radio", "dropdown")) {
