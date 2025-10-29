@@ -118,7 +118,7 @@ process_redcap_var <- function(df,
       data_type <- "DBL"
     }
     else if (validation == "date_mdy") {
-      df <- df |> dplyr::mutate(!!var_name := lubridate::mdy(.data[[var_name]]))
+      df <- df |> dplyr::mutate(!!var_name := lubridate::ymd(.data[[var_name]]))
       data_type <- "DAT"
     }
     else if (validation == "datetime_mdy") {
@@ -126,7 +126,7 @@ process_redcap_var <- function(df,
       data_type <- "DTM"
     }
     else if (validation == "time") {
-      df <- df |> dplyr::mutate(!!var_name := lubridate::hms(.data[[var_name]]))
+      df <- df |> dplyr::mutate(!!var_name := lubridate::hm(.data[[var_name]]))
       data_type <- "TIME"
     }
     else {
