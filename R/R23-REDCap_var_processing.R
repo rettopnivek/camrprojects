@@ -183,10 +183,13 @@ make_indicators <- function(df,
                             data_type = "LGL",
                             sep = "\\|") {
 
-  # Extract form name
+  # Extract form name (e.g., "pscn")
   form_name <- stringr::str_extract(var_name, "^[^_]+")
 
-  # Extract field names from choice codes
+  # Extract core variable name (e.g., "substance_used")
+  core_var <- stringr::str_remove(var_name, "^[^_]+_")
+
+  # Extract all choice names
   all_choices <- names(unlist(answer_choices))
 
   # Step 1: Create the wide indicator matrix
@@ -211,22 +214,21 @@ make_indicators <- function(df,
   indicators <- indicators |>
     select(row_id, all_of(all_choices))
 
-  # Step 4: Rename columns using the same convention
-  new_names <- sapply(all_choices, function(choice) {
-    field_name <- stringr::str_to_title(choice) |>
-      stringr::str_replace_all("_", "") |>
-      stringr::str_replace_all(" ", "")
-    paste(prefix, data_type, toupper(form_name), field_name, sep = ".")
-  }, USE.NAMES = FALSE)
+  # Step 4: Rename columns properly
+  base_name <- stringr::str_to_title(core_var) |>
+    stringr::str_replace_all("_", "") |>
+    stringr::str_replace_all(" ", "")
 
-  colnames(indicators)[-1] <- new_names  # skip row_id
+  new_names <- paste0(prefix, ".", data_type, ".", base_name, ".", seq_along(all_choices))
+  colnames(indicators)[-1] <- new_names
 
   # Step 5: Join back to original df
   df |>
     mutate(row_id = row_number()) |>
     left_join(indicators, by = "row_id") |>
-    select(-row_id, -all_of(var_name))  # remove original checkbox column
+    select(-row_id, -all_of(var_name))
 }
+
 
 
 
