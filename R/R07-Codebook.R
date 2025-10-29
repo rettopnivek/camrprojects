@@ -449,7 +449,7 @@ camr_collected_over <- function(
 #' (means, percentages, ranges, etc.) of a
 #' variable that can then be passed to the
 #' \code{descriptive_summary} argument of the
-#' [new_codebook_entry] function.
+#' [camr_new_codebook_entry] function.
 #'
 #' @param x A variable.
 #' @param type The type of summary to return,

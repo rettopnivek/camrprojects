@@ -13,7 +13,7 @@ it from other files.}
 
 \item{env_variable}{An optional character string, an
 environmental variable listed in a .env file
-loaded into the R environment via the \link{dotenv}
+loaded into the R environment via the \strong{dotenv}
 package. If provided, will be used as the source
 folder assumed to contain the file.}
 

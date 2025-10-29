@@ -30,7 +30,7 @@ Function to generate descriptive summaries
 (means, percentages, ranges, etc.) of a
 variable that can then be passed to the
 \code{descriptive_summary} argument of the
-\link{new_codebook_entry} function.
+\link{camr_new_codebook_entry} function.
 }
 \examples{
 data( example_CAM_data_set )

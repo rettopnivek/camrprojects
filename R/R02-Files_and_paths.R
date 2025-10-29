@@ -264,7 +264,7 @@ camr_file_name <- function(...) {
 #'   it from other files.
 #' @param env_variable An optional character string, an
 #'   environmental variable listed in a .env file
-#'   loaded into the R environment via the [dotenv]
+#'   loaded into the R environment via the **dotenv**
 #'   package. If provided, will be used as the source
 #'   folder assumed to contain the file.
 #' @param folder An optional character string, the
