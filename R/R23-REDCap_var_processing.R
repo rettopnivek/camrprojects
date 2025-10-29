@@ -219,14 +219,16 @@ make_indicators <- function(df,
     stringr::str_replace_all("_", "") |>
     stringr::str_replace_all(" ", "")
 
-  new_names <- paste0(prefix, ".", data_type, ".", base_name, ".", seq_along(all_choices))
+  new_names <- paste0(prefix, ".", data_type, ".", base_name, ".", all_choices)
   colnames(indicators)[-1] <- new_names
 
   # Step 5: Join back to original df
-  df |>
+  out <- df |>
     mutate(row_id = row_number()) |>
     left_join(indicators, by = "row_id") |>
     select(-row_id, -all_of(var_name))
+
+  return(out)
 }
 
 
