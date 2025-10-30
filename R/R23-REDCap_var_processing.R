@@ -47,7 +47,11 @@ camr_process_redcap_vars <- function(df,
   ## Process variables ----
   for (v in vars_to_process) {
     print(v)
-    df <- process_redcap_var(df, v, redcap_var_metadata, prefix)
+    df <- process_redcap_var(df = df,
+                             var_name = v,
+                             redcap_var_metadata = redcap_var_metadata,
+                             prefix = prefix,
+                             custom_form_name = custom_form_name)
   }
 
   return(df)
