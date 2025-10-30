@@ -9,6 +9,7 @@ make_indicators(
   var_name,
   answer_choices,
   prefix,
+  custom_form_name,
   data_type = "LGL",
   sep = "\\\\|"
 )
@@ -22,6 +23,12 @@ make_indicators(
 
 \item{prefix}{A string. The first part of the output variable name. Usually
 this will be "INV" but sometimes other choices will be used (e.g. "SBJ" or "IDX")}
+
+\item{custom_form_name}{A string. A custom form name to be used in place
+of the automatically derived form name
+(useful when e.g. combining multiple forms, like constructing
+visit info from the start of visit AND end of visit forms). If \code{NULL}, the form
+name is automatically derived from the REDCap variable name.}
 
 \item{data_type}{A string. The data type to be used in renaming. Defaults to "LGL".}
 

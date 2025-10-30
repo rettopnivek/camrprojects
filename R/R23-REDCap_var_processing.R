@@ -14,6 +14,11 @@
 #' @param api_token_path. A string. The path to your REDCap project API token.
 #' You can add it to your project .Renviron file as "API_TOKEN_FILE" and the
 #' default will pick it up automatically.
+#' @param custom_form_name A string. A custom form name to be used in place
+#' of the automatically derived form name
+#' (useful when e.g. combining multiple forms, like constructing
+#' visit info from the start of visit AND end of visit forms). If `NULL`, the form
+#' name is automatically derived from the REDCap variable name.
 #'
 #' @return A dataframe with variables processed and renamed according to CAM
 #' standards.
@@ -26,7 +31,8 @@
 #'
 camr_process_redcap_vars <- function(df,
                                      prefix = "INV",
-                                     api_token_path = Sys.getenv("API_TOKEN_FILE")) {
+                                     api_token_path = Sys.getenv("API_TOKEN_FILE"),
+                                     custom_form_name = NULL) {
   ## Load metadata ----
   redcap_var_metadata <- camrprojects::camr_redcap_field_meta(api_token_path)
 
@@ -60,6 +66,11 @@ camr_process_redcap_vars <- function(df,
 #' should be processed (e.g. dropdowns are converted to factors)
 #' @param prefix A string. The first part of the output variable name. Usually
 #' this will be "INV" but sometimes other choices will be used (e.g. "SBJ" or "IDX")
+#' @param custom_form_name A string. A custom form name to be used in place
+#' of the automatically derived form name
+#' (useful when e.g. combining multiple forms, like constructing
+#' visit info from the start of visit AND end of visit forms). If `NULL`, the form
+#' name is automatically derived from the REDCap variable name.
 #'
 #' @returns A dataframe with `var_name` processed and renamed according to CAM standards.
 #'
@@ -70,7 +81,8 @@ camr_process_redcap_vars <- function(df,
 process_redcap_var <- function(df,
                                var_name,
                                redcap_var_metadata,
-                               prefix) {
+                               prefix,
+                               custom_form_name) {
 
   ## Get relevant metadata for this variable ----
   meta_row <- redcap_var_metadata[redcap_var_metadata$field_name == var_name, ]
@@ -145,6 +157,9 @@ process_redcap_var <- function(df,
   ## Rename variable (except checkboxes) ----
   # Checkbox renaming is handled within `make_indicators`
   form_name <- stringr::str_extract(var_name, "^[^_]+")
+  if (!is.null(custom_form_name)) {
+    form_name <- custom_form_name
+  }
   field_name <- sub(paste0(form_name, "_"), "", var_name) |>
     stringr::str_replace_all("_", " ") |>
     stringr::str_to_title() |>
@@ -169,6 +184,11 @@ process_redcap_var <- function(df,
 #' @param answer_choices A list. The possible checkboxes.
 #' @param prefix A string. The first part of the output variable name. Usually
 #' this will be "INV" but sometimes other choices will be used (e.g. "SBJ" or "IDX")
+#' @param custom_form_name A string. A custom form name to be used in place
+#' of the automatically derived form name
+#' (useful when e.g. combining multiple forms, like constructing
+#' visit info from the start of visit AND end of visit forms). If `NULL`, the form
+#' name is automatically derived from the REDCap variable name.
 #' @param data_type A string. The data type to be used in renaming. Defaults to "LGL".
 #' @param sep A string. The character that separates the checkbox choices in the
 #' raw REDCap data. Defaults to "\\|" as the data come in e.g. "1|3|5|6"
@@ -181,12 +201,17 @@ make_indicators <- function(df,
                             var_name,
                             answer_choices,
                             prefix,
+                            custom_form_name,
                             data_type = "LGL",
                             sep = "\\|") {
 
   # Extract form name (e.g., "pscn")
   form_name <- stringr::str_extract(var_name, "^[^_]+") |>
     stringr::str_to_upper()
+
+  if (!is.null(custom_form_name)) {
+    form_name <- custom_form_name
+  }
 
   # Extract core variable name (e.g., "substance_used")
   core_var <- stringr::str_remove(var_name, "^[^_]+_")

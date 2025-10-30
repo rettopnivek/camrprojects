@@ -4,7 +4,7 @@
 \alias{process_redcap_var}
 \title{Helper function to process individual variables}
 \usage{
-process_redcap_var(df, var_name, redcap_var_metadata, prefix)
+process_redcap_var(df, var_name, redcap_var_metadata, prefix, custom_form_name)
 }
 \arguments{
 \item{df}{A dataframe.}
@@ -18,6 +18,12 @@ should be processed (e.g. dropdowns are converted to factors)}
 
 \item{prefix}{A string. The first part of the output variable name. Usually
 this will be "INV" but sometimes other choices will be used (e.g. "SBJ" or "IDX")}
+
+\item{custom_form_name}{A string. A custom form name to be used in place
+of the automatically derived form name
+(useful when e.g. combining multiple forms, like constructing
+visit info from the start of visit AND end of visit forms). If \code{NULL}, the form
+name is automatically derived from the REDCap variable name.}
 }
 \value{
 A dataframe with \code{var_name} processed and renamed according to CAM standards.

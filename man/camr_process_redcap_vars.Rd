@@ -7,7 +7,8 @@
 camr_process_redcap_vars(
   df,
   prefix = "INV",
-  api_token_path = Sys.getenv("API_TOKEN_FILE")
+  api_token_path = Sys.getenv("API_TOKEN_FILE"),
+  custom_form_name = NULL
 )
 }
 \arguments{
@@ -16,6 +17,12 @@ convention (\code{form_name}_\code{fieldname}).}
 
 \item{prefix}{A string. The first part of the new variable names. Usually
 this will be "INV" (the default), but sometimes you will want to use "SBJ".}
+
+\item{custom_form_name}{A string. A custom form name to be used in place
+of the automatically derived form name
+(useful when e.g. combining multiple forms, like constructing
+visit info from the start of visit AND end of visit forms). If \code{NULL}, the form
+name is automatically derived from the REDCap variable name.}
 
 \item{api_token_path.}{A string. The path to your REDCap project API token.
 You can add it to your project .Renviron file as "API_TOKEN_FILE" and the
