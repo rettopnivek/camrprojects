@@ -45,8 +45,8 @@
 #' function for the (now defunct) `REDCapR` package,but
 #' with a more robust output that can handle bizarre characters
 #' and calculated fields. This function handles all REST API calls
-#' using httr. This function also uses calls to [furrr] and [future]
-#' for downloading batches from REDCap. The [plan][future::plan()]
+#' using httr. This function also uses calls to **furrr** and **future**
+#' for downloading batches from REDCap. The [future::plan()]
 #' is not specified. Instead, the user should use the plan that
 #' works best for their specific use.
 #'
@@ -634,7 +634,6 @@ camr_redcap_project_info <- function(api_token_path) {
 #' passed validation.
 #'
 #' @export
-
 validate_var_name <- function(str, type = "R") {
 
   ## CONSTANTS
@@ -757,7 +756,7 @@ validate_var_name <- function(str, type = "R") {
 #'
 #' Rename a data frame downloaded from REDCap using the field annotation
 #' located in the metadata data frame downloaded with the data. See
-#' [valiate_var_name()] for more information on the naming standard.
+#' [validate_var_name()] for more information on the naming standard.
 #' Warns the user for any field that does not contain a new name that
 #' conforms to the standard in the field annotation.
 #'
@@ -870,7 +869,7 @@ rename_redcap_vars <- function(rcDtf, metaDtf) {
 ##### 2.3) camr_ckdict #####
 #' Verify REDCap data dictionary.
 #'
-#' @param dict REDCap metadata table as downloaded by [redcap_read()].
+#' @param dict REDCap metadata table as downloaded by [camr_redcap_read()].
 #'
 #' @author Michael Pascale
 #'

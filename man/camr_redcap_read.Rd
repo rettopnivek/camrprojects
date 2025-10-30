@@ -34,8 +34,8 @@ This function seeks to mimic the \code{redcap_read()}
 function for the (now defunct) \code{REDCapR} package,but
 with a more robust output that can handle bizarre characters
 and calculated fields. This function handles all REST API calls
-using httr. This function also uses calls to \link{furrr} and \link{future}
-for downloading batches from REDCap. The \link[future:plan]{plan}
+using httr. This function also uses calls to \strong{furrr} and \strong{future}
+for downloading batches from REDCap. The \code{\link[future:plan]{future::plan()}}
 is not specified. Instead, the user should use the plan that
 works best for their specific use.
 }
