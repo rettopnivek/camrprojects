@@ -154,7 +154,7 @@ process_redcap_var <- function(df,
   # Checklists are broken into separate variables
   else if (var_type == "checkbox") {
     answer_choices <- meta_row[["answer_choices"]]
-    df <- make_indicators(df, var_name, answer_choices, prefix)
+    df <- make_indicators(df, var_name, answer_choices, prefix, custom_form_name)
     data_type <- NULL
   }
 
