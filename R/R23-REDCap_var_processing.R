@@ -266,7 +266,48 @@ make_indicators <- function(df,
   return(out)
 }
 
+#' A function for guaranteeing all REDCap fields appear even if
+#' no participant has required them yet
+#'
+#' @description
+#' This function ensures that all REDCap project variables are represented as
+#' columns in `df`. Missing columns are added to the returned dataframe.
+#'
+#' @param df A dataframe.
+#' @param target_form A character vector. The REDCap form names you want
+#' to guarantee variables from. E.g. `target_form = "demographics"` ensures
+#' all fields on the Demographics form are on the dataframe.
+#' @param api_token_file A string. Path to a .txt file with the REDCap project
+#' API token
+#' @param meta_data_df A dataframe (optional). A dataframe containing variable
+#' metadata for the REDCap project (produced by [camr_redcap_field_meta]). If
+#' provided, `api_token_file` is not used to pull metadata and this is used
+#' instead. This can help to avoid repeatedly pulling the project metadata.
+#'
+#' @returns A dataframe with all REDCap project variables represented. Variables
+#' that were missing will be all NA.
+#'
+#' @importFrom dplyr select filter pull
+#'
+camr_guarantee_fields <- function(df,
+                                  target_form,
+                                  api_token_file=Sys.getenv("API_TOKEN_FILE"),
+                                  meta_data_df=NULL) {
+  if (!is.null(meta_data_df)) {
+    redcap_metadata <- meta_data_df
+  }
+  else redcap_metadata <- camrprojects::camr_redcap_field_meta(api_token_file)
 
+  complete_fields <-  redcap_metadata |>
+    dplyr::select(field_name, form_name) |>
+    dplyr::filter(form_name == target_form) |> dplyr::pull(field_name)
+
+  for (col in complete_fields) {
+    if (!col %in% colnames(df)) df[[col]] <- NA
+  }
+
+  return(df)
+}
 
 
 
