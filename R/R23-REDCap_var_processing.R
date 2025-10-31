@@ -288,6 +288,7 @@ make_indicators <- function(df,
 #' that were missing will be all NA.
 #'
 #' @importFrom dplyr select filter pull
+#' @export
 #'
 camr_guarantee_fields <- function(df,
                                   target_form,
