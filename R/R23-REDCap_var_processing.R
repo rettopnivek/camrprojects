@@ -104,7 +104,7 @@ process_redcap_var <- function(df,
     data_type <- "NUM"
   }
   # Descriptive fields are removed
-  else if (var_type == "descriptive") {
+  else if (var_type %in% c("descriptive", "file")) {
     df <- df |> dplyr::select(-dplyr::all_of(var_name))
     return(df)
   }

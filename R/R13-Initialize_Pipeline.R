@@ -39,20 +39,20 @@
 #'   redcap_url.     = "https://redcap.ourOrg.org/redcap/api/"
 #' )
 camr_init_pipeline <- function(token_file,
-                          project_name,
-                          nickname,
-                          dest_dir,
-                          std_repo_url,
-                          std_repo_branch = 'main',
-                          redcap_url      = Sys.getenv("REDCAP_API_URL"),
-                          excluded_forms = c('informed_consent',
-                                             'contact_information',
-                                             'intake_summary',
-                                             'adverse_event_review',
-                                             'concomitant_medication_review',
-                                             'data_checking',
-                                             'clinician_consult',
-                                             'remuneration')) {
+                               project_name,
+                               nickname,
+                               dest_dir,
+                               std_repo_url,
+                               std_repo_branch = 'main',
+                               redcap_url      = Sys.getenv("REDCAP_API_URL"),
+                               excluded_forms = c('informed_consent',
+                                                  'contact_information',
+                                                  'intake_summary',
+                                                  'adverse_event_review',
+                                                  'concomitant_medication_review',
+                                                  'data_checking',
+                                                  'clinician_consult',
+                                                  'remuneration')) {
   # Input Checks ----
   stopifnot(file.exists(token_file))
   if (nzchar(redcap_url) == FALSE) {
@@ -145,18 +145,29 @@ camr_init_pipeline <- function(token_file,
       ## move it to the appropriate directory (subject, visit, or measure)
       print(paste('Standard pipeline function available for', form))
       orig_path <- std_map[[form]]
-      new_fname <- sprintf("%s_%s.R", nickname, slug(form))
-      new_path <- fs::path(dest_sub, new_fname)
+      print(orig_path)
+      # Extract the folder name from the original path
+      # e.g., src/process/measurement/ME02-AdverseEvents.R → measurement
+      orig_subdir <- fs::path_file(fs::path_dir(orig_path))
 
+      # Map it to your new src folder, e.g., src/measurement/
+      dest_sub <- fs::path(dest_dir, "src", orig_subdir)
+      fs::dir_create(dest_sub)
+
+      # New path: keep original filename
+      new_path <- fs::path(dest_sub, fs::path_file(orig_path))
+      print(new_path)
+
+      # Read the code and prepend header
       code <- readLines(orig_path, warn = FALSE)
-      # The next line is dangerous and should be updated to look only for function names
-      code <- gsub("std_", paste0(nickname, "_"), code, fixed = TRUE)
-        # plus, there might be multiple functions in a file
-      # Add comment with name of standard pipeline function and date copied
       code <- c(sprintf("# Generated from %s in standard pipeline on %s", basename(orig_path), Sys.Date()),
                 code)
       writeLines(code, new_path)
-      fs::file_delete(orig_path)
+
+      # Edit map to standard functions
+      std_map[[form]] <<- new_path
+      print(std_map[[form]])
+
     } else {
       ## Create stub (for instruments without an existing standard pipeline function) ----
       print(paste('Standard pipeline function NOT available for', form))
@@ -164,14 +175,37 @@ camr_init_pipeline <- function(token_file,
       stub <- c(
         sprintf("%s <- function(df_redcap_raw) {", fun_name),
         sprintf("  df_%s <- df_redcap_raw |>", slug(form)),
-        sprintf("    dplyr::filter(VST.CHR.REDCap.Form == '%s')", form),
-        "  # TODO: add cleaning steps for this instrument",
+        sprintf("    dplyr::filter(VST.CHR.REDCap.Form == '%s') |>", form),
+        sprintf("    pivot_wider(
+names_from=field_name,
+values_from=value,
+values_fn=camr_util_collapse
+) |>"),
+        sprintf("    camr_process_redcap_vars() |>"),
+        "  # TODO: add processing steps for this instrument",
+        sprintf('    mutate(
+    IDX.CHR.Subject = IDS.CHR.Subject,
+    IDX.CHR.Visit = VST.CHR.Visit
+    ) |>
+      select(IDX.CHR.Subject,
+             IDX.CHR.Visit,
+             starts_with("INV."))'),
         sprintf("  return(df_%s)", slug(form)),
         "}"
       )
       writeLines(stub, fs::path(dest_sub, sprintf("%s.R", fun_name)))
     }
   })
+
+  msg("Pruning unused standard pipeline functions ...")
+  all_std_files  <- fs::dir_ls(fs::path(dest_dir, "src/process"), recurse = TRUE, glob = "*.R")
+
+  # # delete files that aren't part of the current project and aren't part of scripts_to_keep
+  # to_delete <- setdiff(all_std_files, scripts_to_keep)
+  # if (length(to_delete)) {
+  #   msg("Deleting %d unused standard pipeline files", length(to_delete))
+  #   fs::file_delete(to_delete)
+  # }
 
   # 5: rewrite _targets.R ----
   msg("Writing _targets.R ...")
@@ -237,11 +271,21 @@ camr_init_pipeline <- function(token_file,
   kept_body <- paste(kept_body, collapse = '\n')
 
   # Create blocks for non-core instruments
-  inst_forms <- names(form_types)
+  inst_forms <- unique(names(form_types))
   new_blocks <- purrr::imap_chr(inst_forms, function(form, idx) {
     lvl <- form_types[[form]]
     var <- sprintf("df_%s_%s", lvl, form)
-    fun <- sprintf("%s_%s_%s", nickname, lvl, form)
+
+    # Use original function name if this form had a standard processing script
+    if (!is.na(std_map[form])) {
+      # Try to extract the base function name from the original file
+      orig_code <- readLines(std_map[[form]], warn = FALSE)
+      fun_candidates <- stringr::str_match(orig_code, "^\\s*([A-Za-z0-9_]+)\\s*<-\\s*function")
+      fun_candidates <- fun_candidates[,2][!is.na(fun_candidates[,2])]
+      fun <- if (length(fun_candidates)) fun_candidates[1] else sprintf("%s_%s_%s", nickname, lvl, form)
+    } else {
+      fun <- sprintf("%s_%s_%s", nickname, lvl, form)
+    }
 
     glue::glue(
       "  tar_target(\n",
@@ -266,34 +310,37 @@ camr_init_pipeline <- function(token_file,
 
   # Combine new targets with head and tail of file
   body_txt <- c("##### Core Targets #####", kept_body, new_blocks, ")")
-  body_txt <- gsub("std_", paste0(nickname, "_"), body_txt, fixed = TRUE)
+  #body_txt <- gsub("std_", paste0(nickname, "_"), body_txt, fixed = TRUE)
 
   writeLines(c(head_txt, body_txt, tail_txt), tf)
 
-  # 6: Handle timeline_followback and reorganize scripts ----
-  msg("Reorganizing files ...")
-  # Make sure all subfolders exist
-  fs::dir_create(fs::path(dest_dir, 'src', c('subject', 'visit', 'measurement')))
-  for (script in scripts_to_keep) {
-    lvl <- stringr::str_extract(script,
-                                'src/process/(subject|visit|measurement)/.*R$',
-                                group = 1)
-    script_name <- fs::path_file(script)
-    new_script <- fs::path(dest_dir, sprintf('src/%s/%s', lvl, script_name))
-    fs::file_move(fs::path(dest_dir, script), new_script)
+  # 6: Final cleanup (keep TLFB scripts, no reorganization) ----
+  msg("Relocating essential scripts out of src/process ...")
 
-    code <- readLines(new_script)
-    new_code <- c(sprintf("# Generated from %s in standard pipeline on %s", script, Sys.Date()),
-                  code)
-    new_code <- gsub('(\\s*)std_', paste0('\\1', nickname, "_"), new_code)
-    writeLines(new_code, new_script)
+  for (script in scripts_to_keep) {
+    old_path <- fs::path(dest_dir, script)  # full path including src/process/measurement/...
+    print(old_path)
+    if (fs::file_exists(old_path)) {
+      # Strip "src/process/" from path to get subfolder + filename
+      rel_path <- fs::path_rel(old_path, start = fs::path(dest_dir, "src/process"))
+      subfolder <- fs::path_dir(rel_path)       # e.g., measurement
+      new_dir <- fs::path(dest_dir, "src", subfolder)
+      fs::dir_create(new_dir)
+
+      new_path <- fs::path(new_dir, fs::path_file(old_path))
+      fs::file_copy(old_path, new_path, overwrite = TRUE)
+      msg("Moved %s → %s", old_path, new_path)
+    } else {
+      warning("Expected script not found: ", old_path)
+    }
   }
 
-  # Replace src/process subfolders with the directories we have built above
-  process_dirs <- fs::path(dest_dir, "src", "process", c("subject", "visit", "measurement"))
-  fs::dir_delete(process_dirs)
-  source_dirs <- fs::path(dest_dir, "src", c("subject", "visit", "measurement"))
-  fs::file_move(source_dirs, process_dirs)
+  # Delete the old src/process folder
+  process_dir <- fs::path(dest_dir, "src", "process")
+  if (fs::dir_exists(process_dir)) {
+    msg("Deleting old src/process directory ...")
+    fs::dir_delete(process_dir)
+  }
 
   # 7: Close ----
   msg("Project %s initialised at %s", project_name, dest_dir)
@@ -302,3 +349,4 @@ camr_init_pipeline <- function(token_file,
   fs::dir_delete(fs::path(dest_dir,'R'))
   invisible(dest_dir) # Return the new project folder string
 }
+
