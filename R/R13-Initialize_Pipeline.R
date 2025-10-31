@@ -177,11 +177,11 @@ camr_init_pipeline <- function(token_file,
         sprintf("  df_%s <- df_redcap_raw |>", slug(form)),
         sprintf("    dplyr::filter(VST.CHR.REDCap.Form == '%s') |>", form),
         sprintf("    pivot_wider(
-names_from=field_name,
-values_from=value,
-values_fn=camr_util_collapse
-) |>"),
-        sprintf("    camr_guarantee_fields(%s)", form),
+        names_from=field_name,
+        values_from=value,
+        values_fn=camr_util_collapse
+    ) |>"),
+        sprintf("    camr_guarantee_fields(\"%s\")", form),
         sprintf("    camr_process_redcap_vars() |>"),
         "  # TODO: add processing steps for this instrument",
         sprintf('    mutate(
