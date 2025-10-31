@@ -181,7 +181,7 @@ camr_init_pipeline <- function(token_file,
         values_from=value,
         values_fn=camr_util_collapse
     ) |>"),
-        sprintf("    camr_guarantee_fields(\"%s\")", form),
+        sprintf("    camr_guarantee_fields(\"%s\") |>", form),
         sprintf("    camr_process_redcap_vars() |>"),
         "  # TODO: add processing steps for this instrument",
         sprintf('    mutate(
