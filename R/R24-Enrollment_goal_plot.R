@@ -1,4 +1,4 @@
-#' Plot CLEAR enrollment actuals vs. goal (consented & randomized)
+#' Plot enrollment actuals vs. goal (consented & randomized)
 #'
 #' @description
 #' Generates a line plot of cumulative **Actual Consented** and **Actual Randomized**
@@ -20,7 +20,7 @@
 #' @param goal_finish Date at which the goal line reaches `goal_recruitments`.
 #' @param show_extension_goal Logical. ▶ If TRUE, add a second goal line that ends `extension_years` after `goal_finish`. (Default FALSE)
 #' @param extension_years Integer. ▶ Length of no-cost extension in years (default 1).
-#' @param filename Output PNG filename (default `"CLEAR_enroll_goal_YYYYMMDD.png"`).
+#' @param filename Output PNG filename (default `"XX_enroll_goal_YYYYMMDD.png"`).
 #' @param show_latest_labels Logical. Add N-labels to the most recent point for each actual series.
 #'
 #' @returns A list with:
@@ -58,7 +58,7 @@ run_clear_enrollment_goal <- function(
     show_extension_goal   = FALSE,
     extension_years       = 1,
     # output
-    filename              = sprintf("CLEAR_enroll_goal_%s.png", format(Sys.Date(), "%Y%m%d")),
+    filename              = sprintf("XX_enroll_goal_%s.png", format(Sys.Date(), "%Y%m%d")),
     show_latest_labels    = TRUE
 ) {
   # 0) load from {targets} if not provided
