@@ -328,6 +328,8 @@ camr_consort_diagram_no_follow_up <- function(
 #' @param pending_rand_reasons Character vector of reasons to show under the Pending randomization box (optional).
 #' @param show_pending_consent Logical, whether to display the pending-consent box (default TRUE).
 #' @param show_pending_rand Logical, whether to display the pending-randomization box (default TRUE).
+#' @param height Numeric or character; overall widget height passed to DiagrammeR::grViz()
+#'   (e.g., 900, "1000px"). Default: 1200.
 #'
 #' @return A DiagrammeR htmlwidget.
 #' @export
@@ -431,7 +433,8 @@ camr_consort_diagram <- function(
     pending_reasons = NULL,
     pending_rand_reasons = NULL,
     show_pending_consent = TRUE,
-    show_pending_rand = TRUE
+    show_pending_rand = TRUE,
+    height = 1200
 ) {
   stopifnot(all(c(
     "assessed", "IDS.CHR.Subject", "SBJ.FCT.Rand.Group",
@@ -807,7 +810,7 @@ camr_consort_diagram <- function(
              "  blank13 -> node5b[dir = none]",
              "}")
 
-  DiagrammeR::grViz(paste(lines, collapse = "\n"))
+  DiagrammeR::grViz(paste(lines, collapse = "\n"), height = height)
 }
 
 

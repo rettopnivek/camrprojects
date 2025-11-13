@@ -9,7 +9,8 @@ camr_consort_diagram(
   pending_reasons = NULL,
   pending_rand_reasons = NULL,
   show_pending_consent = TRUE,
-  show_pending_rand = TRUE
+  show_pending_rand = TRUE,
+  height = 1200
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ SBJ.FCT.Status.ScreenFailReason, SBJ.LGL.InterventionCompleted.
 \item{show_pending_consent}{Logical, whether to display the pending-consent box (default TRUE).}
 
 \item{show_pending_rand}{Logical, whether to display the pending-randomization box (default TRUE).}
+
+\item{height}{Numeric or character; overall widget height passed to DiagrammeR::grViz()
+(e.g., 900, "1000px"). Default: 1200.}
 }
 \value{
 A DiagrammeR htmlwidget.
