@@ -470,7 +470,7 @@ camr_redcap_field_meta <- function(api_token_path) {
   # Convert answer choices to a list with numbers as names and labels as values
   parse_choices <- function(x) {
     stringr::str_split(x, "\\s*\\|\\s*")[[1]] |>
-      purrr::map(~ stringr::str_match(.x, "^([A-Za-z0-9]+), (.*)$")[,2:3]) |>
+      purrr::map(~ stringr::str_match(.x, "^(-?[A-Za-z0-9]+), (.*)$")[,2:3]) |>
       purrr::transpose() |>
       (function(kv) purrr::set_names(kv[[2]], kv[[1]]))() |> as.list()
   }
