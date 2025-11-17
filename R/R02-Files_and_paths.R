@@ -481,6 +481,12 @@ camr_file_path <- function(
 #'   ('file', 'directory').
 #' @param lgl_recurse Logical; if TRUE, the function
 #'   will recurse fully.
+#' @param tgt_depends An optional target. Used to clarify dependencies in a
+#'                    targets pipeline. In other words, if you are using
+#'                    camr_find_file to produce a target in a targets pipeline,
+#'                    and it depends on another target (e.g. the downloading of
+#'                    REDCap data), you can indicate that target here so that
+#'                    the targets algorithm can detect the dependency.
 #'
 #' @import fs
 #'
@@ -499,11 +505,16 @@ camr_find_file <- function(
     chr_commit=NULL,
     chr_date_tolerance='s',
     chr_type='file',
-    lgl_recurse=TRUE
+    lgl_recurse=TRUE,
+    tgt_depends=NULL
 ) {
 
   chr_desc <- deparse(substitute(nm_desc))
   if (stringr::str_detect(chr_desc, '"')) {chr_desc <- nm_desc}
+
+  if (!is.null(tgt_depends)) {
+    print("camr_find_file: Targets dependency indicated")
+  }
 
   assert_string(chr_desc, pattern='^\\w+(\\.\\w{1,5})?$')
   assert_string(chr_path)

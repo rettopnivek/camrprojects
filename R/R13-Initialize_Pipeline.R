@@ -147,7 +147,6 @@ camr_init_pipeline <- function(token_file,
       orig_path <- std_map[[form]]
       print(orig_path)
       # Extract the folder name from the original path
-      # e.g., src/process/measurement/ME02-AdverseEvents.R → measurement
       orig_subdir <- fs::path_file(fs::path_dir(orig_path))
 
       # Map it to your new src folder, e.g., src/measurement/
@@ -249,7 +248,7 @@ camr_init_pipeline <- function(token_file,
   #print("Printing Detected Targets:")
   #sapply(blocks, function(idx) print(txt[idx]))
   # Keep only core target blocks
-  kept_body <-purrr::keep(blocks, function(idx) {
+  kept_body <- purrr::keep(blocks, function(idx) {
     block <- txt[idx]
 
     # Find target name and check against core targets
@@ -260,6 +259,8 @@ camr_init_pipeline <- function(token_file,
 
   kept_body <- sapply(kept_body, function(idx) paste(txt[idx], collapse = '\n')) |>
     unlist()
+
+  print(kept_body)
 
   # Make sure last kept block ends with a comma (so we can append)
   if (length(kept_body)) {
@@ -299,11 +300,11 @@ camr_init_pipeline <- function(token_file,
 
   ## Organize blocks into subject, visit, and measure targets
   subject_blocks <- c("###### Subject Level Data ######",
-                      new_blocks[stringr::str_detect(new_blocks, '_sl_')])
+                      new_blocks[stringr::str_detect(new_blocks, 'df_sl_')])
   visit_blocks <- c("###### Visit Level Data ######",
-                    new_blocks[stringr::str_detect(new_blocks, '_vl_')])
+                    new_blocks[stringr::str_detect(new_blocks, 'df_vl_')])
   measure_blocks <- c("####### Measurement Level Data ######",
-                      new_blocks[stringr::str_detect(new_blocks, '_ml_')])
+                      new_blocks[stringr::str_detect(new_blocks, 'df_ml_')])
 
   new_blocks <- c(subject_blocks, visit_blocks, measure_blocks)
   new_blocks[length(new_blocks)] <- sub('\\),\n$', '\\)\n',
