@@ -57,6 +57,49 @@ camr_process_redcap_vars <- function(df,
   return(df)
 }
 
+#' Function to process individual variables in a script
+#'
+#' @description
+#' This function applies the same processing as `camr_process_redcap_vars`,
+#' but allows it to be called on a single variable, and just returns the data
+#' (so it can be used e.g. inside calls to `dplyr::mutate`).
+#' It also skips the use of automated naming.
+#' Note: this does NOT work for checklist variables.
+#'
+#' @param redcap_varname A string. The name of the redcap variable.
+#' @param api_token_path. A string. Path to a .txt file containing the redcap
+#'                        project API token.
+#' @returns A vector of the variable processed according to `camr_process_redcap_vars`.
+#'
+#' @export
+#'
+camr_process_redcap_var <- function(x,
+                                    api_token_path = Sys.getenv("API_TOKEN_PATH")) {
+
+  # Capture the column name as a string
+  var_name <- rlang::as_name(rlang::ensym(x))
+
+  # Create a temporary one-column data frame
+  df_tmp <- data.frame(tmp = x, stringsAsFactors = FALSE)
+  names(df_tmp) <- var_name
+
+  # Load metadata
+  meta <- camr_redcap_field_meta(api_token_path)
+
+  # Call your full processing function
+  out <- process_redcap_var(
+    df = df_tmp,
+    var_name = var_name,
+    redcap_var_metadata = meta,
+    prefix = "ABC",
+    custom_form_name = NULL
+  )
+
+  # Return processed vector (mutate needs a vector)
+  out[[1]]
+}
+
+
 #' Helper function to process individual variables
 #'
 #' @description
