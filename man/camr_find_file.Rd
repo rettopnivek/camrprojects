@@ -12,7 +12,8 @@ camr_find_file(
   chr_commit = NULL,
   chr_date_tolerance = "s",
   chr_type = "file",
-  lgl_recurse = TRUE
+  lgl_recurse = TRUE,
+  tgt_depends = NULL
 )
 }
 \arguments{
@@ -42,6 +43,13 @@ file type to find.
 
 \item{lgl_recurse}{Logical; if TRUE, the function
 will recurse fully.}
+
+\item{tgt_depends}{An optional target. Used to clarify dependencies in a
+targets pipeline. In other words, if you are using
+camr_find_file to produce a target in a targets pipeline,
+and it depends on another target (e.g. the downloading of
+REDCap data), you can indicate that target here so that
+the targets algorithm can detect the dependency.}
 }
 \value{
 A character string, an absolute path to a file or directory.

@@ -22,6 +22,7 @@
 #   1.3) camr_field_redcap_meta
 #   1.4) camr_instrument_event_map
 #   1.5) camr_redcap_project_info
+#   1.6) camr_redcap_event_data
 # 2) Functions for Naming Conventions
 #   2.1) validate_var_name
 #   2.2) rename_redcap_vars
@@ -564,6 +565,38 @@ camr_redcap_project_info <- function(api_token_path) {
                                simplifyDataFrame = TRUE)
 
   return(result)
+}
+
+#### 1.6) Get REDCap event info
+#' Pull Event info from REDCap project process it into a dataframe
+#'
+#' Pull Event data using REDCap API and convert it into a
+#' convenient data frame. Used to automate processing of visit
+#' data
+#'
+#' @param api_token A string. The API token for the REDCap project
+#' @returns A dataframe
+#'
+#' @export
+#'
+camr_redcap_event_data <- function(api_token = Sys.getenv("API_REDCAP_TOKEN")) {
+  token <- api_token
+  url <- "https://redcap.partners.org/redcap/api/"
+  formData <- list("token"=token,
+                   content='event',
+                   format='json',
+                   returnFormat='json'
+  )
+  response <- httr::POST(url, body = formData, encode = "form")
+  result <- httr::content(response)
+
+  df <- do.call(rbind, lapply(result, function(x) {
+    # Replace NULL elements with NA so they bind correctly
+    x[sapply(x, is.null)] <- NA
+    as.data.frame(x, stringsAsFactors = FALSE)
+  }))
+
+  return(df)
 }
 
 #### 2) Functions for Naming Conventions ####
