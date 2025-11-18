@@ -505,7 +505,7 @@ camr_redcap_field_meta <- function(api_token_path) {
 #' @export
 #' @author Zach Himmelsbach
 #'
-camr_instrument_event_map <- function(api_token_path) {
+camr_instrument_event_map <- function(api_token_path = Sys.getenv("API_TOKEN_FILE")) {
   # Check inputs ----
   if (!file.exists(api_token_path)) stop("API token file not found")
 
@@ -524,6 +524,12 @@ camr_instrument_event_map <- function(api_token_path) {
                                              "text",
                                              encoding = "UTF-8"),
                                simplifyDataFrame = TRUE)
+
+  # Merge on event names
+  event_info <- camr_redcap_event_data(api_token) |>
+    dplyr::select(-arm_num)
+
+  result <- merge(result, event_info, by = "unique_event_name")
 
   return(result)
 }
@@ -567,7 +573,7 @@ camr_redcap_project_info <- function(api_token_path) {
   return(result)
 }
 
-#### 1.6) Get REDCap event info
+##### 1.6) Get REDCap event info ----
 #' Pull Event info from REDCap project process it into a dataframe
 #'
 #' Pull Event data using REDCap API and convert it into a
