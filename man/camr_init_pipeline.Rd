@@ -9,9 +9,9 @@ camr_init_pipeline(
   project_name,
   nickname,
   dest_dir,
-  std_repo_url,
+  std_repo_url = "git@gitlab.partners.org:mgh-cam/standard-data-pipeline.git",
   std_repo_branch = "main",
-  redcap_url = Sys.getenv("REDCAP_API_URL"),
+  redcap_url = Sys.getenv("API_REDCAP_URI"),
   excluded_forms = c("informed_consent", "contact_information", "intake_summary",
     "adverse_event_review", "concomitant_medication_review", "data_checking",
     "clinician_consult", "remuneration")
