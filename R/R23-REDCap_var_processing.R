@@ -74,7 +74,7 @@ camr_process_redcap_vars <- function(df,
 #' @export
 #'
 camr_process_redcap_var <- function(x,
-                                    api_token_path = Sys.getenv("API_TOKEN_PATH")) {
+                                    api_token_path = Sys.getenv("API_TOKEN_FILE")) {
 
   # Capture the column name as a string
   var_name <- rlang::as_name(rlang::ensym(x))
