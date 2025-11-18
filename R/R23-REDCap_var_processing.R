@@ -80,7 +80,7 @@ camr_process_redcap_var <- function(x,
   var_name <- rlang::as_name(rlang::ensym(x))
 
   # Create a temporary one-column data frame
-  df_tmp <- data.frame(tmp = x, stringsAsFactors = FALSE)
+  df_tmp <- data.frame(tmp = unlist(x), stringsAsFactors = FALSE)
   names(df_tmp) <- var_name
 
   # Load metadata
