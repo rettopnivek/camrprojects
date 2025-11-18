@@ -42,9 +42,9 @@ camr_init_pipeline <- function(token_file,
                                project_name,
                                nickname,
                                dest_dir,
-                               std_repo_url,
+                               std_repo_url = "git@gitlab.partners.org:mgh-cam/standard-data-pipeline.git",
                                std_repo_branch = 'main',
-                               redcap_url      = Sys.getenv("REDCAP_API_URL"),
+                               redcap_url      = Sys.getenv("REDCAP_API_URI"),
                                excluded_forms = c('informed_consent',
                                                   'contact_information',
                                                   'intake_summary',
@@ -56,7 +56,7 @@ camr_init_pipeline <- function(token_file,
   # Input Checks ----
   stopifnot(file.exists(token_file))
   if (nzchar(redcap_url) == FALSE) {
-    stop("`redcap_url` is empty - supply it explicitly or set REDCAP_API_URL")
+    stop("`redcap_url` is empty - supply it explicitly or set REDCAP_API_URI")
   }
   if (dir.exists(dest_dir)) {
     stop("`dest_dir` already exists - choose a new folder or delete first")
