@@ -7,7 +7,8 @@
 camr_redcap_field_meta(api_token_path)
 }
 \arguments{
-\item{api_token_path}{path to text file containing REDCap project API token}
+\item{api_token_path}{path to text file containing REDCap project API token;
+can also be the token itself.}
 }
 \value{
 a dataframe containing metadata on the fields from the REDCap project

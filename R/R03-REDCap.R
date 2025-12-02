@@ -423,7 +423,8 @@ camr_redcap_download <- function(...) {
 #' The output contains field names, field types, answer choices, branching logic,
 #' etc
 #'
-#' @param api_token_path path to text file containing REDCap project API token
+#' @param api_token_path path to text file containing REDCap project API token;
+#'                       can also be the token itself.
 #' @returns a dataframe containing metadata on the fields from the REDCap project
 #'
 #' @importFrom httr    POST content
@@ -435,7 +436,11 @@ camr_redcap_download <- function(...) {
 #'
 camr_redcap_field_meta <- function(api_token_path) {
   # Read token
-  token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
+  if (file.exists(api_token_path)) {
+    token <- readLines(api_token_path, warn = FALSE)[1] |> stringr::str_trim()
+  }
+  # If it's not a file, try to use the string as the token directly
+  else token <- api_token_path
 
   # Request metadata
   url <- "https://redcap.partners.org/redcap/api/"
