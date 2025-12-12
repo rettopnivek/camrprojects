@@ -55,12 +55,12 @@
 #'
 #'
 camr_make_table1 <- function(df,
-                        var_label_list,
-                        hist_bar_color = "blue",
-                        group_var = NULL,
-                        output = NULL,
-                        hide_distributions = FALSE,
-                        add_NA_level = TRUE) {
+                             var_label_list,
+                             hist_bar_color = "blue",
+                             group_var = NULL,
+                             output = NULL,
+                             hide_distributions = FALSE,
+                             add_NA_level = TRUE) {
 
   # Check output file extensions
   if (!is.null(output)) {
@@ -184,9 +184,6 @@ camr_make_table1 <- function(df,
   else if (length(factor_vars) == 0) {
     categorical_tbl <- data.frame()
   }
-
-  print(numeric_tbl)
-  print(categorical_tbl)
 
   # --- Bind variables together and make inline historgram (with gt) ----
   table_data <- dplyr::bind_rows(numeric_tbl, categorical_tbl) |>
