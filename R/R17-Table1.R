@@ -125,10 +125,10 @@ camr_make_table1 <- function(df,
         `Mean (SD)` = sprintf("%.1f (%.1f); NA = %i", mean(value, na.rm = TRUE), sd(value, na.rm = TRUE), sum(is.na(value))),
         dist = list(value), # To create histogram using gt_plt_dist()
         min_val = min(value, na.rm = TRUE),
-        max_val = max(value, na.rm = TRUE),
-        variable_grp = NA_character_ # The numerics don't need group labels
+        max_val = max(value, na.rm = TRUE)
       ) |>
-      dplyr::mutate(Variable = get_label(Variable),
+      dplyr::mutate(variable_grp = Variable, # Need for sorting later
+                    Variable = get_label(Variable),
                     axis_vals = sprintf(
                       "<div style='font-size:8px;
                             display:flex;
@@ -185,8 +185,16 @@ camr_make_table1 <- function(df,
     categorical_tbl <- data.frame()
   }
 
+  print(numeric_tbl)
+  print(categorical_tbl)
+
   # --- Bind variables together and make inline historgram (with gt) ----
   table_data <- dplyr::bind_rows(numeric_tbl, categorical_tbl) |>
+    dplyr::mutate(
+      var_order = match(variable_grp, names(var_label_list))
+    ) |>
+    dplyr::arrange(var_order) |>
+    dplyr::select(-var_order) |>
     dplyr::mutate(variable_grp = get_label(variable_grp)) |>
     dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals)
   # if (length(numeric_vars) == 0) {
