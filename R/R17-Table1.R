@@ -129,6 +129,7 @@ camr_make_table1 <- function(df,
       ) |>
       dplyr::mutate(variable_grp = Variable, # Need for sorting later
                     Variable = get_label(Variable),
+                    variable_type = "numeric",
                     axis_vals = sprintf(
                       "<div style='font-size:8px;
                             display:flex;
@@ -177,6 +178,7 @@ camr_make_table1 <- function(df,
       dplyr::mutate(
         `Mean (SD)` = sprintf("%d (%.0f%%)", n, pct),
         dist = list(NA_real_),
+        variable_type = "factor",
         axis_vals = sprintf('<div style="width: %spx; height: 20px; background-color: %s;"></div>', pct, hist_bar_color)
       ) |>
       dplyr::ungroup()
@@ -192,11 +194,14 @@ camr_make_table1 <- function(df,
     ) |>
     dplyr::arrange(var_order) |>
     dplyr::select(-var_order) |>
-    dplyr::mutate(variable_grp = get_label(variable_grp)) |>
+    dplyr::mutate(variable_grp = get_label(variable_grp),
+                  variable_grp = ifelse(variable_type == "numeric", "", variable_grp)) |>
     dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals)
   # if (length(numeric_vars) == 0) {
   #   table_data <- table_data |> select(-c(dist, axis_vals))
   # }
+
+  print(table_data)
 
   table1 <- table_data |>
     gt::gt(rowname_col = "Variable",
