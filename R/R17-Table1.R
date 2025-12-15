@@ -201,8 +201,6 @@ camr_make_table1 <- function(df,
   #   table_data <- table_data |> select(-c(dist, axis_vals))
   # }
 
-  print(table_data)
-
   table1 <- table_data |>
     gt::gt(rowname_col = "Variable",
            groupname_col = "variable_grp")
