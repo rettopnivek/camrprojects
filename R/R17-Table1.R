@@ -196,7 +196,11 @@ camr_make_table1 <- function(df,
     dplyr::select(-var_order) |>
     dplyr::mutate(variable_grp = get_label(variable_grp),
                   variable_grp = ifelse(variable_type == "numeric", "", variable_grp)) |>
-    dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals)
+    dplyr::select(variable_grp, Variable, `Mean (SD)`, dist, axis_vals) |>
+    group_by(variable_grp) |> # Reorder so that NA levels always come last
+    arrange(Variable=="NA", .by_group = TRUE) |>
+    ungroup()
+
   # if (length(numeric_vars) == 0) {
   #   table_data <- table_data |> select(-c(dist, axis_vals))
   # }
