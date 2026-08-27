@@ -245,6 +245,9 @@ camr_redcap_read = function(
 #'   project.
 #' @param lgl_raw Optional. Download data in raw format.
 #' Defaults to TRUE.
+#' @param lgl_export_survey_fields Optional. If TRUE, includes REDCap's
+#'   survey identifier and timestamp fields in the export. Defaults to
+#'   FALSE.
 #'
 #' @return A list consisting of...
 #' \itemize{
@@ -265,7 +268,8 @@ camr_redcap_read = function(
 camr_download_redcap <- function(
     chr_rc_uri = "",
     chr_rc_token = "",
-    lgl_raw=TRUE) {
+    lgl_raw=TRUE,
+    lgl_export_survey_fields = FALSE) {
 
   if ( chr_rc_uri == "" ) {
 
@@ -283,6 +287,7 @@ camr_download_redcap <- function(
   checkmate::assert_string(
     chr_rc_token, n.chars = 32, pattern = '[0-9A-F]{32}'
   )
+  checkmate::assert_logical(lgl_export_survey_fields, len = 1)
 
   #### 1.2.1) Download Project Information ####
 
@@ -314,7 +319,7 @@ camr_download_redcap <- function(
     rawOrLabel = ifelse(lgl_raw, 'raw', 'label'),
     rawOrLabelHeaders = 'raw',
     exportCheckboxLabel = 'false',
-    exportSurveyFields = 'false',
+    exportSurveyFields = ifelse(lgl_export_survey_fields, 'true', 'false'),
     exportDataAccessGroups = 'false'
   )
 
