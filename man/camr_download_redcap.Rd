@@ -5,7 +5,12 @@
 \alias{camr_redcap_download}
 \title{Download Data From a REDCap Project}
 \usage{
-camr_download_redcap(chr_rc_uri = "", chr_rc_token = "", lgl_raw = TRUE)
+camr_download_redcap(
+  chr_rc_uri = "",
+  chr_rc_token = "",
+  lgl_raw = TRUE,
+  lgl_export_survey_fields = FALSE
+)
 
 camr_redcap_download(...)
 }
@@ -19,6 +24,10 @@ project.}
 
 \item{lgl_raw}{Optional. Download data in raw format.
 Defaults to TRUE.}
+
+\item{lgl_export_survey_fields}{Optional. If TRUE, includes REDCap's
+survey identifier and timestamp fields in the export. Defaults to
+FALSE.}
 }
 \value{
 A list consisting of...
